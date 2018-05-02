@@ -35,9 +35,6 @@
                     <a href="https://www.thelendingcoin.com/faq">FAQ</a>
                 </li>
                 {% if user.is_authenticated %}
-		<li>
-			<a href="{% url 'loan_apply' %}">Apply for a Loan</a>
-		</li>
                 <li>
                     <a href="{% url 'logout' %}">Logout</a>
                 </li>
