@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name = 'pages/home.html'), name='home'),
     url(r'^login/$', auth_views.login, {'template_name': 'pages/login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'template_name': 'pages/logout.html'}, name='logout'),
-    url(r'^loan_apply.html$', views.loan_apply, {'template_name': 'pages/loan_apply.html'}, name='loan_apply'),
+    url(r'^loan_apply.html$', views.loan_apply, name='loan_apply'),
+    url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
 ]

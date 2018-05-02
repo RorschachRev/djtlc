@@ -1,0 +1,17 @@
+
+5.2.18 - Alex
+
+Form was written with django 2.0 doc, needs to be converted into 1.11v style forms
+Files that will need to be modified to accomodate this (within the app 'loan'):
+	views.py
+	forms.py
+	loan_apply.html
+	(possibly)
+	home.html
+	login.html
+	urls.py
+
+Additional files that were changed:
+    header.html - commented out most of navigation for readability (nav was overlapping content I was working on)
+
+I sent the django 1.11 documentation over discord

@@ -10,7 +10,13 @@
 		</div>
         <div class="col-sm-12 col-md-9">
 			<h2>Apply for Loan</h2>
-			<div><input></div>
+			<div>
+				<form action="/loan_apply_done.html" method="post">
+					{% csrf_token %}
+					{{ form }}
+					<input type="submit" value="Submit" />
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
