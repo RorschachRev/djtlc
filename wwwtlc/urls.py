@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
 from wwwtlc import views
+from wwwtlc import views_form
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name = 'pages/home.html'), name='home'),
     url(r'^login/$', auth_views.login, {'template_name': 'pages/login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'template_name': 'pages/logout.html'}, name='logout'),
-    url(r'^loan_apply.html$', views.loan_apply, name='loan_apply'),
-    url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
+    url(r'^account.html$', views_form.account, name='account'),
+    url(r'^wallet.html$', views.wallet, name='wallet'),
+    url(r'^loan.html$', views.loan, name='loan'),
+    url(r'^loan_apply.html$', views_form.loan_apply, name='loan_apply'),
+#    url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
+
 ]
