@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}TLC: Wallet Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-3">
+		{% include "sidebar.html" %}
+		</div>
+        <div class="col-sm-12 col-md-9">
+			<h2>Wallet Management</h2>
+			<div>
+				<form action="/wallet.html" method="post">
+					{% csrf_token %}
+					{{ form }}
+					<input type="submit" value="Submit" />
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

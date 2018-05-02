@@ -7,3 +7,5 @@ def loan_apply(request):
 	return render(request, 'pages/loan_apply.html')
 def account(request):
 	return render(request, 'pages/account.html')
+def wallet(request):
+	return render(request, 'pages/wallet.html')	
