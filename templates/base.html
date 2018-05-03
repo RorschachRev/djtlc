@@ -15,7 +15,8 @@
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/gaia.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/tlc.css' %}" rel="stylesheet" />
+    <link href="{% static 'admin/css/base.css' %}" rel="stylesheet"/>
 
     {% block page-styles %}{% endblock %}
 
@@ -25,9 +26,9 @@
     {% csrf_token %}
 
     {% include "header.html" %}
-
+<div id="main">
     {% block content %}{% endblock %}
-
+</div>
     {% include "footer.html" %}
 
 </body>
