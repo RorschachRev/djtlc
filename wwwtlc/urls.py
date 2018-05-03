@@ -21,6 +21,7 @@ from django.views.generic.base import TemplateView
 from django.conf.urls.static import static
 from wwwtlc import views
 from wwwtlc import views_form
+from loan import views as views_loan
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name = 'pages/home.html'), name='home'),
@@ -29,7 +30,7 @@ urlpatterns = [
     url(r'^account.html$', views_form.account, name='account'),
     url(r'^wallet.html$', views.wallet, name='wallet'),
     url(r'^loan.html$', views.loan, name='loan'),
-    url(r'^loan_apply.html$', views_form.loan_apply, name='loan_apply'),
+    url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'), #working url for loan_apply, it goes through the loan app's view instead of the project view
 #    url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
 

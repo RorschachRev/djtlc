@@ -13,7 +13,7 @@
 			<div>
 				<form action="/loan_apply_done.html" method="post">
 					{% csrf_token %}
-					{{ form }}
+					{{ form.as_ul }}
 					<input type="submit" value="Submit" />
 				</form>
 			</div>
