@@ -24,8 +24,9 @@
 <body>
 
     {% csrf_token %}
-
+<div id="main2">
     {% include "header.html" %}
+</div>
 <div id="main">
     {% block content %}{% endblock %}
 </div>
