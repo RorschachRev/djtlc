@@ -1,19 +1,17 @@
-{% extends 'base.html' %}
-
-{% block title %}Loan Application{% endblock %}
+{% extends 'pages/home.html' %}
 
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 col-md-3">
+        <!--<div class="col-sm-12 col-md-3">
 		{% include "sidebar.html" %}
-		</div>
+		</div>-->
         <div class="col-sm-12 col-md-9">
 			<h2>Apply for Loan</h2>
 			<div>
 				<form action="/loan_apply_done.html" method="post">
 					{% csrf_token %}
-					{{ form.as_ul }}
+					{{ formLoan.as_ul }}
 					<input type="submit" value="Submit" />
 				</form>
 			</div>

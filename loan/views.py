@@ -11,4 +11,4 @@ def loan_apply(request):
 			return HttpResponseRedirect('home')
 	else:
 		form = LoanForm()
-	return render(request, 'pages/loan_apply.html', {'form': form})
+	return render(request, 'pages/loan_apply.html', {'formLoan': form})

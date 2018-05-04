@@ -30,8 +30,8 @@ urlpatterns = [
     url(r'^account.html$', views_form.account, name='account'),
     url(r'^wallet.html$', views.wallet, name='wallet'),
     url(r'^loan.html$', views.loan, name='loan'),
-    url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'), #working url for loan_apply, it goes through the loan app's view instead of the project view
-#    url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
+    url(r'^loan_apply/$', views_loan.loan_apply, name='loan_apply'), #working url for loan_apply, it goes through the loan app's view instead of the project view
+    #url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
