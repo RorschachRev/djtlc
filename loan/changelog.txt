@@ -1,3 +1,14 @@
+5.4.18 - Alex
+
+Form was modified to accomodate styling. Models were also created to allow for database usage in Loans app. Files that I changed today:
+    -home.html
+    -loan_apply.html
+    -forms.py
+    -views.py
+    -wwwtlc/urls.py - minor fix to work with loan_apply.html
+    -models.py
+    -admin.py - created an admin interface to input data into Loan app
+
 5.3.18 - Alex
 
 Form was modified so that input fields show up on loan_apply.html. Other files were changed as well to accomodate this, such as:
