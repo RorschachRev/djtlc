@@ -28,7 +28,29 @@
     {% include "header.html" %}
 </div>
 <div id="main">
-    {% block content %}{% endblock %}
+    <div class="container">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <div class="col-sm-12 col-md-3">
+                {% include "sidebar.html" %}
+            </div>
+            <div class="col-sm-12 col-md-9">
+                {% block content %}{% endblock %}
+            </div>
+            {% else %}
+            {% if request.get_full_path == "/login/" %}
+                <h2>Login</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Login</button>
+                </form>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
 </div>
     {% include "footer.html" %}
 
