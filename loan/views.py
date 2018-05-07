@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
-from .forms import LoanForm
+from .forms import LoanForm, LoanDataForm
 
 # Create your views here.
 def loan_apply(request):
 	if request.method == 'POST':
-		form = LoanForm(request.POST)
+		form1 = LoanDataForm(request.POST)
+		form2 = LoanForm(request.POST)
 		if form.is_valid():
 			return HttpResponseRedirect('home')
 	else:
-		form = LoanForm()
-	return render(request, 'pages/loan_apply.html', {'formLoan': form})
+		form1 = LoanDataForm()
+		form2 = LoanForm()
+	return render(request, 'pages/loan_apply.html', {'formLoanData':form1, 'formLoan': form2})

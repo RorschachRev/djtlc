@@ -4,8 +4,6 @@ from django.utils import timezone
 
 # Create your models here.
 
-
-
 class Loan_Data(models.Model):
 	loan_address = models.ForeignKey(Address)
 	contracts = models.ForeignKey(Contract)
@@ -30,7 +28,7 @@ class Loan_Data(models.Model):
 	LOAN_TYPE_CHOICES = (
 			(0, 'TYPE_FIXED'),
 			(1, 'TYPE_ARM'),
-			(2, 'TYPE_SHARIAH'),
+			#(2, 'TYPE_SHARIAH'),
 		)
 	loan_type = models.IntegerField(
 			choices=LOAN_TYPE_CHOICES,
