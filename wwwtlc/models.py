@@ -29,6 +29,10 @@ class Borrower(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
 		return self.title
+class Partner(models.Model):
+	refkey=models.IntegerField()
+	def __str__(self):
+		return self.title
 
 #Structured Data
 class Address(models.Model):
@@ -52,7 +56,6 @@ class Verified(models.Model):
         (ver_QInv, 'Qualified Investor'),
     )
     verified_level = models.IntegerField(
-        max_length=2,
         choices=VERIFIED_CHOICES,
         default=ver_none,
     )
