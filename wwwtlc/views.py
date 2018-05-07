@@ -9,5 +9,5 @@ def home(request):
 def loan(request):
 	return render(request, 'pages/loan.html')
 def wallet(request):
-	return render(request, 'pages/wallet.html')	
+	return render(request, 'pages/wallet.html')
 	

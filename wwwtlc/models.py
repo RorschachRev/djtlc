@@ -7,13 +7,6 @@ from django.utils import timezone
 
 #Extend User to include Wallet FK_ID
 
-class Loan(models.Model):
-	def __str__(self):
-		return self.title
-
-class Loan_Data(models.Model):
-	def __str__(self):
-		return self.title
 
 #NoSQL Section
 class Contract(models.Model):
