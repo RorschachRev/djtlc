@@ -34,7 +34,14 @@ class Partner(models.Model):
 	def __str__(self):
 		return self.title
 
+
 #Structured Data
+class Wallet(models.Model):
+	address=models.CharField(max_length=127)
+	blockchain=models.CharField(max_length=4)
+	TLC_balance = models.DecimalField(decimal_places=18, max_digits=80) # (BC is 79, total supply is 27 with 18 decimal)
+
+
 class Address(models.Model):
 	street1=models.CharField(max_length=254)
 	street2=models.CharField(max_length=254)
@@ -45,28 +52,31 @@ class Address(models.Model):
 	country	=models.CharField(max_length=3)
 
 class Verified(models.Model):
-    ver_none = 0
-    ver_ID = 1
-    ver_KYC = 2
-    ver_QInv = 3
-    VERIFIED_CHOICES = (
-        (ver_none, 'Not Verified'),
-        (ver_ID, 'ID Verified'),
-        (ver_KYC, 'KYC Verified'),
-        (ver_QInv, 'Qualified Investor'),
-    )
-    verified_level = models.IntegerField(
-        choices=VERIFIED_CHOICES,
-        default=ver_none,
-    )
-    ver_none_apply_date= models.DateTimeField(default=timezone.now)
-    ver_none_approved_date =models.DateTimeField()
-    ver_ID_apply_date=models.DateTimeField()
-    ver_ID_approved_date=models.DateTimeField()
-    ver_KYC_apply_date=models.DateTimeField()
-    ver_KYC_approved_date=models.DateTimeField()
-    ver_QInv_apply_date=models.DateTimeField()
-    ver_QInv_approved_date=models.DateTimeField()
+	ver_none = 0
+	ver_ID = 1
+	ver_KYC = 2
+	ver_QInv = 3
+	VERIFIED_CHOICES = (
+			(ver_none, 'Not Verified'),
+			(ver_ID, 'ID Verified'),
+			(ver_KYC, 'KYC Verified'),
+			(ver_QInv, 'Qualified Investor'),
+		)
+	verified_level = models.IntegerField(
+			choices=VERIFIED_CHOICES,
+			default=ver_none,
+		)
+	ver_none_apply_date= models.DateTimeField(default=timezone.now)
+	ver_none_approved_date =models.DateTimeField()
+	ver_ID_apply_date=models.DateTimeField()
+	ver_ID_approved_date=models.DateTimeField()
+	ver_KYC_apply_date=models.DateTimeField()
+	ver_KYC_approved_date=models.DateTimeField()
+	ver_QInv_apply_date=models.DateTimeField()
+	ver_QInv_approved_date=models.DateTimeField()
+
+	def __str__(self):
+		return self.title
 
 class Person(models.Model):
 	user = models.ForeignKey('auth.User')
@@ -83,8 +93,6 @@ class Person(models.Model):
 	bank_info=models.ManyToManyField(Bank)
 	bank_acct=models.ManyToManyField(Bank_Account)
 
-	def __str__(self):
-		return self.title
 
 #Payments
 #Business

@@ -1,5 +1,5 @@
 from django.db import models
-from wwwtlc.models import Address, Contract, Person, Borrower, Partner
+from wwwtlc.models import Address, Contract, Person, Borrower, Partner, Verified
 from django.utils import timezone
 
 # Create your models here.
