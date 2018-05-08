@@ -10,4 +10,6 @@ def loan(request):
 	return render(request, 'pages/loan.html')
 def wallet(request):
 	return render(request, 'pages/wallet.html')
+def pay(request):
+	return render(request, 'pages/quoc.html')
 	
