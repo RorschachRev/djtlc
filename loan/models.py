@@ -19,6 +19,18 @@ class Loan_Data(models.Model):
 			default=0
 		)
 	borrower_requested = models.CharField(max_length=60) #At time of loan request, who is trying to borrow the money
+	BORROWER_TYPE_CHOICES = (
+			(0, 'Sole Proprietorship'),
+			(1, 'General Partnership'),
+			(2, 'Limited Partnership'),
+			(3, 'C-Corporation'),
+			(4, 'S-Corporation'),
+			(5, 'Limited Liability Company'),
+		)
+	borrower_type = models.IntegerField(
+			choices=BORROWER_TYPE_CHOICES,
+			default=0
+		)
 	loan_balance = models.DecimalField(decimal_places=18, max_digits=80) # (BC is 79)
 	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4)
 	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4)

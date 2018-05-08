@@ -1,3 +1,14 @@
+5.8.18 - Alex
+Tasks Completed: 
+    Created 'alias' for the admin view of Addresses - changed __str__(self) to output self.street1 to display that instead of 'Address object'
+    Added choices list for Borrower model in Loan_Data to include different types of entities
+    Added hint/help text for Person.phone
+    Added nullable fields to Address.street2/street3, Person/name_middle
+
+Problems encountered:
+    Could not add any nullable fields within the Verified model
+    Could not enter data into Person, or any model referencing Credit_Report, Bank, or Bank_Account; Also couldn't allow null=True on these fields in order to test functionality due to them being ForeignKeys
+
 5.4.18 - Alex
 
 Form was modified to accomodate styling. Models were also created to allow for database usage in Loans app. Files that I changed today:
