@@ -20,12 +20,14 @@ class Loan_Data(models.Model):
 		)
 	borrower_requested = models.CharField(max_length=60) #At time of loan request, who is trying to borrow the money
 	BORROWER_TYPE_CHOICES = (
-			(0, 'Sole Proprietorship'),
-			(1, 'General Partnership'),
-			(2, 'Limited Partnership'),
-			(3, 'C-Corporation'),
-			(4, 'S-Corporation'),
-			(5, 'Limited Liability Company'),
+			(0, 'Individual'),
+			(1, 'Married Couple'),
+			(2, 'Partnership'),
+			(3, 'Corporation'),
+			(4, 'Limited Liability Company'),
+			(5, 'Trust'),
+			(6, 'Investment Group'),
+			(7, 'Other'),
 		)
 	borrower_type = models.IntegerField(
 			choices=BORROWER_TYPE_CHOICES,
