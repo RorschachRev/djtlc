@@ -45,9 +45,9 @@ class Wallet(models.Model):
 		return self.address
 
 class Address(models.Model):
-	street1=models.CharField(max_length=254)
-	street2=models.CharField(max_length=254, blank=True)
-	street3=models.CharField(max_length=254, blank=True)
+	street1=models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
+	street2=models.CharField(max_length=254, blank=True, verbose_name="Street 2", help_text="(optional)")
+	street3=models.CharField(max_length=254, blank=True, verbose_name="Street 3", help_text="(optional)")
 	city=models.CharField(max_length=127)
 	state=models.CharField(max_length=25)
 	zipcode=models.CharField(max_length=10)
@@ -57,7 +57,7 @@ class Address(models.Model):
 	def __str__(self):
 		return self.street1
 
-class Verified(models.Model): # whole model can't accept null fields: IntegrityError NOTNULL constraint failed
+class Verified(models.Model):
 	ver_none = 0
 	ver_ID = 1
 	ver_KYC = 2
@@ -72,19 +72,20 @@ class Verified(models.Model): # whole model can't accept null fields: IntegrityE
 			choices=VERIFIED_CHOICES,
 			default=ver_none,
 		)
-	ver_none_apply_date= models.DateTimeField(default=timezone.now)
-	ver_none_approved_date =models.DateTimeField()
-	ver_ID_apply_date=models.DateTimeField()
-	ver_ID_approved_date=models.DateTimeField()
-	ver_KYC_apply_date=models.DateTimeField()
-	ver_KYC_approved_date=models.DateTimeField()
-	ver_QInv_apply_date=models.DateTimeField()
-	ver_QInv_approved_date=models.DateTimeField()
+	ver_none_apply_date= models.DateTimeField(default=timezone.now, blank=True, null=True, verbose_name="Not verified application date")
+	ver_none_approved_date =models.DateTimeField(blank=True, null=True,verbose_name="Not verified approval date")
+	ver_ID_apply_date=models.DateTimeField(blank=True, null=True, verbose_name="ID verification application date")
+	ver_ID_approved_date=models.DateTimeField(blank=True, null=True, verbose_name="ID verification approval date")
+	ver_KYC_apply_date=models.DateTimeField(blank=True, null=True, verbose_name="KYC verification application date")
+	ver_KYC_approved_date=models.DateTimeField(blank=True, null=True, verbose_name="KYC verification approval date")
+	ver_QInv_apply_date=models.DateTimeField(blank=True, null=True, verbose_name="Qualified investor application date")
+	ver_QInv_approved_date=models.DateTimeField(blank=True, null=True, verbose_name="Qualified investor approval date")
 
 	#will probably want to change this later
 	def __str__(self):
 		x = self.verified_level
 		y = ''
+		z = self.ver_none_apply_date
 		
 		if x == 0:
 			y='Not Verified'
@@ -95,23 +96,25 @@ class Verified(models.Model): # whole model can't accept null fields: IntegrityE
 		elif x == 3:
 			y='Qualified Investor'
 		
-		return y
+		return y + ' ' + str(z) #returns verification level and ver_none_apply_date to distinguish between verifications when called by Foreign Keys
 
 class Person(models.Model):
 	user = models.ForeignKey('auth.User')
-	name_first = models.CharField(max_length=30)
-	name_middle= models.CharField(max_length=30, blank=True)
-	name_last= models.CharField(max_length=30)
+	name_first = models.CharField(max_length=30, verbose_name="First Name")
+	name_middle= models.CharField(max_length=30, blank=True, verbose_name="Middle Name", help_text="(optional)")
+	name_last= models.CharField(max_length=30, verbose_name="Last Name")
 	phone= models.CharField(max_length=15, help_text="Please use this format: (xxx) xxx-xxxx")
-	taxid= models.CharField(max_length=12)
+	taxid= models.CharField(max_length=12, verbose_name="Tax ID")
 	language= models.CharField(max_length=3)
 
 	verified=models.ForeignKey(Verified)
-	address=models.ForeignKey(Address)
-	credit=models.ForeignKey(Credit_Report) # can't accept null fields: IntegrityError NOTNULL constraint failed
-	bank_info=models.ManyToManyField(Bank) # can't accept null fields: IntegrityError NOTNULL constraint failed
-	bank_acct=models.ManyToManyField(Bank_Account) # can't accept null fields: IntegrityError NOTNULL constraint failed
+	address=models.ForeignKey(Address, help_text="The address of the property needing financed")
+	credit=models.ForeignKey(Credit_Report, blank=True, null=True)
+	bank_info=models.ManyToManyField(Bank, blank=True, verbose_name="Bank Information")
+	bank_acct=models.ManyToManyField(Bank_Account, blank=True, verbose_name="Bank Account")
 
+	def __str__(self):
+		return self.name_first + ' ' + self.name_last
 
 #Payments
 #Business

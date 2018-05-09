@@ -1,14 +1,13 @@
 from django import forms
-from django.forms import ModelForm
 from .models import Loan, Loan_Data
 
-class LoanDataForm(ModelForm):
+class LoanDataForm(forms.ModelForm):
 	class Meta:
 		model = Loan_Data
-		fields = ['borrower_requested', 'contact_person','loan_principle', 'loan_address', 'loan_type']
+		fields = ['borrower_requested', 'borrower_type', 'contact_person', 'loan_partner', 'loan_address', 'loan_principle', 'loan_currency', 'loan_type']
 		
 
-class LoanForm(ModelForm):
+class LoanForm(forms.ModelForm):
 	class Meta:
 		model = Loan
 		fields = ['loan_payment_request']

@@ -1,3 +1,13 @@
+5.9.18 - Alex
+Tasks Completed:
+    Added OneToMany(ForeignKey) field to Loan_Data/TLC_balance, as well as reverse lookup
+    Added help_text and verbose_name attributes throughout models to improve user-readability
+    Modified Loan/forms.py to reflect changes in models, and to add things user should enter
+    Recreated the DB so that it allowed nullable fields in modified models
+
+Problems Encountered:
+    Same problems as 5.8.18, but fixed with the help of Ian
+
 5.8.18 - Alex
 Tasks Completed: 
     Created 'alias' for the admin view of Addresses - changed __str__(self) to output self.street1 to display that instead of 'Address object'

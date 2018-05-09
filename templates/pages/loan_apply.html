@@ -6,6 +6,7 @@
 				<form action="/loan_apply_done.html" method="post">
 					{% csrf_token %}
 					{{ formLoanData.as_ul}}
+					<!--{{ formLoan.as_ul }}--><!-- unsure why deleted -->
 					<input type="submit" value="Submit" />
 				</form>
 			</div>
