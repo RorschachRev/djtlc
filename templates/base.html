@@ -44,6 +44,7 @@
                     <button type="submit">Login</button>
                 </form>
             {% else %}
+            <p> This application is only available to registered users. </p>
             <a href="{% url 'login' %}">Login</a>
             {% endif %}
             {% endif %}
