@@ -1,6 +1,8 @@
 import datetime
 from decimal import Decimal
 from django.db import models
+from django.contrib.auth.models import User
+
 
 
 from django.utils import timezone
@@ -99,7 +101,9 @@ class Verified(models.Model):
 		return y + ' ' + str(z) #returns verification level and ver_none_apply_date to distinguish between verifications when called by Foreign Keys
 
 class Person(models.Model):
-	user = models.ForeignKey('auth.User')
+	#user = models.ForeignKey('auth.User')
+	#user = models.OneToOneField(User, primary_key=True, blank=True, null=True)
+	user = models.OneToOneField(User, blank=True, null=True)
 	name_first = models.CharField(max_length=30, verbose_name="First Name")
 	name_middle= models.CharField(max_length=30, blank=True, verbose_name="Middle Name", help_text="(optional)")
 	name_last= models.CharField(max_length=30, verbose_name="Last Name")
