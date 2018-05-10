@@ -54,7 +54,7 @@ class Loan_Data(models.Model):
 	TLC_balance = models.ForeignKey(Wallet, related_name='balances')
 	
 	def __str__(self):
-		return str(self.id)
+		return str(self.contact_person) + ', ' + str(self.loan_address) #this will display the name of the contact person, and the address of the property needing financing
 
 class Loan(models.Model):
 	borrower_id = models.ForeignKey(Borrower, related_name='borrower', verbose_name="Borrower ID")	#NoSQL

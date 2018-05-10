@@ -3,10 +3,9 @@
 {% block content %}
 			<h2>Apply for Loan</h2>
 			<div>
-				<form action="/loan_apply_done.html" method="post">
+				<form action="/loan_apply.html" method="post">
 					{% csrf_token %}
-					{{ formLoanData.as_ul}}
-					<!--{{ formLoan.as_ul }}--><!-- unsure why deleted -->
+					{{ form.as_ul}}
 					<input type="submit" value="Submit" />
 				</form>
 			</div>

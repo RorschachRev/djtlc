@@ -1,3 +1,14 @@
+5.10.18 - Alex:
+Tasks Completed:
+    Determined order of forms that will need to be entered by user (Address -> Person -> LoanData)
+    Created forms for all necessary models
+    Small change on Loan_Data to display contact_person's name as well as the address of property that needs finaced instead of displaying the Loan_Data id number
+
+Problems encountered:
+    Was unsure of how to approach passing data from one form to the next, tried using a view_controller variable to move through different views containing each of the different formModels, but that didn't work. 
+    I tried looking into creating a session to store data variables, but not submit them to the database until the last view function was called, but the problem I ran into with that was that HttpResponseRedirect wouldn't reload the 'request' information to pass into the next view function.
+    I read that FormWizard would be able to simplify this problem, but didn't have much time to look into how to use it.
+
 5.9.18 - Alex
 Tasks Completed:
     Added OneToMany(ForeignKey) field to Loan_Data/TLC_balance, as well as reverse lookup

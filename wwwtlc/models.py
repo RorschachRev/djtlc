@@ -107,7 +107,7 @@ class Person(models.Model):
 	taxid= models.CharField(max_length=12, verbose_name="Tax ID")
 	language= models.CharField(max_length=3)
 
-	verified=models.ForeignKey(Verified)
+	verified=models.ForeignKey(Verified, blank=True, null=True)
 	address=models.ForeignKey(Address, help_text="The address of the property needing financed")
 	credit=models.ForeignKey(Credit_Report, blank=True, null=True)
 	bank_info=models.ManyToManyField(Bank, blank=True, verbose_name="Bank Information")
