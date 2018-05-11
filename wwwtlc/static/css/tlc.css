@@ -24,9 +24,9 @@ padding-top: 100px;
 }
 
 .navbar .navbar-nav.navbar-uppercase > li > a {
-    width: 106px;
+ /*   width: 106px;
     height: 64px;
     font-size: 17px;
-    margin-top: 15px;
+    margin-top: 15px; */
 }
 
