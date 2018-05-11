@@ -1,45 +1,32 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-
+from formtools.wizard.views import CookieWizardView
 from .forms import LoanForm, LoanDataForm, AddressForm, PersonForm
+from django.contrib.auth.models import User
 
-#new view that passes information depending on last form 
-# not working, view controller sets variable everytime loan_apply is called, but cant define view_controller outside of function(then it's out of scope)
-# possibly going to implement something like http://django-formtools.readthedocs.io/en/latest/wizard.html
-def loan_apply(request):
-	view_controller = 0
-	
-	if view_controller == 0:
-		if request.method == 'POST':
-			address = AddressForm(request.POST)
-			if address.is_valid():
-				address.save()
-				view_controller = 1
-				return render(request, 'pages/loan_apply.html', {'form':address})#HttpResponseRedirect('home')
-		else:
-			address = AddressForm()
-			view_controller = 1
-		return render(request, 'pages/loan_apply.html', {'form':address})
-	
-	if view_controller == 1:
-		if request.method == 'POST':
-			person = PersonForm(request.POST)
-			if person.is_valid():
-				person.save()
-				view_controller = 2
-				return HttpResponseRedirect('pages/loan_apply.html')
-		else:
-			person = PersonForm()
-			view_controller = 2
-		return render(request, 'pages/loan_apply.html', {'form':person})
-	
-	if view_controller == 2:
-		if request.method == 'POST':
-			loan_data = LoanDataForm(request.POST)
-			if loan_data.is_valid():
-				loan_data.save()
-				return HttpResponseRedirect('home')
-		else:
-			loan_data = LoanDataForm()
-		return render(request, 'pages/loan_apply.html', {'form':loan_data})
+#view to use Django FormWizard to create the multi-step form (Address -> Person -> LoanData)
+class LoanApplyWizard(CookieWizardView):
+	def get_form(self, step=None, data=None, files=None):
+		form = super(LoanApplyWizard, self).get_form(step, data, files)
+		
+		if step == None:
+			step = self.steps.current
+		
+		if step == '0':
+			if form.is_valid():
+				form.save() #saves the address form to the address model
+			
+		if step == '1':
+			form.address = self.storage.get_step_data('0') #pulls address model into Person Form
+			
+			if form.is_valid():
+				form.save()
+		
+		if step == '2':
+			form.contact_person = self.storage.get_step_data('1') #pulls address model into LoanDataForm
+			if form.is_valid():
+				form.save()
+		
+		return form
+	def done(self, form_list, **kwargs):
+		return render(self.request, 'pages/loan_apply.html', {'form':[form.cleaned_data for form in form_list]})

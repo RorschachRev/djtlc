@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 from wwwtlc import views
 from wwwtlc import views_form
 from loan import views as views_loan
+from loan.views import LoanApplyWizard
+from loan.forms import AddressForm, PersonForm, LoanDataForm
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name = 'pages/home.html'), name='home'),
@@ -31,9 +33,10 @@ urlpatterns = [
     url(r'^wallet.html$', views.wallet, name='wallet'),
     url(r'^loan.html$', views.loan, name='loan'),
     url(r'^pay.html$', views.pay, name='pay'),
-    url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'),
+    #url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'), #old loan_apply url
     #url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
+    url(r'^loan_apply.html$', LoanApplyWizard.as_view( [AddressForm, PersonForm, LoanDataForm], template_name = 'pages/loan_apply.html'), name='loan_apply'), #experimental formWizard url for loan_apply
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

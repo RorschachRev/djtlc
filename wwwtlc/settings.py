@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'wwwtlc',    
     'login',
     'loan',
+    'formtools',
 ]
 
 MIDDLEWARE = [

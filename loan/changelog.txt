@@ -1,3 +1,14 @@
+5.11.18 - Alex:
+Tasks Completed:
+    Created a working multi-step form for loan_apply
+        * this used django formWizard from the 'form tools' app, documentation here: http://django-formtools.readthedocs.io/en/stable/index.html
+        ** I had to change the wwwtlc/urls to enable the 'pagination' of the formWizard multi-step form, original url is left commented out in case of issues
+    Changed Loan_Data to allow nulls that weren't going to be input by the user
+
+Tasks not complete:
+    Dictionary creation on wwwtlc/models/verified - for dates
+    
+
 5.10.18 - Alex:
 Tasks Completed:
     Determined order of forms that will need to be entered by user (Address -> Person -> LoanData)

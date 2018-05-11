@@ -33,12 +33,12 @@ class Loan_Data(models.Model):
 			choices=BORROWER_TYPE_CHOICES,
 			default=0
 		)
-	loan_balance = models.DecimalField(decimal_places=18, max_digits=80, help_text="Remaining balance left on loan") # (BC is 79)
-	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Current interest rate")
-	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Starting interest rate")
-	loan_principle = models.DecimalField(decimal_places=2, max_digits=12) 
-	loan_principle_paid = models.DecimalField(decimal_places=4, max_digits=15)
-	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15)
+	loan_balance = models.DecimalField(decimal_places=18, max_digits=80, null=True, blank=True, help_text="Remaining balance left on loan") # (BC is 79)
+	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True, verbose_name="Current interest rate")
+	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True, verbose_name="Starting interest rate")
+	loan_principle = models.DecimalField(decimal_places=2, max_digits=12, null=True, blank=True) 
+	loan_principle_paid = models.DecimalField(decimal_places=4, max_digits=15, null=True, blank=True)
+	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15, null=True, blank=True)
 	LOAN_TYPE_CHOICES = (
 			(0, 'FIXED'),
 			(1, 'ARM'),
@@ -49,9 +49,9 @@ class Loan_Data(models.Model):
 			default=0
 		)
 	loan_currency = models.CharField(max_length=3, default='USD') #(USD) - default
-	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True)	#NoSQL
+	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, help_text = '(optional)')	#NoSQL
 	loan_approve_date = models.DateField(blank=True, null=True)
-	TLC_balance = models.ForeignKey(Wallet, related_name='balances')
+	TLC_balance = models.ForeignKey(Wallet, related_name='balances', null=True, blank=True)
 	
 	def __str__(self):
 		return str(self.contact_person) + ', ' + str(self.loan_address) #this will display the name of the contact person, and the address of the property needing financing

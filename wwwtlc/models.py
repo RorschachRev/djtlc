@@ -85,20 +85,9 @@ class Verified(models.Model):
 
 	#will probably want to change this later
 	def __str__(self):
-		x = self.verified_level
-		y = ''
 		z = self.ver_none_apply_date
 		
-		if x == 0:
-			y='Not Verified'
-		elif x == 1:
-			y='ID Verified'
-		elif x == 2:
-			y='KYC Verified'
-		elif x == 3:
-			y='Qualified Investor'
-		
-		return y + ' ' + str(z) #returns verification level and ver_none_apply_date to distinguish between verifications when called by Foreign Keys
+		return VERIFIED_CHOICES[self.verified_level] + str(z)
 
 class Person(models.Model):
 	#user = models.ForeignKey('auth.User')
