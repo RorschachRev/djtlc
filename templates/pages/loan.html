@@ -3,9 +3,11 @@
 {% block title %}TLC: Manage Loans{% endblock %}
 
 {% block content %}
-			<h2>List of Loans</h2>
-			<ul>
-				<li>Loan 1</li>
-				<li>Loan 2</li>
-			</ul>
+	<h2>List of Loans</h2>
+	<div>Active Wallet: (from JS) </div>
+	<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
+	<table>
+		<tr><th>Loan</th><th>Amount</th><th>Payment</th><th>Pay</th></tr>
+		<tr><td>{{ loan.wallet_addr }} </td><td>${{ blockdata.bal }} </td><td>$ {{ loan.payment}} due</td><td><button>Pay with TLC</button></td></tr>
+	</table>
 {% endblock %}

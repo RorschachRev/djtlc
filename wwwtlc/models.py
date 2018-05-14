@@ -38,14 +38,6 @@ class Partner(models.Model):
 
 
 #Structured Data
-class Wallet(models.Model):
-	address=models.CharField(max_length=127)
-	blockchain=models.CharField(max_length=4)
-	TLC_balance = models.DecimalField(decimal_places=18, max_digits=80) # (BC is 79, total supply is 27 with 18 decimal)
-	
-	def __str__(self):
-		return self.address
-
 class Address(models.Model):
 	street1=models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
 	street2=models.CharField(max_length=254, blank=True, verbose_name="Street 2", help_text="(optional)")
@@ -108,6 +100,16 @@ class Person(models.Model):
 
 	def __str__(self):
 		return self.name_first + ' ' + self.name_last
+class Wallet(models.Model):
+	wallet = models.ForeignKey(User)
+	address=models.CharField(max_length=127)
+	blockchain=models.CharField(max_length=4)
+	buy_TLC_approval=models.NullBooleanField()
+	#date_added
+	TLC_balance_USD=models.DecimalField(decimal_places=2, max_digits=12, null=True, blank=True)
+	TLC_balance_Token=models.DecimalField(decimal_places=18, max_digits=80, null=True, blank=True)	# (BC is 79, total supply is 27 with 18 decimal)
+	def __str__(self):
+		return self.address[:8]+"..."
 
 #Payments
 #Business

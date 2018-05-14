@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Wallet Test{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/js/application.js"></script>
+    <script src="/static/js/web3.min.js"></script>
+    <div id="noMetamask" class="alert alert-danger" role="alert" style="display:none;">No metamask was detected. Please install metamask to interact with The Lending Coin</div>
+    <br />
+<form>
+    <div id="myfunctions"class="container">
+                <div class="form-group row">
+                    <label for="currentRole" class="col-sm-2 col-form-label">Role</label>
+                    <span class="col-sm-10" id="currentRole">Loading...</span><br />
+                </div>
+
+                <div class="form-group row">
+                    <label for="currentAddress" class="col-sm-2 col-form-label">Address</label>
+                    <span class="col-sm-10" id="currentAddress">Loading...</span><br />
+                </div>
+                <div class="form-group row">
+                    <label for="currentBalance" class="col-sm-2 col-form-label">TLC Balance</label>
+                    <span class="col-sm-10" id="currentBalance">Loading...</span><br />
+                </div>
+                <div class="form-group row">
+                    <label for="loanBalance" class="col-sm-2 col-form-label">Loan Balance</label>
+                    <span class="col-sm-10" id="loanBalance">{{ blockdata.loanbal }}</span><br />
+                </div>
+                <div class="form-group row">
+                    <label for="loanPay" class="col-sm-2 col-form-label">Loan Payment</label>
+                    <span class="col-sm-10" id="loanPay">{{ loan.payment }}</span><br />
+                </div>
+                <div class="form-group row">
+                    <label for="loanAddress" class="col-sm-2 col-form-label">Loan Address</label>
+                    <span class="col-sm-10" id="loanAddress">0x{{ loan.wallet_addr }}</span><br />
+                </div>
+                <div class="form-group row">
+                    <label for="TLCtoUSDc" class="col-sm-2 col-form-label">USD per TLC</label>
+                    <span class="col-sm-10" id="TLCtoUSDc">{{ blockdata.tlctousdc }}</span><br />
+                </div>
+</form>
+<hr />
+              <form class="form-inline row">
+                <div class="form-group">
+                   <label for="loanAddress" class="col-sm-2">Payment Address:</label>
+                  <div class="col-sm-10" id="loanAddress">0x{{ loan.wallet_addr }} </div>
+                  <input type="number" class="form-control col-sm-8" size="10" id="loanpayTLC" value="{{ loan.payTLC }}">
+                  <div class="col-sm-1">&nbsp;</div>
+                  <button type="button" class="btn btn-primary col-sm-3" onclick="loanPayTLC()">Send TLC Loan Payment</button>
+                </div>
+              </form>
+                <div class="row">
+                    <label for="currentStatus" class="col-sm-2 col-form-label">Current Status</label>
+                    <span class="col-sm-10" id="currentStatus">Loading...</span><br />
+                </div>
+            </div>
+            </div>
+            </div>
+
+<script>
+var Web3 = require("web3");
+let contractAddress;
+let MyContract;
+let myContractInstance;
+function balanceOf() {
+    var address = document.getElementById("balanceOfAddress").value;
+    if (!address) {
+        return;
+    }
+    this.myContractInstance.balanceOf.call(address, function(error, balance) {
+      if (error) {
+        return;
+      }
+      alert(balance.toNumber() + ' TLC');
+    });
+}
+function transfer() {
+  
+  var recipient = document.getElementById("loanAddress").innerHTML;
+  var amount = document.getElementById("loanpayTLC").value;
+  console.log( '"'+recipient +'","'+amount+'"');
+  if (!amount || !recipient) {
+    console.log( recipient + " error with "+ amount);
+  }
+  document.getElementById('currentStatus').innerHTML = "Sending "+ recipient + " TLC "+ amount;
+  this.myContractInstance.transfer(recipient, amount, function(error, success) {
+    if (error) {
+      document.getElementById('currentStatus').innerHTML = "Error";
+      return;
+    }
+    address=document.getElementById('currentAddress').innerHTML;
+    document.getElementById('currentStatus').innerHTML = "<a href='https://ropsten.etherscan.io/address/"+address+"/>'Payment Status</a>";
+  });
+}
+function loanPayTLC() {
+  var recipient = document.getElementById("loanAddress").innerText;
+  var amount = document.getElementById("loanpayTLC").value +'000000000000000000';
+  console.log( '"'+recipient +'","'+amount+'"');
+  if (!amount || !recipient) {
+    console.log( recipient + " error with "+ amount);
+  }
+  document.getElementById('currentStatus').innerHTML = "Sending "+ recipient + " TLC "+ amount;
+  this.myContractInstance.loanPayTLC(recipient, amount, function(error, success) {
+    if (error) {
+      document.getElementById('currentStatus').innerHTML = "Error";
+      return;
+    }
+    address=document.getElementById('currentAddress').innerHTML;
+    document.getElementById('currentStatus').innerHTML = "<a href='https://ropsten.etherscan.io/address/"+address+"/>'Payment Status</a>";
+  });
+}
+
+function getRole(address) {
+    document.getElementById('currentRole').innerHTML = "Payment Due";
+}
+
+function getWalletBalance(address) {
+    this.myContractInstance.balanceOf.call(address, function(error, balance) {
+      if (error) {
+        return;
+      }
+      document.getElementById('currentBalance').innerHTML = balance/(1e18) + ' TLC';
+    });
+}
+function getLoanBalance(address) {
+    this.myContractInstance.balanceOf.call(address, function(error, balance) {
+      if (error) {
+        return;
+      }
+      document.getElementById('loanBalance').innerHTML = balance/(1e10) + ' USD';
+    });
+}
+function loadContract() {
+  var self = this;
+  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+  if (typeof this.web3 !== 'undefined') {
+    // Use the browser's ethereum provider
+    var provider = web3.currentProvider;
+    document.getElementById('noMetamask').style.display = 'none';
+    document.getElementById('myfunctions').style.display = '';
+  } else {
+    console.log('No web3? You should consider trying MetaMask!');
+    document.getElementById('noMetamask').style.display = '';
+    document.getElementById('myfunctions').style.display = 'none';
+    return;
+  }
+  this.web3 = new Web3(provider);
+  this.web3.version.getNetwork((err, netId) => {
+    switch (netId) {
+      case "1":
+        self.abi = mainnet.json;
+        self.contractAddress = mainnet.address;
+        break
+      case "3":
+        self.abi = ropsten.json;
+        self.contractAddress = ropsten.address;
+        break
+      case "4":
+        self.abi = rinkeby.json;
+        self.contractAddress = rinkeby.address;
+        break
+      case "42":
+        self.abi = kovan.json;
+        self.contractAddress = kovan.address;
+        break
+      default:
+        console.log('This is an unknown network.');
+    }
+    self.MyContract = self.web3.eth.contract(abi);
+    self.myContractInstance = self.MyContract.at(self.contractAddress);
+    self.web3.eth.defaultAccount = self.web3.eth.accounts[0];
+    document.getElementById('currentStatus').innerHTML = "Waiting...";
+    setInterval(function(){
+      getWalletBalance(self.web3.eth.accounts[0]);
+      getRole(self.web3.eth.accounts[0]);
+      document.getElementById('currentAddress').innerHTML = this.web3.eth.accounts[0];
+    }, 3000);
+  });
+}
+window.addEventListener('load', loadContract());
+</script>
+{% endblock %}
+

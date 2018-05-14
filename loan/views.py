@@ -30,3 +30,4 @@ class LoanApplyWizard(CookieWizardView):
 		return form
 	def done(self, form_list, **kwargs):
 		return render(self.request, 'pages/loan_apply.html', {'form':[form.cleaned_data for form in form_list]})
+

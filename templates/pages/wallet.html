@@ -3,10 +3,14 @@
 {% block title %}TLC: Wallet Management{% endblock %}
 
 {% block content %}
+		{% for each_wallet in wallet %}
+			<div>{{ each_wallet.address }}</div>
+		{% endfor %}
 			<h2>Wallet Management</h2>
 			<div>
 				<form action="/wallet.html" method="post">
 					{% csrf_token %}
+					<div>Blockchain: <strong>ETH</strong></div>
 					{{ form }}
 					<input type="submit" value="Submit" />
 				</form>
