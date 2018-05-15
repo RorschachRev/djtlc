@@ -1,3 +1,28 @@
+5.15.18 - Alex:
+Tasks Completed:
+    -Deleted custom template functions from work yesterday
+    -Implemented django-money for use with pay.html
+    -Created custom currencies within django-money/moneyed to support TLC, LCUK, LCAR, LCSG
+    
+I'm unsure wether or not git is tracking the lib/python3.5/site_packages or not, but if it isn't the code to add the custom currencies I'll list below:
+
+In lib/python3.5/site_packages/moneyed/classes.py, add:
+
+    # Custom currencies
+    TLC = add_currency('TLC', '001', 'United States Lending Coin', ['LCUS'])
+    LCUK = add_currency('LCUK', '002', 'United Kingdom Lending Coin', ['LCUK'])
+    LCAR = add_currency('LCAR', '003', 'Argentina Lending Coin', ['LCAR'])
+    LCSG = add_currency('LCSG', '004', 'Singapore Lending Coin', ['LCSG'])
+
+In lib/python3.5/site_packages/moneyed/localization.py, add:
+   
+    # Custom currency signs - en_US
+    # Will possibly want to remove either the prefix or suffix for cleanliness
+    _sign('en_US', moneyed.TLC, prefix='$', suffix=' LCUS')
+    _sign('en_US', moneyed.LCUK, prefix='£', suffix=' LCUK')
+    _sign('en_US', moneyed.LCAR, prefix='ARS$', suffix=' LCAR')
+    _sign('en_US', moneyed.LCSG, prefix='SI$', suffix=' LCSG')
+
 5.14.18 - Alex:
     Looking into the I18N, it seemed more useful for translating strings, and for dates. Also the built-in I10N handles a lot of form formatting, but it doens't add the currency symbols. I couldn't figure out how to implement those to show the currency symbol as well as format the number to move the decimal place. So, the best answer that I could find to implement python's localize.currency() method was to create your own template tag/template filter. A custom filter would allow django to utilize the localize.currency() method within the templates. The resources I was using were:
 
