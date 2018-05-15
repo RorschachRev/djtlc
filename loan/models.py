@@ -67,4 +67,4 @@ class Loan(models.Model):
 	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits
 	
 	def __str__(self):
-		return self.loan_ID
+		return self.loan_address

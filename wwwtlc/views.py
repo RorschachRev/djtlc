@@ -1,5 +1,6 @@
 #from wwwtlc.models import Person, Loan, Loan_Data
 from wwwtlc.models import Person, Wallet
+from loan.models import Loan, Loan_Data
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 #from django.core.mail import send_mail
@@ -18,14 +19,20 @@ class loaninfo():
 	"""
 	def __init__(self):
 		pass
-
+def payhistory(request):
+	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
+	blockdata=BC()
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100	
+	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata })
 
 def home(request):
 	return render(request, 'pages/home.html')
 def loan(request):
+#TODO: fetch all loans for user
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
-	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr)
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
+#	loaninfo.payment=Loan.loan_payment_required
 	loaninfo.payment=D.Decimal(5000)
 	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
@@ -42,9 +49,11 @@ def wallet(request):
 	form=WalletForm()
 	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
 def pay(request):
+#TODO: select loan by ID
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
-	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr)
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
+#	loaninfo.payment=Loan.objectloan_payment_required
 	loaninfo.payment=D.Decimal(5000)
 	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc

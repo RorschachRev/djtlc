@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^wallet.html$', views.wallet, name='wallet'),
     url(r'^loan.html$', views.loan, name='loan'),
     url(r'^pay.html$', views.pay, name='pay'),
+    url(r'^payhistory.html$', views.payhistory, name='payhistory'),
     url(r'^test.html$', views.test, name='test'),
     #url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'), #old loan_apply url
     #url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
