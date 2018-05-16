@@ -35,7 +35,6 @@ urlpatterns = [
     url(r'^pay.html$', views.pay, name='pay'),
     url(r'^payhistory.html$', views.payhistory, name='payhistory'),
     url(r'^test.html$', views.test, name='test'),
-    #url(r'^loan_apply.html$', views_loan.loan_apply, name='loan_apply'), #old loan_apply url
     #url(r'^loan_apply_done.html$', views.loan_apply, name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
     url(r'^loan_apply.html$', LoanApplyWizard.as_view( [AddressForm, PersonForm, LoanDataForm], template_name = 'pages/loan_apply.html'), name='loan_apply'), #experimental formWizard url for loan_apply

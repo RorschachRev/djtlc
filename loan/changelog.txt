@@ -1,3 +1,8 @@
+5.16.18 - Alex:
+Tasks Completed:
+    -Fixed bug where loan_apply form would enter data twice
+        * This was accomplished by re-writing the view for the WizardForm, so that it didn't save the form after every step. I also made it so that the user isn't able to select the information they provide with the forms (ie. loan_address, contact_person). The done() method of the LoanApplyWizard form handles the wiring of the foreign keys to automatically set them based on the information given on the previous form step.
+
 5.15.18 - Alex:
 Tasks Completed:
     -Deleted custom template functions from work yesterday

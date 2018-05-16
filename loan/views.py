@@ -1,33 +1,32 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from formtools.wizard.views import CookieWizardView
+from formtools.wizard.views import SessionWizardView
+from .models import Loan, Loan_Data, Address, Person
 from .forms import LoanForm, LoanDataForm, AddressForm, PersonForm
 from django.contrib.auth.models import User
 
 #view to use Django FormWizard to create the multi-step form (Address -> Person -> LoanData)
-class LoanApplyWizard(CookieWizardView):
-	def get_form(self, step=None, data=None, files=None):
-		form = super(LoanApplyWizard, self).get_form(step, data, files)
-		
-		if step == None:
-			step = self.steps.current
-		
-		if step == '0':
-			if form.is_valid():
-				form.save() #saves the address form to the address model
-			
-		if step == '1':
-			form.address = self.storage.get_step_data('0') #pulls address model into Person Form
-			
-			if form.is_valid():
-				form.save()
-		
-		if step == '2':
-			form.contact_person = self.storage.get_step_data('1') #pulls address model into LoanDataForm
-			if form.is_valid():
-				form.save()
-		
-		return form
+class LoanApplyWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
-		return render(self.request, 'pages/loan_apply.html', {'form':[form.cleaned_data for form in form_list]})
-
+		
+		# This block of code binds data from form to form itself, and validates the data
+		a_data = self.storage.get_step_data('0')
+		a_valid = self.get_form(step='0', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('1')
+		b_valid = self.get_form(step='1', data=b_data).is_valid()
+		c_data = self.storage.get_step_data('2')
+		c_valid = self.get_form(step='2', data=c_data).is_valid()
+		
+		# This block of code sets the foreign keys of each table to the entries entered in the previous form step, if the data is valid
+		if a_valid and b_valid and c_valid:
+			a = self.get_form(step='0', data=a_data).save()
+			b = self.get_form(step='1', data=b_data).save(commit=False)
+			c = self.get_form(step='2', data=c_data).save(commit=False)
+		
+			b.address = a
+			b.save()
+			c.loan_address = a
+			c.contact_person = b
+			c.save()
+			
+		return HttpResponseRedirect('/')
