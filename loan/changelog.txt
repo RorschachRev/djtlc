@@ -1,3 +1,13 @@
+5.17.18 - Alex:
+Tasks Completed:
+    -Refactored Database, changed many models between Loan and Loan_Data
+    -Added Loan_Requests & Loan_Workflow
+    -Updated forms to work with changes in Models
+    -Modified some models in wwwtlc/Person, loan/Loan, and Loan_Data to allow nulls for certain cases (ex. loan_officer registering as a person shouldn't need to input tax info, or an address)
+    -Minor modifications across all models to help user readability (changed output of a few __str__(self) methods)
+    -Implemented the loan_apply_done.html
+    -More quality of life improvements to loan/models/Loan_Request
+
 5.16.18 - Alex:
 Tasks Completed:
     -Fixed bug where loan_apply form would enter data twice

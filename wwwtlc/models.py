@@ -79,7 +79,7 @@ class Verified(models.Model):
 	def __str__(self):
 		z = self.ver_none_apply_date
 		
-		return VERIFIED_CHOICES[self.verified_level] + str(z)
+		return str(self.VERIFIED_CHOICES[self.verified_level]) + ' ' + str(z)
 
 class Person(models.Model):
 	#user = models.ForeignKey('auth.User')
@@ -89,11 +89,11 @@ class Person(models.Model):
 	name_middle= models.CharField(max_length=30, blank=True, verbose_name="Middle Name", help_text="(optional)")
 	name_last= models.CharField(max_length=30, verbose_name="Last Name")
 	phone= models.CharField(max_length=15, help_text="Please use this format: (xxx) xxx-xxxx")
-	taxid= models.CharField(max_length=12, verbose_name="Tax ID")
+	taxid= models.CharField(max_length=12, blank=True, null=True, verbose_name="Tax ID")
 	language= models.CharField(max_length=3)
 
 	verified=models.ForeignKey(Verified, blank=True, null=True)
-	address=models.ForeignKey(Address, help_text="The address of the property needing financed")
+	address=models.ForeignKey(Address, blank=True, null=True, help_text="The address of the property needing financed")
 	credit=models.ForeignKey(Credit_Report, blank=True, null=True)
 	bank_info=models.ManyToManyField(Bank, blank=True, verbose_name="Bank Information")
 	bank_acct=models.ManyToManyField(Bank_Account, blank=True, verbose_name="Bank Account")

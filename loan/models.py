@@ -4,6 +4,18 @@ from django.utils import timezone
 
 # Create your models here.
 
+#will need to add this model to the loan_apply.html(form)
+class Loan_Request(models.Model):
+	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money") #from Loan_data
+	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount") #from Loan_data
+	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment") #from Loan
+	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")  #from Loan
+	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits #from Loan_data
+	
+	def __str__(self):
+		return self.borrower_requested + ', ' + str(self.loan_request_date)
+	
+
 class Loan_Data(models.Model):
 	loan_address = models.ForeignKey(Address, help_text="The address of the property needing financed")
 	contracts = models.ForeignKey(Contract, blank=True, null=True, help_text="(optional)")
@@ -18,7 +30,6 @@ class Loan_Data(models.Model):
 			choices=LOAN_STATUS_CHOICES,
 			default=0
 		)
-	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money") #At time of loan request, who is trying to borrow the money
 	BORROWER_TYPE_CHOICES = (
 			(0, 'Individual'),
 			(1, 'Married Couple'),
@@ -33,12 +44,6 @@ class Loan_Data(models.Model):
 			choices=BORROWER_TYPE_CHOICES,
 			default=0
 		)
-	loan_balance = models.DecimalField(decimal_places=18, max_digits=80, null=True, blank=True, help_text="Remaining balance left on loan") # (BC is 79)
-	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True, verbose_name="Current interest rate")
-	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, null=True, blank=True, verbose_name="Starting interest rate")
-	loan_principle = models.DecimalField(decimal_places=2, max_digits=12, null=True, blank=True) 
-	loan_principle_paid = models.DecimalField(decimal_places=4, max_digits=15, null=True, blank=True)
-	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15, null=True, blank=True)
 	LOAN_TYPE_CHOICES = (
 			(0, 'FIXED'),
 			(1, 'ARM'),
@@ -49,22 +54,49 @@ class Loan_Data(models.Model):
 			default=0
 		)
 	loan_currency = models.CharField(max_length=3, default='USD') #(USD) - default
-	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, help_text = '(optional)')	#NoSQL
-	loan_approve_date = models.DateField(blank=True, null=True)
-	TLC_balance = models.ForeignKey(Wallet, related_name='balances', null=True, blank=True)
+	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, default=0, help_text = '(optional)') #NoSQL
 	
 	def __str__(self):
 		return str(self.contact_person) + ', ' + str(self.loan_address) #this will display the name of the contact person, and the address of the property needing financing
 
 class Loan(models.Model):
-	borrower_id = models.ForeignKey(Borrower, related_name='borrower', verbose_name="Borrower ID")	#NoSQL
-	loan_officer = models.ForeignKey(Person, related_name='loan_officer')
-	loan_data = models.ForeignKey(Loan_Data, related_name='loan_data')
-	loan_address = models.ForeignKey(Address, related_name='loan_address', help_text="The address of the property needing financed")
-	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment")
-	loan_payment_required = models.DecimalField(decimal_places=4, max_digits=12, help_text="Approved monthly payment")
-	loan_payment_quantity = models.IntegerField(help_text="Months until loan is paid")
-	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits
+	borrower_id = models.ForeignKey(Borrower, related_name='borrower', blank=True, null=True, verbose_name="Borrower ID")	#NoSQL
+	loan_data = models.OneToOneField(Loan_Data, related_name='loan_data')
+	loan_payment_due = models.DecimalField(decimal_places=4, max_digits=12, help_text="Approved monthly payment")
+	loan_payment_due_date = models.DateField(default=timezone.now) #datetime
+	payments_left = models.IntegerField(help_text="Months until loan is paid") #loan payments remaining
+	loan_balance = models.DecimalField(decimal_places=18, max_digits=80, help_text="Remaining balance left on loan") # (BC is 79)
+	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Current interest rate")
+	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Starting interest rate")
+	loan_principal = models.DecimalField(decimal_places=4, max_digits=15)
+	loan_principal_paid = models.DecimalField(decimal_places=4, max_digits=15)
+	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15)
+	loan_approve_date = models.DateField(default=timezone.now)
+	TLC_balance = models.ForeignKey(Wallet, related_name='balances', null=True, blank=True)
 	
 	def __str__(self):
-		return self.loan_address
+		return str(self.loan_data) + ' (' + str(self.loan_approve_date) + ')'
+		
+#might want to change location of this model for relation purposes
+class Loan_Workflow(models.Model):
+	loan_data = models.OneToOneField(Loan_Data)
+	loan_officer = models.ForeignKey(Person, related_name='loan_officer') #goes in workflow
+	COMPLETED_CHOICES = (
+			(0, 'Incomplete'),
+			(1, 'Processing'),
+			(2, 'Completed'),
+			(3, 'N/A'),
+		)
+	request_status = models.IntegerField(
+			choices=COMPLETED_CHOICES,
+			default=0
+		)
+	approval_status = models.IntegerField(
+			choices=COMPLETED_CHOICES,
+			default=0
+		)
+	
+	def __str__(self):
+		return 'Officer: ' + str(self.loan_officer) + ' | Loan: ' + str(self.loan_data)
+			
+	

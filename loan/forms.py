@@ -1,5 +1,5 @@
 from django import forms
-from .models import Loan, Loan_Data
+from .models import Loan_Data, Loan_Request
 from wwwtlc.models import Address, Person
 
 # deleted from forms :
@@ -10,13 +10,12 @@ from wwwtlc.models import Address, Person
 class LoanDataForm(forms.ModelForm):
 	class Meta:
 		model = Loan_Data
-		fields = ['borrower_requested', 'borrower_type', 'loan_principle', 'loan_currency', 'loan_type']
+		fields = ['borrower_type', 'loan_currency', 'loan_type']
 		
-
-class LoanForm(forms.ModelForm):
+class LoanRequestForm(forms.ModelForm):
 	class Meta:
-		model = Loan
-		fields = ['loan_payment_request']
+		model = Loan_Request
+		fields = ['borrower_requested', 'loan_request_amt', 'loan_payment_request', 'loan_intrate_request', 'loan_request_date']
 		
 class AddressForm(forms.ModelForm):
 	class Meta:
