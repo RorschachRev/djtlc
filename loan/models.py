@@ -4,7 +4,6 @@ from django.utils import timezone
 
 # Create your models here.
 
-#will need to add this model to the loan_apply.html(form)
 class Loan_Request(models.Model):
 	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money") #from Loan_data
 	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount") #from Loan_data
@@ -57,7 +56,7 @@ class Loan_Data(models.Model):
 	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, default=0, help_text = '(optional)') #NoSQL
 	
 	def __str__(self):
-		return str(self.contact_person) + ', ' + str(self.loan_address) #this will display the name of the contact person, and the address of the property needing financing
+		return str(self.contact_person) + ', ' + str(self.loan_address)
 
 class Loan(models.Model):
 	borrower_id = models.ForeignKey(Borrower, related_name='borrower', blank=True, null=True, verbose_name="Borrower ID")	#NoSQL
@@ -80,19 +79,23 @@ class Loan(models.Model):
 #might want to change location of this model for relation purposes
 class Loan_Workflow(models.Model):
 	loan_data = models.OneToOneField(Loan_Data)
-	loan_officer = models.ForeignKey(Person, related_name='loan_officer') #goes in workflow
+	loan_officer = models.ForeignKey(Person, limit_choices_to = {'user__is_staff__exact': True }, related_name='loan_officer')
 	COMPLETED_CHOICES = (
 			(0, 'Incomplete'),
 			(1, 'Processing'),
 			(2, 'Completed'),
 			(3, 'N/A'),
 		)
+	APPROVAL_CHOICES = (
+			(0, 'Denied'),
+			(1, 'Approved'),
+		)
 	request_status = models.IntegerField(
 			choices=COMPLETED_CHOICES,
 			default=0
 		)
 	approval_status = models.IntegerField(
-			choices=COMPLETED_CHOICES,
+			choices=APPROVAL_CHOICES,
 			default=0
 		)
 	

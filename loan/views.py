@@ -3,9 +3,8 @@ from django.http import HttpResponseRedirect
 from formtools.wizard.views import SessionWizardView
 #from .models import Loan_Data, Address, Person
 from .forms import LoanRequestForm, LoanDataForm, AddressForm, PersonForm
-from django.contrib.auth.models import User
 
-#view to use Django FormWizard to create the multi-step form (Address -> Person -> LoanData)
+#view to use Django FormWizard to create the multi-step form (LoanRequest -> LoanData -> Address -> Person(contact for LoanData))
 class LoanApplyWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
 		# a, 0 = LoanRequest
@@ -37,4 +36,4 @@ class LoanApplyWizard(SessionWizardView):
 			b.contact_person = d
 			b.save()
 			
-		return render(self.request, 'pages/loan_apply_done.html', {'name': a.borrower_requested} )
+		return render(self.request, 'pages/loan_apply_done.html', {'name': d.name_first + ' ' + d.name_last} )

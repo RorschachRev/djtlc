@@ -47,7 +47,6 @@ class Address(models.Model):
 	zipcode=models.CharField(max_length=10)
 	country	=models.CharField(max_length=3)
 	
-	#this allows django/admin foreign key in Loan_Data to drop down a list of addresses
 	def __str__(self):
 		return self.street1
 
@@ -75,7 +74,6 @@ class Verified(models.Model):
 	ver_QInv_apply_date=models.DateTimeField(blank=True, null=True, verbose_name="Qualified investor application date")
 	ver_QInv_approved_date=models.DateTimeField(blank=True, null=True, verbose_name="Qualified investor approval date")
 
-	#will probably want to change this later
 	def __str__(self):
 		z = self.ver_none_apply_date
 		
