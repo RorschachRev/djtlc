@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load djmoney %}
+{% money_localize money %}
 
 {% block title %}TLC: Manage Loans{% endblock %}
 
@@ -7,7 +9,19 @@
 	<div>Active Wallet: (from JS) </div>
 	<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
 	<table>
-		<tr><th>Loan</th><th>Amount</th><th>Status</th><th>Pay</th></tr>
-		<tr><td>{{ loan.wallet_addr }} </td><td>${{ blockdata.loanbal }} </td><td>$ {{ loan.payment}} due</td><td><a href="/pay.html"><button>Pay with TLC</button></a></td></tr>
+		<tr>
+			<th>Loan</th>
+			<th>Amount</th>
+			<th>Status</th>
+			<th>Pay</th>
+		</tr>
+		{% for loan in loan_iterable %}
+		<tr>
+			<td>{{ loan.loan_wallet}} </td>
+			<td>{% money_localize loan.loan_balance 'USD' %} </td>
+			<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
+			<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
+		</tr>
+		{% endfor %}
 	</table>
 {% endblock %}

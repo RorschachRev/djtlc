@@ -1,15 +1,16 @@
 from django.db import models
 from wwwtlc.models import Address, Contract, Person, Borrower, Partner, Verified, Wallet
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Loan_Request(models.Model):
-	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money") #from Loan_data
-	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount") #from Loan_data
-	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment") #from Loan
-	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")  #from Loan
-	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits #from Loan_data
+	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money")
+	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount")
+	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment")
+	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")
+	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits
 	
 	def __str__(self):
 		return self.borrower_requested + ', ' + str(self.loan_request_date)
@@ -59,6 +60,7 @@ class Loan_Data(models.Model):
 		return str(self.contact_person) + ', ' + str(self.loan_address)
 
 class Loan(models.Model):
+	user = models.ForeignKey(User)
 	borrower_id = models.ForeignKey(Borrower, related_name='borrower', blank=True, null=True, verbose_name="Borrower ID")	#NoSQL
 	loan_data = models.OneToOneField(Loan_Data, related_name='loan_data')
 	loan_payment_due = models.DecimalField(decimal_places=4, max_digits=12, help_text="Approved monthly payment")
@@ -71,7 +73,8 @@ class Loan(models.Model):
 	loan_principal_paid = models.DecimalField(decimal_places=4, max_digits=15)
 	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15)
 	loan_approve_date = models.DateField(default=timezone.now)
-	TLC_balance = models.ForeignKey(Wallet, related_name='balances', null=True, blank=True)
+	loan_wallet = models.OneToOneField(Wallet)
+	TLC_balance =models.DecimalField(decimal_places=18, max_digits=80, help_text="TLC owned by TLC from loan payment") # (BC is 79)
 	
 	def __str__(self):
 		return str(self.loan_data) + ' (' + str(self.loan_approve_date) + ')'

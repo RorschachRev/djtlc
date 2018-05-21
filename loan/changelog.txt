@@ -1,3 +1,11 @@
+5.21.18 - Alex:
+Tasks Completed:
+    -Minor refactoring on db to allow for loan.Loan to connect to User
+    -Reworked loan.html and pay.html to show dynamic data
+        *The loan.html now pulls from the database/Loan model to display all loans that are assigned to the specific user
+        *pay.html is now connecting to the database in the same way to display information of one of the rows in the loan.html page
+    
+
 5.17.18 - Alex:
 Tasks Completed:
     -Refactored Database, changed many models between Loan and Loan_Data

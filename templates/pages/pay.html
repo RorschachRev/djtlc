@@ -12,6 +12,9 @@
     <script src="/static/js/web3.min.js"></script>
     <div id="noMetamask" class="alert alert-danger" role="alert" style="display:none;">No metamask was detected. Please install metamask to interact with The Lending Coin</div>
     <br />
+    {% for r in requests %}
+    {{ r }}
+    {% endfor %}
 <form>
     <div id="myfunctions"class="container">
                 <div class="form-group row">

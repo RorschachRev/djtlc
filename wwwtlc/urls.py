@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^account.html$', views_form.account, name='account'),
     url(r'^wallet.html$', views.wallet, name='wallet'),
     url(r'^loan.html$', views.loan, name='loan'),
-    url(r'^pay.html$', views.pay, name='pay'),
+    url(r'^pay.html/(?P<loan_id>\d+)/$', views.pay, name='pay'), #allows the specific row's data id to be passed from loan.html to pay.html
     url(r'^payhistory.html$', views.payhistory, name='payhistory'),
     url(r'^test.html$', views.test, name='test'),
     url(r'^loan_apply_done.html$', TemplateView.as_view(template_name='pages/loan_apply_done.html'), name='loan_apply_done'),
