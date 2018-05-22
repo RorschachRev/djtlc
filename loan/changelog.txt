@@ -1,3 +1,12 @@
+5.22.18 - Alex:
+Tasks Completed:
+    -Set up the loan_apply.html form so that when the form is submitted, the loan officers will also get an email detailing that there has been a new form submitted
+        * In it's current state the email doesn't actually email (it displays in the console), we will need to set up a SMTP server, and change settings in settings.py.
+        ** Also, a possible concern with how the recipient addresses are set up is that they are hardcoded in, and not dynamically pulled from the db of staff. Will probably change this later
+    -I added one row of data (refkey=1) to all of the NoSQL models through the shell to test the connectivity of those models to the rest of the models in the db
+    -Added functionality to account.html where the user can modify their person instance in the database
+        * Also included in this is that the user cannot update their taxid, they must contact the loan officers in order to have that info changed. To accomplish this, a new form was created under loan/forms.py/PersonEditForm
+
 5.21.18 - Alex:
 Tasks Completed:
     -Minor refactoring on db to allow for loan.Loan to connect to User

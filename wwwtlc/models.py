@@ -14,27 +14,27 @@ from django.utils import timezone
 class Contract(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 class Credit_Report(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 class Bank(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 class Bank_Account(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 class Borrower(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 class Partner(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
-		return self.refkey
+		return str(self.refkey)
 
 
 #Structured Data

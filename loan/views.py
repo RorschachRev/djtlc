@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.core.mail import send_mail
 from formtools.wizard.views import SessionWizardView
-#from .models import Loan_Data, Address, Person
-from .forms import LoanRequestForm, LoanDataForm, AddressForm, PersonForm
 
 #view to use Django FormWizard to create the multi-step form (LoanRequest -> LoanData -> Address -> Person(contact for LoanData))
 class LoanApplyWizard(SessionWizardView):
@@ -35,5 +34,20 @@ class LoanApplyWizard(SessionWizardView):
 			b.loan_address = c
 			b.contact_person = d
 			b.save()
+			
+			# sends email when data is submitted and validated
+			send_mail(
+				str(b) + ' (loan request)', # subject line - returns LoanData __str__ method
+				
+				# message
+				'A new loan request has been submitted and can be found in the admin console:'
+				'\n\nLoan_Requests (' + str(a) + '),'
+				'\nLoan_Data (' + str(b) + '),' 
+				'\nAddress (' + str(c) + '),'
+				'\nPerson (' + str(d) + ', the contact person)', 
+				
+				'example@email.address', # 'from' email address
+				['loanofficer@email.address'] # recipient email address
+			)
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': d.name_first + ' ' + d.name_last} )

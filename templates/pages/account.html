@@ -3,12 +3,12 @@
 {% block title %}TLC: Manage Account{% endblock %}
 
 {% block content %}
-			<h2>Manage Account</h2>
-			<div>
-				<form action="/account.html" method="post">
+			<h2>Edit Account</h2>
+			<table>
+				<form action="" method="post">
 					{% csrf_token %}
 					{{ form }}
-					<input type="submit" value="Submit" />
+				<input type="submit" value="Submit" /> <!-- I don't know why this is appearing on top of the form -->
 				</form>
-			</div>
+			</table>
 {% endblock %}

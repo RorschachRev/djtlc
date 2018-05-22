@@ -25,4 +25,9 @@ class AddressForm(forms.ModelForm):
 class PersonForm(forms.ModelForm):
 	class Meta:
 		model = Person
-		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language']	
+		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language']
+
+class PersonEditForm(forms.ModelForm):
+	class Meta:
+		model = Person
+		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'language']		

@@ -121,6 +121,20 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Email
+# https://docs.djangoproject.com/en/1.11/topics/email/
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'localhost'
+
+EMAIL_PORT = 1025
+
+# Optional SMTP authentication information for EMAIL_HOST
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
