@@ -27,10 +27,15 @@ def payhistory(request):
 def home(request):
 	return render(request, 'pages/home.html')
 	
-# this function displays all loans associated to a user in loan.html
+# Need to add the ability to call BC.loanbal data to display under Principal Owed.
+# This will also need to be iterable so that the template can display the BC data.
 def loan(request):
 	loan_iterable = Loan.objects.all().filter(user=request.user)
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable})
+	
+	# Trying to call the BC data for the template
+	blockdata=BC()
+	
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata})
 	
 def wallet(request):
 	if request.method == 'POST':
@@ -48,7 +53,7 @@ def wallet(request):
 def pay(request, loan_id):
 	loaninfo.wallet_addr= str(Loan.objects.get(pk=loan_id).loan_wallet.address)
 	blockdata=BC()
-	blockdata.loanbal= Loan.objects.get(pk=loan_id).loan_balance
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
 	loaninfo.payment=Loan.objects.get(pk=loan_id).loan_payment_due
 	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
