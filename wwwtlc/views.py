@@ -27,14 +27,9 @@ def payhistory(request):
 def home(request):
 	return render(request, 'pages/home.html')
 	
-# Need to add the ability to call BC.loanbal data to display under Principal Owed.
-# This will also need to be iterable so that the template can display the BC data.
 def loan(request):
 	loan_iterable = Loan.objects.all().filter(user=request.user)
-	
-	# Trying to call the BC data for the template
 	blockdata=BC()
-	
 	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata})
 	
 def wallet(request):

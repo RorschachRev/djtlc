@@ -4,11 +4,11 @@
 
 {% block content %}
 			<h2>Edit Account</h2>
-			<table>
-				<form action="" method="post">
+			<form action="" method="post">
+				<table>
 					{% csrf_token %}
 					{{ form }}
-				<input type="submit" value="Submit" /> <!-- I don't know why this is appearing on top of the form -->
-				</form>
-			</table>
+				</table>
+				<input type="submit" value="Submit" />
+			</form>
 {% endblock %}

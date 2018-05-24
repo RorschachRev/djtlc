@@ -1,3 +1,9 @@
+5.24.18 - Alex:
+Tasks Completed:
+    -Modified the loan.html and pay.html so that they pull the balance from the blockchain and not the database
+    -Added to loan_bal.py/get_loan_bal the code to update the specific loan's loan balance with the balance on the blockchain
+        * This is a block of code that probably will need to be rewritten 
+
 5.22.18 - Alex:
 Tasks Completed:
     -Set up the loan_apply.html form so that when the form is submitted, the loan officers will also get an email detailing that there has been a new form submitted
