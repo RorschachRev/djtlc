@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load djmoney %}
 {% money_localize money %}
+{% load loan_bal %}
 
 {% block title %}TLC: Manage Loans{% endblock %}
 
@@ -18,7 +19,7 @@
 		{% for loan in loan_iterable %}
 		<tr>
 			<td>{{ loan.loan_wallet}} </td>
-			<td>{% money_localize blockdata.get_loan_bal.loan.loan_wallet.address 'USD' %} </td> <!-- unsure if this works, it raises error, but I don't know if that's because I'm not actually hitting the BC or not -->
+			<td>{% money_localize loan.loan_wallet.address|get_loan_bal 'USD' %}</td>
 			<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
 			<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
 		</tr>
