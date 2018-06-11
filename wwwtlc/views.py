@@ -6,6 +6,7 @@ from django import forms
 from django.shortcuts import render, get_object_or_404
 from wwwtlc.ethereum import BC
 import decimal as D
+from wwwtlc.forms import *
 
 class WalletForm(forms.ModelForm):
 	class Meta:
@@ -71,3 +72,58 @@ def account(request):
 	except:
 		form = PersonForm()
 	return render(request, 'pages/account.html', {'form': form})
+	
+# BELOW IS NEW MODEL FORM INTEGRATION
+def loanappnew(request):
+	form = CreditRequestedForm(request.POST)
+	form1 = ApplicantInfoForm(request.POST)
+	form2 = CollateralScheduleForm(request.POST)
+	form3 = AssetScheduleForm(request.POST)
+	form4 = LiabilityScheduleForm(request.POST)
+	form5 = ExpenseScheduleForm(request.POST)
+	form6 = IncomeScheduleForm(request.POST)
+	form7 = FinanceSummaryForm(request.POST)
+	form8 = RelationshipInfoForm(request.POST)
+	form9 = ApplicantSignersForm(request.POST)
+	form10 = ApplicantSignaturesForm(request.POST)
+	form11 = LenderInfoForm(request.POST)
+	
+	context = {
+		'form':form,
+		'form1':form1,
+		'form2':form2,
+		'form3':form3,
+		'form4':form4,
+		'form5':form5,
+		'form6':form6,
+		'form7':form7,
+		'form8':form8,
+		'form9':form9,
+		'form10':form10,
+		'form11':form11,
+	}
+	
+	return render(request, 'pages/loan_app1.html', context)
+	
+def loanappnew2(request):
+	form = LoanTermsForm(request.POST)
+	form1 = PropertyInfoForm(request.POST)
+	form2 = BorrowerInfoForm(request.POST)
+	form3 = EmploymentInfoForm(request.POST)
+	form4 = IncomeExpenseInfoForm(request.POST)
+	form5 = AssetsLiabilitiesForm(request.POST)
+	form6 = DeclarationsForm(request.POST)
+	form7 = AcknowledgeAgreeForm(request.POST)
+	
+	context = {
+		'form':form,
+		'form1':form1,
+		'form2':form2,
+		'form3':form3,
+		'form4':form4,
+		'form5':form5,
+		'form6':form6,
+		'form7':form7,
+	}
+	
+	return render(request, 'pages/loan_app2.html', context)

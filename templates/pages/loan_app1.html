@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}TLC: Loan Application 1 {% endblock %}
+
+{% block content %}
+			<h2>Loan Application Form 1</h2>
+			<form action="" method="post">
+				<table>
+					{% csrf_token %}
+					<h3>Credit Requested</h3>
+					{{ form }}
+				</table>
+				<table>
+					<h3>Applicant Information</h3>
+					{{ form1 }}
+				</table>
+				<table>
+					<h3>Schedule of Collateral Offered by this Applicant</h3>
+					{{ form2 }}
+				</table>
+				<table>
+					<h3>Schedule of Assets</h3>
+					{{ form3 }}
+				</table>
+				<table>
+					<h3>Schedule of Liabilities</h3>
+					{{ form4 }}
+				</table>
+				<table>
+					<h3>Schedule of Expenses</h3>
+					{{ form5 }}
+				</table>
+				<table>
+					<h3>Income Schedule</h3>
+					{{ form6 }}
+				</table>
+				<table>
+					<h3>Financial and Income Statement Summary</h3>
+					{{ form7 }}
+				</table>
+				<table>
+					<h3>Relationship Information - Applicant's History with Lender</h3>
+					{{ form8 }}
+				</table>
+				<table>
+					<h3>Signers for this Applicant</h3>
+					{{ form9 }}
+				</table>
+				<table>
+					<h3>Applicant Signatures</h3>
+					{{ form10 }}
+				</table>
+				<table>
+					<h3>For Lender's Use Only</h3>
+					{{ form11 }}
+				</table>
+				<input type="submit" value="Submit" />
+			</form>
+{% endblock %}

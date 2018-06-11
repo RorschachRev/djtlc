@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^loan_apply_done.html$', TemplateView.as_view(template_name='pages/loan_apply_done.html'), name='loan_apply_done'),
     url(r'^admin/', admin.site.urls),
     url(r'^loan_apply.html$', LoanApplyWizard.as_view( [LoanRequestForm, LoanDataForm, AddressForm, PersonForm], template_name = 'pages/loan_apply.html'), name='loan_apply'), #url for formWizard
-
+    url(r'^loan_app1.html$', views.loanappnew, name='loan_app1'),
+    url(r'^loan_app2.html$', views.loanappnew2, name='loan_app2'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

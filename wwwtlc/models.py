@@ -98,6 +98,7 @@ class Person(models.Model):
 
 	def __str__(self):
 		return self.name_first + ' ' + self.name_last
+		
 class Wallet(models.Model):
 	wallet = models.ForeignKey(User)
 	address=models.CharField(max_length=127)
