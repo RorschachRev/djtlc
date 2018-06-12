@@ -78,15 +78,55 @@ def loanappnew(request):
 	form = CreditRequestedForm(request.POST)
 	form1 = ApplicantInfoForm(request.POST)
 	form2 = CollateralScheduleForm(request.POST)
-	form3 = AssetScheduleForm(request.POST)
-	form4 = LiabilityScheduleForm(request.POST)
-	form5 = ExpenseScheduleForm(request.POST)
-	form6 = IncomeScheduleForm(request.POST)
-	form7 = FinanceSummaryForm(request.POST)
+	#form3 = AssetScheduleForm(request.POST)
+	#form4 = LiabilityScheduleForm(request.POST)
+	#form5 = ExpenseScheduleForm(request.POST)
+	#form6 = IncomeScheduleForm(request.POST)
+	#form7 = FinanceSummaryForm(request.POST)
 	form8 = RelationshipInfoForm(request.POST)
-	form9 = ApplicantSignersForm(request.POST)
-	form10 = ApplicantSignaturesForm(request.POST)
+	#form9 = ApplicantSignersForm(request.POST)
+	#form10 = ApplicantSignaturesForm(request.POST)
 	form11 = LenderInfoForm(request.POST)
+	
+	context = {
+		'form':form,
+		'form1':form1,
+		'form2':form2,
+		#'form3':form3,
+		#'form4':form4,
+		#'form5':form5,
+		#'form6':form6,
+		#'form7':form7,
+		'form8':form8,
+		#'form9':form9,
+		#'form10':form10,
+		'form11':form11,
+	}
+	
+	return render(request, 'pages/loan_app1.html', context)
+	
+def loanappnew2(request):
+	form = LoanTermsForm(request.POST)
+	form1 = ConstructionInfoForm(request.POST)
+	form2 = RefinanceInfoForm(request.POST)
+	form3 = PropertyInfoForm(request.POST)
+	form4 = EmploymentInfoForm(request.POST)
+	form5 = IncomeInfoForm(request.POST)
+	form6 = ExpenseInfoForm(request.POST)
+	form7 = BankAccountForm(request.POST)
+	form8 = StockForm(request.POST)
+	form9 = BondForm(request.POST)
+	form10 = VehicleForm(request.POST)
+	form11 = AssetSummaryForm(request.POST)
+	form12 = DebtForm(request.POST)
+	form13 = AlimonyForm(request.POST)
+	form14 = ChildSupportForm(request.POST)
+	form15 = SeparateMaintForm(request.POST)
+	form16 = LiabilitySummaryForm(request.POST)
+	form17 = ALSummaryForm(request.POST)
+	form18 = DeclarationForm(request.POST)
+	form19 = BorrowerInfoForm(request.POST)
+	form20 = AcknowledgeAgreeForm(request.POST)
 	
 	context = {
 		'form':form,
@@ -101,29 +141,15 @@ def loanappnew(request):
 		'form9':form9,
 		'form10':form10,
 		'form11':form11,
-	}
-	
-	return render(request, 'pages/loan_app1.html', context)
-	
-def loanappnew2(request):
-	form = LoanTermsForm(request.POST)
-	form1 = PropertyInfoForm(request.POST)
-	form2 = BorrowerInfoForm(request.POST)
-	form3 = EmploymentInfoForm(request.POST)
-	form4 = IncomeExpenseInfoForm(request.POST)
-	form5 = AssetsLiabilitiesForm(request.POST)
-	form6 = DeclarationsForm(request.POST)
-	form7 = AcknowledgeAgreeForm(request.POST)
-	
-	context = {
-		'form':form,
-		'form1':form1,
-		'form2':form2,
-		'form3':form3,
-		'form4':form4,
-		'form5':form5,
-		'form6':form6,
-		'form7':form7,
+		'form12':form12,
+		'form13':form13,
+		'form14':form14,
+		'form15':form15,
+		'form16':form16,
+		'form17':form17,
+		'form18':form18,
+		'form19':form19,
+		'form20':form20,
 	}
 	
 	return render(request, 'pages/loan_app2.html', context)
