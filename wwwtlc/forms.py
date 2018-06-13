@@ -19,10 +19,10 @@ class CreditRequestForm(forms.ModelForm):
 		model = CreditRequest
 		fields = '__all__'
 		
-class ApplicantInfoForm(forms.ModelForm):
+'''class ApplicantInfoForm(forms.ModelForm):
 	class Meta:
 		model = ApplicantInfo
-		fields = '__all__'
+		fields = '__all__'''
 
 class CollateralScheduleForm(forms.ModelForm):
 	class Meta:

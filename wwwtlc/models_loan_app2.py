@@ -5,12 +5,25 @@ from django.utils import timezone
 from .models import Address
 
 #*************************************************************************************************************************************
-# v1.1 of models from Commercial_loan_app2_transcript.txt														\
+# v1.3 - Current																						\
+#																									\
+#of models from Commercial_loan_app2_transcript.txt															\
 # Will need extensive modifying - possibly within the djtlc/loan/models.py file as well									\
 # To be used in addition with models.loan_app.py (seperated for pdf referencing purposes)								\
 # 																									\
+# v1.1																								\
 # In it's current state there are a lot of foreign key calls for information that may need filled out multiple times,				\
 # may want to change this if there is a better way to handle that hierarchy											\
+# 																									\
+# v1.2																								\
+# The process of merging over the other models_loan_app.py models has begun, so there is a lot of refactoring				\
+# to take care of. Most things will still need to be renamed and modified/moved around.								\
+#																									\
+# v1.3																								\
+# Most models from the models_loan_app.py file have been moved over, and integrated									\
+# There is a small (2) exception to this though, where I don't know where the models are goint to fit in						\
+# Also, this is at the point where I need Ian to look through it so that we can discuss what stays and what					\
+# goes																								\
 #*************************************************************************************************************************************
 # commented out for now, causes conflicts with original models, but those files will eventually be removed, in which case this block will be uncommented and the import will be removed
 '''class Address(models.Model):
@@ -46,8 +59,8 @@ class LoanTerms (models.Model):
 	agency_case_no = models.IntegerField()
 	lender_case_no = models.IntegerField()
 	loan_amount = models.DecimalField(max_digits=12, decimal_places=4)
-	int_rate = models.DecimalField(max_digits=4, decimal_places=2) # requested int_rate?
-	months = models.IntegerField() #number of months - will need different name
+	int_rate = models.DecimalField(max_digits=4, decimal_places=2)
+	months_left = models.IntegerField()
 	amortization_type = models.IntegerField(
 		choices = AMORTIZATION_CHOICES,
 		default = 0,
@@ -200,6 +213,19 @@ class SeparateMaint(models.Model):
 	owed_to = models.CharField(max_length=256)
 	amt_owed = models.DecimalField(max_digits=12, decimal_places=4)
 	
+# previously in Liability summary block, unsure if this should go into the liability summary or the asset summary as a FK
+class ManagedProperty(models.Model):
+	real_estate_schedule = models.CharField(max_length=256) # may want to be a CHOICES field
+	property_address = models.ForeignKey(Address)
+	property_type = models.CharField(max_length=256) # will want to be CHOICES field later
+	present_market_value = models.DecimalField(max_digits=12, decimal_places=4)
+	mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4)
+	liens_amt = models.DecimalField(max_digits=12, decimal_places=4)
+	gross_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True) # might want to require this
+	mortgage_payments = models.DecimalField(max_digits=12, decimal_places=4)
+	misc_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True) # might want to require this
+	net_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True) # might want to require this
+	
 class LiabilitySummary(models.Model):
 	debt1 = models.ForeignKey(Debt, related_name='debt1', null=True, blank=True)
 	debt2 = models.ForeignKey(Debt, related_name='debt2', null=True, blank=True)
@@ -225,19 +251,6 @@ class LiabilitySummary(models.Model):
 	total_monthly_payments = models.DecimalField(max_digits=12, decimal_places=4)
 	liabilities_total = models.DecimalField(max_digits=12, decimal_places=4)
 	
-	# Unsure what to do with this code, my intuition says to make it a FK, 	\
-	# however,  I'm unsure if it will be classified as Asset or Liability
-	'''real_estate_schedule = models.CharField(max_length=256, null=True, blank=True) # may want to be a CHOICES field
-	property_address = models.CharField(max_length=256, null=True, blank=True)
-	property_type = models.CharField(max_length=256, null=True, blank=True) # will want to be CHOICES field later
-	present_market_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	liens_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	gross_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	mortgage_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	misc_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	net_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)'''
-	
 	# totals # unsure of what this is going to be. in pdf it says:	\
 		     # "Totals (for each of the above categories NOT	\
 		     # classified under Liabilities block"			
@@ -248,6 +261,10 @@ class ALSummary(models.Model):
 	liabilities = models.ForeignKey(LiabilitySummary)
 	net_worth = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True) # assests_total	\
 																		      # - liabilities_total	\
+	
+	annual_income = models.DecimalField(max_digits=12, decimal_places=2) # from models_loan_app/FinanceSummary
+	annual_expenses = models.DecimalField(max_digits=12, decimal_places=2) # from models_loan_app/FinanceSummary
+	net_annual_cash_flow = models.DecimalField(max_digits=12, decimal_places=2) # from models_loan_app/FinanceSummary
 	
 	# below fields are for listing any additional names under which credit has previously been recieved
 	prev_alt_name = models.CharField(max_length=256, null=True, blank=True)
@@ -290,11 +307,42 @@ class Declaration(models.Model):
 	# if True, will need to add:				\
 		# type_property_owned # CHOICE field	\
 		# title_held_method # CHOICE field	\
-	ownership_interest = models.BooleanField(default=False) # m.
+	ownership_interest = models.BooleanField(default=False) # m. 1/3
+	m_property_type = models.CharField(max_length=256) # m. 2/3
+	m_title_method = models.CharField(max_length=256) # m 3/3 # there should be a better name for this field
 	
 	continuation = models.TextField(null=True, blank=True)
 	
 class BorrowerInfo (models.Model):
+	APPLICATION_CHOICES = (
+		(0, 'Borrower'),
+		(1, 'Guarantor'),
+		(2, 'Cosigner'),
+		(3, 'Grantor'),
+		(4, 'Other'),
+	)
+	APPLICANT_CHOICES = (
+		(0, 'Individual'),
+		(1, 'Association'),
+		(2, 'Proprietorship'),
+		(3, 'Trust'),
+		(4, 'Partnership'),
+		(5, 'Gov\'t Entity'),
+		(6, 'Corporation'),
+		(7, 'LLC'),
+		(8, 'Non-Profit'),
+	)
+	MARITAL_CHOICES = (
+		(0, 'Married'),
+		(1, 'Unmarried'),
+		(2, 'Seperated'),
+	)
+	# above 3 choice tuples are from models_loan_app
+	FILING_CHOICES = (
+		(0, 'Individual Independent'),
+		(1, 'Individual Dependent'),
+		(2, 'Joint'),
+	)
 	OWN_RENT_CHOICES = (
 		(0, 'Own'),
 		(1, 'Rent'),
@@ -315,11 +363,12 @@ class BorrowerInfo (models.Model):
 		choices = BORROWER_CHOICES,
 		default = 0,
 	)
+	title = models.CharField(max_length=256) # from models_loan_app/ApplicantSigners
+	authorized = models.BooleanField() # from models_loan_app/ApplicantSigners
 	ssn = models.IntegerField()
 	home_phone = models.CharField(max_length=256)
 	dob = models.DateField(default=timezone.now)
 	yrs_school = models.IntegerField() # years of schooling completed
-	marriage_status = models.BooleanField()
 	dependents = models.IntegerField()
 	present_addr = models.ForeignKey(Address, related_name='present_addr')
 	own_rent = models.IntegerField(
@@ -340,8 +389,35 @@ class BorrowerInfo (models.Model):
 	employment = models.ForeignKey(EmploymentInfo)
 	income = models.ForeignKey(IncomeInfo)
 	expenses = models.ForeignKey(ExpenseInfo)
-	assets = models.ForeignKey(ALSummary)
+	assets_liabilities = models.ForeignKey(ALSummary)
 	declarations = models.ForeignKey(Declaration)
+	
+	# below fields are from models_loan_app
+	# will want to reconfigure/reorganize the fields
+	# for user readability/general ease of use
+	application_type = models.IntegerField(
+		choices = APPLICATION_CHOICES,
+		default = 0,
+	)
+	tin_no = models.IntegerField(null=True, blank=True)
+	assumed_business_names = models.CharField(max_length=256, null=True, blank=True) # unsure what to name this field/what it is supposed to provide
+	filing_dates = models.DateField(default=timezone.now)
+	filing_locations = models.CharField(max_length=256, null=True, blank=True) # will probably want this to be a foreign key, possibly Address(?)
+	dba_name = models.CharField(max_length=256, null=True, blank=True)
+	filing_type = models.IntegerField(
+		choices = FILING_CHOICES,
+		default = 0,
+	)
+	marital_status = models.IntegerField(
+		choices = MARITAL_CHOICES,
+		default = 0,
+	)
+	principal_office_addr = models.CharField(max_length=256, null=True, blank=True)
+	orginizations_state = models.CharField(max_length=2, null=True, blank=True) # will probably change to CHOICES list
+	applicant_type = models.IntegerField(
+		choices = APPLICANT_CHOICES,
+		default = 0,
+	)
 	
 class AcknowledgeAgree(models.Model):
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower_agree', null=True, blank=True)
@@ -349,4 +425,126 @@ class AcknowledgeAgree(models.Model):
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower_agree', null=True, blank=True)
 	coborrower_agree = models.BooleanField(default=False)
 	date = models.DateField(default=timezone.now)
+	
+#################################################################################
+#################################################################################
+# Below are the models that used to be a part of the models_loan_app.py file
+# they have been moved here to begin integration into this file as the sole
+# models file. They have been left commented out in the other file for reference
+# until this one is flushed out enough to where it is of no use to keep
+
+# from other models file originally
+class CreditRequest(models.Model):
+	CREDIT_REQUEST_CHOICES = (
+		(0, 'Applicant Only'),
+		(1, 'Joint with Co-Applicant(s)'),
+	)
+	borrower = models.ForeignKey(BorrowerInfo)
+	amt_requested = models.DecimalField(max_digits=12, decimal_places=2)
+	term_requested = models.CharField(max_length=256) # unsure of what this is going to be
+	loan_type = models.CharField(max_length=256) # will probably turn into a CHOICES field later
+	market_survey = models.CharField(max_length=256, null=True, blank=True) # unsure of what this is going to be
+	request_purpose = models.TextField(null=True, blank=True)
+	app_no = models.IntegerField()
+	credit_request = models.IntegerField(
+		choices = CREDIT_REQUEST_CHOICES,
+		default = 0,
+	)
+	submission_date = models.DateField(default=timezone.now)
+	
+# unsure how this is going to merge into the existing models in this file
+class CollateralSchedule(models.Model):
+	OWN_STATUS_CHOICES = (
+		(0, 'Purchase Money'),
+		(1, 'Presently Owned'),
+	)
+	description = models.CharField(max_length=256)
+	value = models.DecimalField(max_digits=12, decimal_places=2)
+	liens_total = models.DecimalField(max_digits=12, decimal_places=2)
+	ownership_status = models.IntegerField(
+		choices = OWN_STATUS_CHOICES,
+		default=0,
+	)
+	creditor_name = models.CharField(max_length=256, null=True, blank=True) # may want this to be foreign key to a 'Person' || 'Creditor' || 'Officer' table - unsure best approach
+	
+	
+# Totally unsure of what this model is going to provide
+# or even where it goes/connects to
+class RelationshipInfo(models.Model):
+	CUSTOMER_CHOICES = (
+		(0, 'New Customer'),
+		(1, 'Existing Customer'),
+	)
+	customer_type = models.IntegerField(
+		choices = CUSTOMER_CHOICES,
+		default = 0,
+	)
+	customer_since = models.IntegerField(null=True, blank=True)
+	last_tax_return = models.DateField(null=True, blank=True)
+	last_financial_statement = models.DateField(null=True, blank=True)
+	last_credit_report = models.DateField(null=True, blank=True)
+	last_credit_bureau = models.CharField(max_length=256, null=True, blank=True)
+	
+	# below fields are a part of a subcategory called ("Liabilities with Lender")
+	direct = models.DecimalField(max_digits=12, decimal_places=2)
+	contingent = models.DecimalField(max_digits=12, decimal_places=2)
+	total = models.DecimalField(max_digits=12, decimal_places=2)
+	
+	# below fields are a part of a subcategory called ("Deposits with Lender")
+	dda_avg = models.DecimalField(max_digits=12, decimal_places=2)
+	other_avg = models.DecimalField(max_digits=12, decimal_places=2)
+	total_avg = models.DecimalField(max_digits=12, decimal_places=2)
+	
+	# below fields are a part of a subcategory called ("Deposits with Lender")
+	new_credit = models.DecimalField(max_digits=12, decimal_places=2)
+	proposed_total = models.DecimalField(max_digits=12, decimal_places=2)
+	
+# Unsure if this table needs to exist or not
+# it would allow us to add FK relationships 
+# to LenderInfo table, but the current
+# CharField may work better anyways
+class Officer(models.Model): # employee(?), lender(?), creditor(?)
+	fname = models.CharField(max_length=256)
+	lname = models.CharField(max_length=256)
+	officer_number = models.IntegerField()
+	
+class LenderInfo(models.Model):
+	DECISION_CHOICES = (
+		(0, 'Approved'),
+		(1, 'Denied'),
+		(2, 'Incomplete'),
+		(3, 'Counteroffer'),
+		(4, 'Conditional Approval'),
+		(5, 'Withdrawl'),
+		(6, 'Other'),
+	)
+	officer_name = models.CharField(max_length=256)
+	officer_number = models.IntegerField()
+	approved_by = models.CharField(max_length=256) # will probably turn into FK to a 'Person' || 'Creditor' || 'Officer table - unsure which would work best
+	concurrence_by = models.CharField(max_length=256) # will probably turn into FK to a 'Person' || 'Creditor' || 'Officer table - unsure which would work best
+	committee_date = models.DateField()
+	decision_date = models.DateField()
+	branch = models.CharField(max_length=256) # this could be an Address (?)
+	app_date = models.DateField()
+	app_number = models.IntegerField()
+	commitment_number = models.IntegerField()
+	loan_number = models.IntegerField()
+	mortgage_loan_originator_id = models.CharField(max_length=256)# will probably turn into FK to a 'Person' || 'Creditor' || 'Officer table - unsure which would work best
+	mortgage_loan_company_id = models.CharField(max_length=256) # will probably turn into FK - unsure to what table though, may need to make a new one
+	decision = models.IntegerField(
+		choices = DECISION_CHOICES,
+		default = 0,
+	)
+	
+#################################################################################
+#################################################################################
+# Below is a Loan Summary, all relevant information at a glance should be put here
+
+class LoanSummary(models.Model):
+	subject_address = models.ForeignKey(PropertyInfo)
+	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
+	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)
+	lender_info = models.ForeignKey(LenderInfo)
+	loan_terms = models.ForeignKey(LoanTerms)
+	
 	

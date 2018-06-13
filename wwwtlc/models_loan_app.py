@@ -8,12 +8,13 @@ from django.utils import timezone
 # Will need extensive modifying - possibly within the djtlc/loan/models.py file as well									\
 # To be used in addition with models.loan_app2.py (seperated for pdf referencing purposes)								\
 # 																									\
-# In it's current state there are a lot of things to be omitted and merged into the other file, depending on what				\
-# we want the DB structure to look like, we'll remove certain fields/delete whole models and let a model in the 				\
-# other file take it's place																				\
+# In it's current state, most of the models have been merged into the models_loan_app2.py file							\
+# many of the models have either been removed completely or they have been modified/moved							\
+# to the other file. Now it's just a graveyard of old models only to be used as references until they						\
+# meet their ultimate doom at the hands of me, the developer mwahahahaha											\
 #*************************************************************************************************************************************
 
-class CreditRequest(models.Model):
+'''class CreditRequest(models.Model):
 	CREDIT_REQUEST_CHOICES = (
 		(0, 'Applicant Only'),
 		(1, 'Joint with Co-Applicant(s)'),
@@ -29,9 +30,8 @@ class CreditRequest(models.Model):
 		default = 0,
 	)
 	
-# This model will probably need to merge with models_loan_app2.py/BorrowerInfo
-# - Unsure what to keep/what to drop during merge
-# - For now, fields that I know duplicate are commented out and moved to bottom of model
+# This model has been merged into models_loan_app2/BorrowerInfo
+# it is commented out here for reference in case things go sour
 class ApplicantInfo(models.Model):
 	APPLICATION_CHOICES = (
 		(0, 'Borrower'),
@@ -60,9 +60,6 @@ class ApplicantInfo(models.Model):
 		choices = APPLICATION_CHOICES,
 		default = 0,
 	)
-	#last_name = models.CharField(max_length=256, null=True, blank=True)
-	#first_name = models.CharField(max_length=256, null=True, blank=True)
-	#ssn = models.IntegerField(null=True, blank=True)
 	tin_no = models.IntegerField(null=True, blank=True)
 	assumed_business_names = models.CharField(max_length=256, null=True, blank=True) # unsure what to name this field
 	filing_dates = models.DateField(default=timezone.now)
@@ -76,7 +73,6 @@ class ApplicantInfo(models.Model):
 		choices = MARITAL_CHOICES,
 		default = 0,
 	)
-	#address = models.CharField(max_length=256, null=True, blank=True) # might want this to be foreign key
 	mailing_addr = models.CharField(max_length=256, null=True, blank=True)
 	principal_office_addr = models.CharField(max_length=256, null=True, blank=True)
 	orginizations_state = models.CharField(max_length=2, null=True, blank=True) # will probably change to CHOICES list
@@ -84,6 +80,10 @@ class ApplicantInfo(models.Model):
 		choices = APPLICANT_CHOICES,
 		default = 0,
 	)
+	#last_name = models.CharField(max_length=256, null=True, blank=True)
+	#first_name = models.CharField(max_length=256, null=True, blank=True)
+	#ssn = models.IntegerField(null=True, blank=True)
+	#address = models.CharField(max_length=256, null=True, blank=True) # might want this to be foreign key
 	
 # this model is repeated in pdf form, may want relationship in a summary table
 # also, not included in other model file, unsure what it would merge as though
@@ -102,53 +102,16 @@ class CollateralSchedule(models.Model):
 	)
 	creditor_name = models.CharField(max_length=256, null=True, blank=True) # may want this to be foreign key to a 'Person' || 'Creditor' || 'Officer' table - unsure best approach
 	
-# this model is repeated in pdf form, may want relationship in a summary table
-# also, this table is much more well documented in other models file (Asset), may want to 
-# scrap this one, commented out for now
-'''class AssetSchedule(models.Model):
-	description = models.CharField(max_length=256, null=True, blank=True)
-	value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	debt_subject = models.BooleanField() # unsure of what this is going to be
-	asset_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)'''
-	
-# this model is repeated in pdf form, may want relationship in a summary table
-# also, this table is much more well documented in other models file (Liability), may want to 
-# scrap this one, commented out for now
-'''class LiabilitySchedule(models.Model):
-	description = models.CharField(max_length=256, null=True, blank=True)
-	type = models.CharField(max_length=256, null=True, blank=True)
-	current_bal = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	liability_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)'''
-	
-# this model is repeated in pdf form, may want relationship in a summary table
-# also, this table is much more well documented in other models file (Expense), may want to 
-# scrap this one, commented out for now
-'''class ExpenseSchedule(models.Model):
-	description = models.CharField(max_length=256, null=True, blank=True)
-	type = models.CharField(max_length=256, null=True, blank=True)
-	amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	per = models.CharField(max_length=256, null=True, blank=True) # might want to be CHOICES field
-	annualized_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)'''
-
-# this model is repeated in pdf form, may want relationship in a summary table
-# also, this table is much more well documented in other models file (Income), may want to 
-# scrap this one, commented out for now
-'''class IncomeSchedule(models.Model):
-	description = models.CharField(max_length=256, null=True, blank=True)
-	type = models.CharField(max_length=256, null=True, blank=True)
-	annualized_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	annualized_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)'''
-	
 # this table is much more well documented in other models file (ALSummary), may want to 
 # scrap this one, commented out for now, however, it does contain a couple
 # fields that may need to be included, they are marked by the # comments
-'''class FinanceSummary(models.Model):
+class FinanceSummary(models.Model):
 	assets_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	liabilities_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	net_worth = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	#annual_income = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	#annual_expenses = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	#net_annual_cash_flow = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)'''
+	#net_annual_cash_flow = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	
 class RelationshipInfo(models.Model):
 	CUSTOMER_CHOICES = (
@@ -178,19 +141,6 @@ class RelationshipInfo(models.Model):
 	# below fields are a part of a subcategory called ("Deposits with Lender")
 	new_credit = models.DecimalField(max_digits=12, decimal_places=2)
 	proposed_total = models.DecimalField(max_digits=12, decimal_places=2)
-		
-# this table is much more well documented in other models file (BorrowerInfo), may want to 
-# scrap this one	
-'''class ApplicantSigners(models.Model):
-	name = models.CharField(max_length=256, null=True, blank=True)
-	title = models.CharField(max_length=256, null=True, blank=True)
-	authorized = models.BooleanField()
-	ssn = models.IntegerField(null=True, blank=True)
-	address = models.CharField(max_length=256, null=True, blank=True)
-	city = models.CharField(max_length=256, null=True, blank=True)
-	state = models.CharField(max_length=256, null=True, blank=True)
-	zip_code = models.IntegerField(null=True, blank=True)
-	phone_number = models.CharField(max_length=256, null=True, blank=True)'''
 	
 class LenderInfo(models.Model):
 	DECISION_CHOICES = (
@@ -218,4 +168,4 @@ class LenderInfo(models.Model):
 	decision = models.IntegerField(
 		choices = DECISION_CHOICES,
 		default = 0,
-	)
+	)'''

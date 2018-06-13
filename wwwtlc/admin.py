@@ -11,7 +11,7 @@ admin.site.register(Wallet)
 
 # models_loan_app
 admin.site.register(CreditRequest)
-admin.site.register(ApplicantInfo)
+#admin.site.register(ApplicantInfo)
 admin.site.register(CollateralSchedule)
 admin.site.register(RelationshipInfo)
 admin.site.register(LenderInfo)
