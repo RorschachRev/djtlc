@@ -74,59 +74,144 @@ def account(request):
 	return render(request, 'pages/account.html', {'form': form})
 	
 # BELOW IS NEW MODEL FORM INTEGRATION
-def loanappnew(request):
-	form = CreditRequestedForm(request.POST)
-	form1 = ApplicantInfoForm(request.POST)
-	form2 = CollateralScheduleForm(request.POST)
-	#form3 = AssetScheduleForm(request.POST)
-	#form4 = LiabilityScheduleForm(request.POST)
-	#form5 = ExpenseScheduleForm(request.POST)
-	#form6 = IncomeScheduleForm(request.POST)
-	#form7 = FinanceSummaryForm(request.POST)
-	form8 = RelationshipInfoForm(request.POST)
-	#form9 = ApplicantSignersForm(request.POST)
-	#form10 = ApplicantSignaturesForm(request.POST)
-	form11 = LenderInfoForm(request.POST)
+def tier1(request):
+	if request.method == 'POST':
+		form = BusinessInfoForm(request.POST)
+		form1 = ExpenseInfoForm(request.POST)
+		form2 = ConstructionInfoForm(request.POST)
+		form3 = RefinanceInfoForm(request.POST)
+		form4 = PropertyInfoForm(request.POST)
+		form5 = BorrowerInfoForm(request.POST)
+		form6 = CreditRequestForm(request.POST)
+		form7 = DeclarationForm(request.POST)
+		form8 = TransactionDetailsForm(request.POST)
+		form9 = AcknowledgeAgreeForm(request.POST)
+		if ( 
+			form.is_valid() and form1.is_valid() and form2.is_valid() and form3.is_valid()
+			and form4.is_valid() and form5.is_valid() and form6.is_valid()
+			and form7.is_valid() and form8.is_valid() and form9.is_valid()
+		):
+			form.save()
+			form1.save()
+			form2.save()
+			form3.save()
+			form4.save()
+			form5.save()
+			form6.save()
+			form7.save()
+			form8.save()
+			form9.save()
+		else:
+			form = BusinessInfoForm()
+			form1 = ExpenseInfoForm()
+			form2 = ConstructionInfoForm()
+			form3 = RefinanceInfoForm()
+			form4 = PropertyInfoForm()
+			form5 = BorrowerInfoForm()
+			form6 = CreditRequestForm()
+			form7 = DeclarationForm()
+			form8 = TransactionDetailsForm()
+			form9 = AcknowledgeAgreeForm()
 	
 	context = {
 		'form':form,
 		'form1':form1,
 		'form2':form2,
-		#'form3':form3,
-		#'form4':form4,
-		#'form5':form5,
-		#'form6':form6,
-		#'form7':form7,
+		'form3':form3,
+		'form4':form4,
+		'form5':form5,
+		'form6':form6,
+		'form7':form7,
 		'form8':form8,
-		#'form9':form9,
-		#'form10':form10,
-		'form11':form11,
+		'form9':form9,
 	}
 	
-	return render(request, 'pages/loan_app1.html', context)
+	return render(request, 'pages/tier1_app.html', context)
 	
-def loanappnew2(request):
-	form = LoanTermsForm(request.POST)
-	form1 = ConstructionInfoForm(request.POST)
-	form2 = RefinanceInfoForm(request.POST)
-	form3 = PropertyInfoForm(request.POST)
-	form4 = EmploymentInfoForm(request.POST)
-	form5 = IncomeInfoForm(request.POST)
-	form6 = ExpenseInfoForm(request.POST)
-	form7 = BankAccountForm(request.POST)
-	form8 = StockForm(request.POST)
-	form9 = BondForm(request.POST)
-	form10 = VehicleForm(request.POST)
-	form11 = AssetSummaryForm(request.POST)
-	form12 = DebtForm(request.POST)
-	form13 = AlimonyForm(request.POST)
-	form14 = ChildSupportForm(request.POST)
-	form15 = SeparateMaintForm(request.POST)
-	form16 = LiabilitySummaryForm(request.POST)
-	form17 = ALSummaryForm(request.POST)
-	form18 = DeclarationForm(request.POST)
-	form19 = BorrowerInfoForm(request.POST)
-	form20 = AcknowledgeAgreeForm(request.POST)
+# Tier 2 includes all fields required in Tier 1, plus additional fields not required in Tier 1,	\
+# such as Asset and Liability information
+def tier2(request):
+	if request.method == 'POST':
+		form = BusinessInfoForm(request.POST)
+		form1 = ExpenseInfoForm(request.POST)
+		form2 = ConstructionInfoForm(request.POST)
+		form3 = RefinanceInfoForm(request.POST)
+		form4 = PropertyInfoForm(request.POST)
+		form5 = BorrowerInfoForm(request.POST)
+		form6 = CreditRequestForm(request.POST)
+		form7 = DeclarationForm(request.POST)
+		form8 = TransactionDetailsForm(request.POST)
+		form9 = AcknowledgeAgreeForm(request.POST)
+		form10 = AssetSummaryForm(request.POST)
+		form11 = DebtForm(request.POST)
+		form12 = ManagedPropertyForm(request.POST)
+		form13 = AlimonyForm(request.POST)
+		form14 = ChildSupportForm(request.POST)
+		form15 = SeparateMaintForm(request.POST)
+		form16 = LiabilitySummaryForm(request.POST)
+		form17 = ALSummaryForm(request.POST)
+		form18 = BorrowerInfoForm(request.POST)
+		form19 = CreditRequestForm(request.POST)
+		form20 = DeclarationForm(request.POST)
+		form21 = TransactionDetailsForm(request.POST)
+		form22 = AcknowledgeAgreeForm(request.POST)
+		if (
+			form.is_valid() and form1.is_valid() and form2.is_valid() and form3.is_valid()
+			and form4.is_valid() and form5.is_valid() and form6.is_valid()
+			and form7.is_valid() and form8.is_valid() and form9.is_valid()
+			and form10.is_valid() and form11.is_valid() and form12.is_valid()
+			and form13.is_valid() and form14.is_valid() and form15.is_valid()
+			and form16.is_valid() and form17.is_valid() and form18.is_valid()
+			and form19.is_valid() and form20.is_valid() and form21.is_valid()
+			and form22.is_valid()
+		):
+			form.save()
+			form1.save()
+			form2.save()
+			form3.save()
+			form4.save()
+			form5.save()
+			form6.save()
+			form7.save()
+			form8.save()
+			form9.save()
+			form10.save()
+			form11.save()
+			form12.save()
+			form13.save()
+			form14.save()
+			form15.save()
+			form16.save()
+			form17.save()
+			form18.save()
+			form19.save()
+			form20.save()
+			form21.save()
+			form22.save()
+		else:
+			form = BusinessInfoForm()
+			form1 = ExpenseInfoForm()
+			form2 = ConstructionInfoForm()
+			form3 = RefinanceInfoForm()
+			form4 = PropertyInfoForm()
+			form5 = BorrowerInfoForm()
+			form6 = CreditRequestForm()
+			form7 = DeclarationForm()
+			form8 = TransactionDetailsForm()
+			form9 = AcknowledgeAgreeForm()
+			form10 = AssetSummaryForm()
+			form11 = DebtForm()
+			form12 = ManagedPropertyForm()
+			form13 = AlimonyForm()
+			form14 = ChildSupportForm()
+			form15 = SeparateMaintForm()
+			form16 = LiabilitySummaryForm()
+			form17 = ALSummaryForm()
+			form18 = BorrowerInfoForm()
+			form19 = CreditRequestForm()
+			form20 = DeclarationForm()
+			form21 = TransactionDetailsForm()
+			form22 = AcknowledgeAgreeForm()
 	
 	context = {
 		'form':form,
@@ -150,6 +235,8 @@ def loanappnew2(request):
 		'form18':form18,
 		'form19':form19,
 		'form20':form20,
+		'form21':form21,
+		'form22':form22,
 	}
 	
-	return render(request, 'pages/loan_app2.html', context)
+	return render(request, 'pages/tier2_app.html', context)

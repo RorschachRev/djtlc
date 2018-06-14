@@ -80,7 +80,7 @@ class Loan(models.Model):
 		return str(self.loan_data) + ' (' + str(self.loan_approve_date) + ')'
 		
 #might want to change location of this model for relation purposes
-class Loan_Workflow(models.Model):
+'''class Loan_Workflow(models.Model):
 	loan_data = models.OneToOneField(Loan_Data)
 	loan_officer = models.ForeignKey(Person, limit_choices_to = {'user__is_staff__exact': True }, related_name='loan_officer')
 	COMPLETED_CHOICES = (
@@ -103,6 +103,6 @@ class Loan_Workflow(models.Model):
 		)
 	
 	def __str__(self):
-		return 'Officer: ' + str(self.loan_officer) + ' | Loan: ' + str(self.loan_data)
+		return 'Officer: ' + str(self.loan_officer) + ' | Loan: ' + str(self.loan_data)'''
 			
 	

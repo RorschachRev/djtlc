@@ -1,7 +1,6 @@
 from django import forms
 from wwwtlc.models import Person, Wallet
 from wwwtlc.models_loan_app import *
-from wwwtlc.models_loan_app2 import *
 
 class WalletForm(forms.ModelForm):
 	class Meta:
@@ -14,74 +13,18 @@ class WalletForm(forms.ModelForm):
 		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language', 'address']'''
 		
 # Below are forms for the new models - correlates to models_loan_app.py
-class CreditRequestForm(forms.ModelForm):
-	class Meta:
-		model = CreditRequest
-		fields = '__all__'
-		
-'''class ApplicantInfoForm(forms.ModelForm):
-	class Meta:
-		model = ApplicantInfo
-		fields = '__all__'''
 
-class CollateralScheduleForm(forms.ModelForm):
-	class Meta:
-		model = CollateralSchedule
-		fields = '__all__'
-
-class RelationshipInfoForm(forms.ModelForm):
-	class Meta:
-		model = RelationshipInfo
-		fields = '__all__'
-
-class LenderInfoForm(forms.ModelForm):
-	class Meta:
-		model = LenderInfo
-		fields = '__all__'	
-		
-# below block of forms may have models that will be removed, so they've been commented out
-'''class AssetScheduleForm(forms.ModelForm):
-	class Meta:
-		model = AssetSchedule
-		fields = '__all__'
-
-class LiabilityScheduleForm(forms.ModelForm):
-	class Meta:
-		model = LiabilitySchedule
-		fields = '__all__'
-
-class ExpenseScheduleForm(forms.ModelForm):
-	class Meta:
-		model = ExpenseSchedule
-		fields = '__all__'
-
-class IncomeScheduleForm(forms.ModelForm):
-	class Meta:
-		model = IncomeSchedule
-		fields = '__all__'	
-
-class FinanceSummaryForm(forms.ModelForm):
-	class Meta:
-		model = FinanceSummary
-		fields = '__all__'''	
-
-'''class ApplicantSignersForm(forms.ModelForm):
-	class Meta:
-		model = ApplicantSigners
-		fields = '__all__'''	
-
-##########################################
-# Below are forms for new models - correlates to models_loan_app2.py
-class LoanTermsForm(forms.ModelForm):
-	class Meta:
-		model = LoanTerms
-		fields = '__all__'
+# models not listed in the forms, due to only needing to be accessed by staff:
+#	- LenderInfo
+#	- Loan Terms
+#	- LoanWorkflow
+#	- LoanSummary
 
 class ConstructionInfoForm(forms.ModelForm):
 	class Meta:
 		model = ConstructionInfo
 		fields = '__all__'
-
+		
 class RefinanceInfoForm(forms.ModelForm):
 	class Meta:
 		model = RefinanceInfo
@@ -92,14 +35,14 @@ class PropertyInfoForm(forms.ModelForm):
 		model = PropertyInfo
 		fields = '__all__'	
 
-class EmploymentInfoForm(forms.ModelForm):
+class EmploymentIncomeForm(forms.ModelForm):
 	class Meta:
-		model = EmploymentInfo
+		model = EmploymentIncome
 		fields = '__all__'	
 		
-class IncomeInfoForm(forms.ModelForm):
+class BusinessInfoForm(forms.ModelForm):
 	class Meta:
-		model = IncomeInfo
+		model = BusinessInfo
 		fields = '__all__'	
 		
 class ExpenseInfoForm(forms.ModelForm):
@@ -152,6 +95,11 @@ class SeparateMaintForm(forms.ModelForm):
 		model = SeparateMaint
 		fields = '__all__'
 
+class ManagedPropertyForm(forms.ModelForm):
+	class Meta:
+		model = ManagedProperty
+		fields = '__all__'
+		
 class LiabilitySummaryForm(forms.ModelForm):
 	class Meta:
 		model = LiabilitySummary
@@ -162,6 +110,11 @@ class ALSummaryForm(forms.ModelForm):
 		model = ALSummary
 		fields = '__all__'		
 
+class TransactionDetailsForm(forms.ModelForm):
+	class Meta:
+		model = TransactionDetails
+		fields = '__all__'
+		
 class DeclarationForm(forms.ModelForm):
 	class Meta:
 		model = Declaration
@@ -175,4 +128,9 @@ class BorrowerInfoForm(forms.ModelForm):
 class AcknowledgeAgreeForm(forms.ModelForm):
 	class Meta:
 		model = AcknowledgeAgree
-		fields = '__all__'	
+		fields = '__all__'
+		
+class CreditRequestForm(forms.ModelForm):
+	class Meta:
+		model = CreditRequest
+		fields = '__all__'
