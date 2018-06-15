@@ -66,7 +66,7 @@ class Loan(models.Model):
 	loan_payment_due = models.DecimalField(decimal_places=4, max_digits=12, help_text="Approved monthly payment")
 	loan_payment_due_date = models.DateField(default=timezone.now) #datetime
 	payments_left = models.IntegerField(help_text="Months until loan is paid") #loan payments remaining
-	loan_balance = models.DecimalField(decimal_places=18, max_digits=80, help_text="Remaining balance left on loan") # (BC is 79)
+	loan_balance = models.DecimalField(decimal_places=18, max_digits=65, help_text="Remaining balance left on loan") # (BC is 79)
 	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Current interest rate")
 	loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Starting interest rate")
 	loan_principal = models.DecimalField(decimal_places=4, max_digits=15)
@@ -74,7 +74,7 @@ class Loan(models.Model):
 	loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15)
 	loan_approve_date = models.DateField(default=timezone.now)
 	loan_wallet = models.OneToOneField(Wallet)
-	TLC_balance =models.DecimalField(decimal_places=18, max_digits=80, help_text="TLC owned by TLC from loan payment") # (BC is 79)
+	TLC_balance =models.DecimalField(decimal_places=18, max_digits=65, help_text="TLC owned by TLC from loan payment") # (BC is 79)
 	
 	def __str__(self):
 		return str(self.loan_data) + ' (' + str(self.loan_approve_date) + ')'

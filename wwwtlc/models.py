@@ -106,7 +106,8 @@ class Wallet(models.Model):
 	buy_TLC_approval=models.NullBooleanField()
 	#date_added
 	TLC_balance_USD=models.DecimalField(decimal_places=2, max_digits=12, null=True, blank=True)
-	TLC_balance_Token=models.DecimalField(decimal_places=18, max_digits=80, null=True, blank=True)	# (BC is 79, total supply is 27 with 18 decimal)
+	TLC_balance_Token=models.DecimalField(decimal_places=18, max_digits=64, null=True, blank=True)	# (BC is 79, total supply is 27 with 18 decimal)
+		#max mysql is 65 digits
 	def __str__(self):
 		return self.address[:8]+"..."
 
