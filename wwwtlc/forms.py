@@ -45,10 +45,10 @@ class BusinessInfoForm(forms.ModelForm):
 		model = BusinessInfo
 		fields = '__all__'	
 		
-class ExpenseInfoForm(forms.ModelForm):
+'''class ExpenseInfoForm(forms.ModelForm):
 	class Meta:
 		model = ExpenseInfo
-		fields = '__all__'	
+		fields = '__all__'	'''
 
 class BankAccountForm(forms.ModelForm):
 	class Meta:

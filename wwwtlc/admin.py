@@ -10,7 +10,7 @@ admin.site.register(Wallet)
 
 # Tier 1
 admin.site.register(BusinessInfo)
-admin.site.register(ExpenseInfo)
+#admin.site.register(ExpenseInfo)
 admin.site.register(ConstructionInfo)
 admin.site.register(RefinanceInfo)
 admin.site.register(PropertyInfo)
