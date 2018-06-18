@@ -21,24 +21,132 @@ from django.views.generic.base import TemplateView
 from django.conf.urls.static import static
 from wwwtlc import views
 from wwwtlc import views_form
+from wwwtlc.views import TierOneWizard, TierTwoWizard
+from wwwtlc.forms import *
 from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import AddressForm, PersonForm, LoanDataForm, LoanRequestForm
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name = 'pages/home.html'), name='home'),
-    url(r'^login/$', auth_views.login, {'template_name': 'pages/login.html'}, name='login'),
-    url(r'^logout/$', auth_views.logout, {'template_name': 'pages/logout.html'}, name='logout'),
-    url(r'^account.html$', views.account, name='account'),
-    url(r'^wallet.html$', views.wallet, name='wallet'),
-    url(r'^loan.html$', views.loan, name='loan'),
-    url(r'^pay.html/(?P<loan_id>\d+)/$', views.pay, name='pay'), #allows the specific row's data id to be passed from loan.html to pay.html
-    url(r'^payhistory.html$', views.payhistory, name='payhistory'),
-    url(r'^test.html$', views.test, name='test'),
-    url(r'^loan_apply_done.html$', TemplateView.as_view(template_name='pages/loan_apply_done.html'), name='loan_apply_done'),
-    url(r'^admin/', admin.site.urls),
-    url(r'^loan_apply.html$', LoanApplyWizard.as_view( [LoanRequestForm, LoanDataForm, AddressForm, PersonForm], template_name = 'pages/loan_apply.html'), name='loan_apply'), #url for formWizard
-    url(r'^tier1_app.html$', views.tier1, name='tier1_app'),
-    url(r'^tier2_app.html$', views.tier2, name='tier2_app'),
+    url(
+        r'^$', 
+        TemplateView.as_view(template_name = 'pages/home.html'), 
+        name='home'
+),
+    url(
+        r'^login/$', 
+        auth_views.login, 
+        {'template_name': 'pages/login.html'}, 
+        name='login'
+),
+    url(
+        r'^logout/$', 
+        auth_views.logout, 
+        {'template_name': 'pages/logout.html'},
+        name='logout'
+),
+    url(
+        r'^account.html$', 
+        views.account, 
+        name='account'
+),
+    url(
+        r'^wallet.html$', 
+        views.wallet, 
+        name='wallet'
+),
+    url(
+        r'^loan.html$', 
+        views.loan, 
+        name='loan'
+),
+    url(
+        r'^pay.html/(?P<loan_id>\d+)/$',  #allows the specific row's data id to be passed from loan.html to pay.html
+        views.pay, 
+        name='pay'
+),
+    url(
+        r'^payhistory.html$', 
+        views.payhistory, 
+        name='payhistory'
+),
+    url(
+        r'^test.html$', 
+        views.test, 
+        name='test'
+),
+    url(
+        r'^loan_apply_done.html$', 
+        TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
+        name='loan_apply_done'
+),
+    url(
+        r'^admin/', 
+        admin.site.urls
+),
+# url for LoanApply Wizard Form
+    url(
+        r'^loan_apply.html$', 
+        LoanApplyWizard.as_view(
+            [
+                LoanRequestForm, 
+                LoanDataForm, 
+                AddressForm, 
+                PersonForm
+            ], 
+            template_name='pages/loan_apply.html'
+        ), 
+        name='loan_apply'
+), 
+# url for TierOneWizard form
+    url(
+        r'^tier1_app.html$', 
+        TierOneWizard.as_view(
+            [
+                BusinessInfoForm, 
+                ConstructionInfoForm, 
+                RefinanceInfoForm, 
+                PropertyInfoForm, 
+                BorrowerInfoForm, 
+                CreditRequestForm, 
+                DeclarationForm, 
+                TransactionDetailsForm, 
+                AcknowledgeAgreeForm,
+            ] , 
+            template_name='pages/tier1_app.html'
+        ), 
+        name='tier1_app'
+),
+    url(
+        r'^tier2_app.html$', 
+        TierTwoWizard.as_view(
+            [
+                BusinessInfoForm,
+                ConstructionInfoForm, 
+                RefinanceInfoForm, 
+                PropertyInfoForm, 
+                EmploymentIncomeForm, 
+                BankAccountForm, 
+                BondForm, 
+                StockForm, 
+                VehicleForm, 
+                AssetSummaryForm, 
+                DebtForm, 
+                ManagedPropertyForm, 
+                AlimonyForm, 
+                ChildSupportForm, 
+                SeparateMaintForm, 
+                LiabilitySummaryForm, 
+                ALSummaryForm, 
+                BorrowerInfoForm, 
+                CreditRequestForm, 
+                DeclarationForm, 
+                TransactionDetailsForm, 
+                AcknowledgeAgreeForm,
+            ],
+            template_name='pages/tier2_app.html'
+        ),
+        name='tier2_app'
+),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

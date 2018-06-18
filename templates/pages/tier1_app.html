@@ -1,47 +1,25 @@
-{% extends 'base.html' %}
+{% extends 'pages/home.html' %}
+{% load i18n %}
 
-{% block title %}TLC: Tier 1 Application{% endblock %}
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
 
 {% block content %}
-			<h2>Tier 1 Application</h2>
-			<form action="" method="post">
-				<table>
-					{% csrf_token %}
-					<h3>Business Information</h3>
-					{{ form }}
-				</table>
-				<table>
-					<h3>Construction Information (if applicable)</h3>
-					{{ form1 }}
-				</table>
-				<table>
-					<h3>Refinance Information (if applicable)</h3>
-					{{ form2 }}
-				</table>
-				<table>
-					<h3>Property Information</h3>
-					{{ form3 }}
-				</table>
-				<table>
-					<h3>Borrower Information</h3>
-					{{ form4 }}
-				</table>
-				<table>
-					<h3>Credit Request</h3>
-					{{ form5 }}
-				</table>
-				<table>
-					<h3>Declarations</h3>
-					{{ form6 }}
-				</table>
-				<table>
-					<h3>Transaction Details</h3>
-					{{ form7 }}
-				</table>
-				<table>
-					<h3>Acknowlegement and Agreement</h3>
-					{{ form8 }}
-				</table>
-				<input type="submit" value="Submit" />
-			</form>
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<h2>{{ wizard.form.step_name }}</h2>
+<form action="" method="post">{% csrf_token %}
+<table>
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+    {{ wizard.form }}
+{% endif %}
+</table>
+<input type="submit" value="{% trans 'Submit' %}"/>
+</form>
 {% endblock %}

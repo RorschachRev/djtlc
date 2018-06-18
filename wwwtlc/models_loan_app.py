@@ -6,7 +6,7 @@ from .models import Address
 from django.contrib.auth.models import User
 
 #*************************************************************************************************************************************
-# v1.4 - Current																						\
+# v1.5 - Current																						\
 #																									\
 #of models from Commercial_loan_app2_transcript.txt															\
 # Will need extensive modifying - possibly within the djtlc/loan/models.py file as well									\
@@ -50,6 +50,9 @@ from django.contrib.auth.models import User
 # minor modifications, mostly to max_length properties of CharField fields, and some CHOICES fields, but all are minor, and can	\
 # be fixed easily. The forms still need quite a bit of work, but in this generation, they should be presentable. No work has begun	\
 # on customizing DjangoAdmin.																			\
+#																									\
+# v1.5																								\
+# Added Verbose Names																					\
 #*************************************************************************************************************************************
 # commented out for now, causes conflicts with original models, but those files will eventually be removed, in which case this block will be uncommented and the import will be removed
 '''class Address(models.Model):
@@ -136,13 +139,13 @@ class PropertyInfo (models.Model):
 		return str(self.address) + ', ' + self.legal_description
 								      
 class EmploymentIncome(models.Model): # for Tier 2, when personal income is needed for the application
-	name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Name of Employer')
+	name = models.CharField(max_length=256, help_text='(required)', verbose_name='Name of Employer')
 	address = models.ForeignKey(Address, null=True, blank=True)
 	self_employed = models.BooleanField(default=False, verbose_name='Self Employed')
 	yrs_worked = models.IntegerField(null=True, blank=True, verbose_name='Years Worked at Current Employer') # years worked at current employer
 	yrs_in_profession = models.IntegerField(null=True, blank=True, verbose_name='Years Worked in Related Field') # years worked in the related field
 	position = models.CharField(max_length=256, null=True, blank=True)
-	title = models.CharField(max_length=256, null=True, blank=True)
+	title = models.CharField(max_length=256, help_text='(required)')
 	business_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Type of Business')
 	business_phone = models.CharField(max_length=256, null=True, blank=True, verbose_name='Phone Number')
 	income = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Yearly Income') # yearly amt
@@ -152,7 +155,7 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 	other_emp_info = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Other Employment Information', help_text='If employed for less than two years or if employed currently in more than one position') # recursive relationship
 	
 	def __str__(self):
-		return self.name + ', ' + self.title + ': $' + str(self.income)
+		return '{}, {}: ${}'.format(self.name, self.title, self.income)
 		
 # I feel as though this model contains comprehensive expense information	\
 # but insufficient income information, may need to add more 'income' fields
@@ -163,7 +166,7 @@ class BusinessInfo(models.Model):
 	rent = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
 	first_mortgage = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='First Mortgage Amount')
 	other_financing = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Financing Amount')
-	other_financing_description = models.TextField(verbose_name='Other Financing Description')
+	other_financing_description = models.TextField(null=True, blank=True, verbose_name='Other Financing Description')
 	hazard_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Hazard Insurance')
 	real_estate_taxes = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Real Estate Taxes')
 	mortgage_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Mortgage Insurance')
@@ -217,7 +220,7 @@ class Vehicle(models.Model):
 	vehicle_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cash or Market Value')
 	
 	def __str__(self):
-		return self.vehicle_make + ' ' + self.vehicle_model + ', $' + str(self.vehicle_amount)
+		return '{}, {} ${}'.format(self.vehicle_make, self.vehicle_model, self.vehicle_amount)
 	
 class AssetSummary(models.Model):
 	holding_deposit = models.CharField(max_length=256, null=True, blank=True, verbose_name='Holding Deposit') # unsure what this field is supposed 	\
