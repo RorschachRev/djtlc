@@ -54,7 +54,7 @@ class Loan_Data(models.Model):
 			default=0
 		)
 	loan_currency = models.CharField(max_length=3, default='USD') #(USD) - default
-	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, default=0, help_text = '(optional)') #NoSQL
+	loan_partner = models.ForeignKey(Partner, related_name='loan_partner', blank=True, null=True, default=1, help_text = '(optional)') #NoSQL
 	
 	def __str__(self):
 		return str(self.contact_person) + ', ' + str(self.loan_address)
