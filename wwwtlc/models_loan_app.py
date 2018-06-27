@@ -422,7 +422,7 @@ class Declaration(models.Model):
 	alimony = models.BooleanField(default=False, verbose_name='Are you obligated to pay alimony?', help_text='g. 1/3') # g. 1/3
 	child_support = models.BooleanField(default=False, verbose_name='Are you obligated to pay child support?', help_text='g. 2/3') # g. 2/3
 	seperate_maintenance = models.BooleanField(default=False, verbose_name='Are you obligated to pay separate maintenance?', help_text='g. 3/3') # g. 3/3
-	borrowed_down_payment = models.BooleanField(default=False, verbose_name='Is any part of teh down payment borrowed?', help_text='h.') # h.
+	borrowed_down_payment = models.BooleanField(default=False, verbose_name='Is any part of the down payment borrowed?', help_text='h.') # h.
 	co_maker_endorser = models.BooleanField(default=False, verbose_name='Are you a co-maker or endorser on a note?', help_text='i.') # i.
 	
 	us_citizen = models.BooleanField(default=False, verbose_name='Are you a U.S. citizen?', help_text='j.') # j.
