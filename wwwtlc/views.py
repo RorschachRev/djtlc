@@ -119,11 +119,15 @@ class TierOneWizard(SessionWizardView):
 			b = self.get_form(step='1', data=b_data).save()
 			c = self.get_form(step='2', data=c_data).save()
 			d = self.get_form(step='3', data=d_data).save()
-			e = self.get_form(step='4', data=e_data).save()
+			e = self.get_form(step='4', data=e_data).save(commit=False)
 			f = self.get_form(step='5', data=f_data).save()
 			g = self.get_form(step='6', data=g_data).save()
 			h = self.get_form(step='7', data=h_data).save()
 			i = self.get_form(step='8', data=i_data).save()
+			
+			# Sets BorrowerInfo.user = currently logged in user
+			e.user = self.request.user
+			e.save()
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 			
@@ -229,11 +233,15 @@ class TierTwoWizard(SessionWizardView):
 			o = self.get_form(step='14', data=o_data).save()
 			p = self.get_form(step='15', data=p_data).save()
 			q = self.get_form(step='16', data=q_data).save()
-			r = self.get_form(step='17', data=r_data).save()
+			r = self.get_form(step='17', data=r_data).save(commit=False)
 			s = self.get_form(step='18', data=s_data).save()
 			t = self.get_form(step='19', data=t_data).save()
 			u = self.get_form(step='20', data=u_data).save()
 			v = self.get_form(step='21', data=v_data).save()
+			
+			# Sets BorrowerInfo.user = currently logged in user
+			r.user = self.request.user
+			r.save()
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 

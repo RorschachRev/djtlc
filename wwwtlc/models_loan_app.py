@@ -555,7 +555,7 @@ class BorrowerInfo (models.Model):
 		(48, 'WI'),
 		(49, 'WY'),
 	)
-		
+	user = models.ForeignKey(User)	
 	application_type = models.IntegerField(
 		choices = APPLICATION_CHOICES,
 		default = 0,
@@ -697,7 +697,16 @@ class LenderInfo(models.Model):
 # model based on existing LoanWorkflow model, the other one has	\
 # been commented out to prevent any kind of duplication error	
 class LoanWorkflow(models.Model):
+	APP_STATUS_CHOICES = (
+		(0, 'In Progress'),
+		(1, 'Submitted for Review'),
+		(2, 'Certified'),
+	)
 	property = models.ForeignKey(PropertyInfo, null=True, blank=True)
+	application_status = models.IntegerField(
+		choices = APP_STATUS_CHOICES,
+		default = 0,
+	)
 	credit_approval = models.BooleanField(default=False, verbose_name='Credit Approval')
 	credit_approval_timestamp = models.DateTimeField(default=timezone.now, verbose_name='Credit Approval Timestamp')
 	data_merge = models.BooleanField(default=False, verbose_name='Data Merge')
@@ -714,6 +723,7 @@ class LoanWorkflow(models.Model):
 	
 # Below is a Loan Summary, all relevant information at a glance should be put here
 class LoanSummary(models.Model):
+	user = models.ForeignKey(User)
 	subject_address = models.ForeignKey(PropertyInfo, verbose_name='Subject Address')
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True, verbose_name='Co-Borrower')
