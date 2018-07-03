@@ -109,8 +109,8 @@ urlpatterns = [
                 PropertyInfoForm, 
                 BorrowerInfoForm, 
                 CreditRequestForm, 
-                DeclarationForm, 
-                TransactionDetailsForm, 
+                #DeclarationForm, # this form causes issues when trying to save every step
+                #TransactionDetailsForm, # this form causes issues when trying to save every step
                 AcknowledgeAgreeForm,
             ] , 
             template_name='pages/tier1_app.html'
@@ -129,19 +129,19 @@ urlpatterns = [
                 BankAccountForm, 
                 BondForm, 
                 StockForm, 
-                VehicleForm, 
-                AssetSummaryForm, 
-                DebtForm, 
-                ManagedPropertyForm, 
+                #VehicleForm, # this form causes issues when trying to save every step
+                #AssetSummaryForm, # this form causes issues when trying to save every step 
+                #DebtForm, # this form causes issues when trying to save every step 
+                #ManagedPropertyForm, # this form causes issues when trying to save every step 
                 AlimonyForm, 
                 ChildSupportForm, 
                 SeparateMaintForm, 
-                LiabilitySummaryForm, 
-                ALSummaryForm, 
-                BorrowerInfoForm, 
-                CreditRequestForm, 
-                DeclarationForm, 
-                TransactionDetailsForm, 
+                #LiabilitySummaryForm, # this form causes issues when trying to save every step 
+                #ALSummaryForm, # this form causes issues when trying to save every step 
+                #BorrowerInfoForm, # this form causes issues when trying to save every step 
+                #CreditRequestForm, # this form causes issues when trying to save every step 
+                #DeclarationForm, # this form causes issues when trying to save every step 
+                #TransactionDetailsForm, # this form causes issues when trying to save every step 
                 AcknowledgeAgreeForm,
             ],
             template_name='pages/tier2_app.html'

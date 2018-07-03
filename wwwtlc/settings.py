@@ -138,7 +138,12 @@ EMAIL_USE_TLS = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 LOGIN_REDIRECT_URL = 'home'
+
+
+# Django Session Settings
+# https://docs.djangoproject.com/en/1.11/topics/http/sessions/#settings
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False

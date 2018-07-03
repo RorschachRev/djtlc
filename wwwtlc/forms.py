@@ -143,7 +143,7 @@ class BorrowerInfoForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
-		exclude = ['user']			
+		fields = '__all__'
 
 class AcknowledgeAgreeForm(forms.ModelForm):
 	step_name = 'Acknowledgement & Agreement:'
