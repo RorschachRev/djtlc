@@ -124,8 +124,6 @@ class TierOneWizard(CookieWizardView):
 			if form.is_valid():
 				print('#### step 6: Valid ####\n')
 				form.save()
-			elif not form.is_valid():
-				print('#### step 6: is the_issue ####\n')
 		if step == '7':
 			if form.is_valid():
 				print('#### step 7: Valid ####\n')

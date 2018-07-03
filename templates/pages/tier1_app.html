@@ -7,8 +7,15 @@
 
 {% block content %}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-<h2>{{ wizard.form.step_name }}</h2>
 <form action="" method="post">{% csrf_token %}
+{% for step in wizard.steps.all %}
+	{% if wizard.steps.current >= step %}
+		<input name="wizard_goto_step" type="submit" value="{{ step}}"/>
+	{% else %}
+		<input disabled type="button" value="{{ step }}"/>
+	{% endif %}
+{% endfor %}
+<h2>{{ wizard.form.step_name }}</h2>
 <table>
 {{ wizard.management_form }}
 {% if wizard.form.forms %}

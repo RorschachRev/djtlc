@@ -1,0 +1,28 @@
+7.3.18 - Alex
+
+Currently, the 'save-every-step' and 'form navigation' features have been implemented, however they do come with significant bugs. Currently the code is in a psuedo-functional state. Everything is just partially completed, thorough testing needs to be done as well as bugfixes. The current issues/brainstormed solutions are below.
+
+The current bugs for the tiered/multi-step forms are:
+	- The navigation buttons submit data to db
+		: Unsure of how to fix this, it seems to be an issue with how the forms are called
+		: The get_form() method is called everytime a 'submit' type button is posted
+		: Using the get_form() method seems to be really bad code, so that may be dropped
+		: altogether, but a substitute is not obvious
+		
+	- When moving to a previous step, it deletes session data for next step, even if submitted
+		: This may be easy to figure out when moving from the get_form() method to call
+		: the forms.
+		: Currently, it seems as though the formtools 'NamedWizardView' should be applied,
+		: that way the instance data can be prepopulated, as well as potentially fixing the 
+		: navigation issues. This method would need a lot of restructuring in the views.py,
+		: urls.py, and templates. Still needs further research
+		
+	- Some forms do not allow done() method to redirect to pages/loan_apply_done.html
+		: This is a confusing problem, there is no obvious answer. Very unsure how to 
+		: approach this one. However, it may become more clear/sort itself out after solving
+		: other issues in this list
+		
+	- The done() method saves form data to db, even though it's already being submitted each step
+		: The potential fixes for this would be to form.save(commit=False) every form in the
+		: form_list, or to ditch the get_form() method altogether, abandoning that method
+		: of saving every step.
