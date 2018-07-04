@@ -27,6 +27,49 @@ from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import AddressForm, PersonForm, LoanDataForm, LoanRequestForm
 
+# below is for testing the NamedUrlSessionsView for the formtools app
+# https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
+tier_one_forms = (
+	(1, BusinessInfoForm),
+	(2, ConstructionInfoForm),
+	(3, RefinanceInfoForm),
+	(4, PropertyInfoForm),
+	(5, BorrowerInfoForm),
+	(6, CreditRequestForm),
+	(7, DeclarationForm),
+	(8, TransactionDetailsForm),
+	(9, AcknowledgeAgreeForm),
+)
+
+tier_two_forms = (
+	(1, BusinessInfoForm),
+	(2, ConstructionInfoForm),
+	(3, RefinanceInfoForm),
+	(4, PropertyInfoForm),
+	(5, EmploymentIncomeForm),
+	(6, BankAccountForm),
+	(7, BondForm),
+	(8, StockForm),
+	(9, VehicleForm),
+	(10, AssetSummaryForm),
+	(11, DebtForm),
+	(12, ManagedPropertyForm),
+	(13, AlimonyForm),
+	(14, ChildSupportForm),
+	(15, SeparateMaintForm),
+	(16, LiabilitySummaryForm),
+	(17, ALSummaryForm),
+	(18, BorrowerInfoForm),
+	(19, CreditRequestForm),
+	(20, DeclarationForm),
+	(21, TransactionDetailsForm),
+	(22, AcknowledgeAgreeForm),
+)
+
+tier_one_wizard = TierOneWizard.as_view(tier_one_forms, url_name='tier_one_step', template_name='pages/tier1_app.html')
+
+tier_two_wizard = TierTwoWizard.as_view(tier_two_forms, url_name='tier_two_step', template_name='pages/tier2_app.html')
+
 urlpatterns = [
     url(
         r'^$', 
@@ -98,55 +141,27 @@ urlpatterns = [
         ), 
         name='loan_apply'
 ), 
-# url for TierOneWizard form
+# urls for TierOneWizard form
     url(
-        r'^tier1_app.html$', 
-        TierOneWizard.as_view(
-            [
-                BusinessInfoForm, 
-                ConstructionInfoForm, 
-                RefinanceInfoForm, 
-                PropertyInfoForm, 
-                BorrowerInfoForm, 
-                CreditRequestForm, 
-                #DeclarationForm, # this form causes issues when trying to save every step
-                #TransactionDetailsForm, # this form causes issues when trying to save every step
-                AcknowledgeAgreeForm,
-            ] , 
-            template_name='pages/tier1_app.html'
-        ), 
-        name='tier1_app'
+        r'^tier_one_app/(?P<step>.+)/$', 
+        tier_one_wizard,
+        name='tier_one_step'
 ),
     url(
-        r'^tier2_app.html$', 
-        TierTwoWizard.as_view(
-            [
-                BusinessInfoForm,
-                ConstructionInfoForm, 
-                RefinanceInfoForm, 
-                PropertyInfoForm, 
-                EmploymentIncomeForm, 
-                BankAccountForm, 
-                BondForm, 
-                StockForm, 
-                #VehicleForm, # this form causes issues when trying to save every step
-                #AssetSummaryForm, # this form causes issues when trying to save every step 
-                #DebtForm, # this form causes issues when trying to save every step 
-                #ManagedPropertyForm, # this form causes issues when trying to save every step 
-                AlimonyForm, 
-                ChildSupportForm, 
-                SeparateMaintForm, 
-                #LiabilitySummaryForm, # this form causes issues when trying to save every step 
-                #ALSummaryForm, # this form causes issues when trying to save every step 
-                #BorrowerInfoForm, # this form causes issues when trying to save every step 
-                #CreditRequestForm, # this form causes issues when trying to save every step 
-                #DeclarationForm, # this form causes issues when trying to save every step 
-                #TransactionDetailsForm, # this form causes issues when trying to save every step 
-                AcknowledgeAgreeForm,
-            ],
-            template_name='pages/tier2_app.html'
-        ),
-        name='tier2_app'
+        r'^tier_one_app/$',
+        tier_one_wizard,
+        name='tier_one_app'
+),
+# url for TierTwoWizard form
+    url(
+        r'^tier_two_app/(?P<step>.+)/$',
+        tier_two_wizard,
+        name='tier_two_step'
+),
+    url(
+        r'^tier_two_app/$',
+        tier_two_wizard,
+        name='tier_two_app'
 ),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

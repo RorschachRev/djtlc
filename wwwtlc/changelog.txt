@@ -1,3 +1,17 @@
+7.4.18 - Alex
+
+So, due to the issues yesterday pointing me at using the NamedUrlWizardView of the formtools app, I decided to implement that feature instead of using the basic formtools WizardView. This is going to allow us to target specific steps via url and manipulate the data or store the session information. Currently, the code is mostly working. It hits the database, and saves all of the form data at the end. The features that will need implemented are as follows:
+	- Free navigation to any form previously completed
+		: Currently, the navigation has a bug that won't allow you to access a form ahead of the
+		: one that you're currently on. An example of this would be if you are currently on form 8
+		: and jump back to form 5, you will not be able to access any form via navigation from
+		: form 6 upwards, it also will delete any data that you entered on those steps.
+		:
+		: The fix for this will probably end up being saving the state of that form in a session,
+		: and then pulling that session information anytime that the form is called, and if the
+		: form has no session data, then just display the empty form
+
+
 7.3.18 - Alex
 
 Currently, the 'save-every-step' and 'form navigation' features have been implemented, however they do come with significant bugs. Currently the code is in a psuedo-functional state. Everything is just partially completed, thorough testing needs to be done as well as bugfixes. The current issues/brainstormed solutions are below.

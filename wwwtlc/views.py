@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from wwwtlc.ethereum import BC
 import decimal as D
 from wwwtlc.forms import *
-from formtools.wizard.views import CookieWizardView #SessionWizardView # commented out to test save-every-step strategy
+from formtools.wizard.views import NamedUrlSessionWizardView # possible solution to multiple bugs
 
 class WalletForm(forms.ModelForm):
 	class Meta:
@@ -89,155 +89,193 @@ def account(request):
 # Updated save-at end formview:
 # https://github.com/RorschachRev/djtlc/commit/ae009f0386159be9732cc75c835d0f6efe9a3991
 '''
-class TierOneWizard(CookieWizardView):
-	def get_form(self, step=None, data=None, files=None):
-		form = super(TierOneWizard, self).get_form(step, data, files)
-	
-		if step is None:
-			step = self.steps.current
-			print('\n#### self.steps.current ####')
-		if step == '0':
-			if form.is_valid():
-				print('#### step 0: Valid ####\n')
-				form.save()
-		if step == '1':
-			if form.is_valid():
-				print('#### step 1: Valid ####\n')
-				form.save()
-		if step == '2':
-			if form.is_valid():
-				print('#### step 2: Valid ####\n')
-				form.save()
-		if step == '3':
-			if form.is_valid():
-				print('#### step 3: Valid ####\n')
-				form.save()
-		if step == '4':
-			if form.is_valid():
-				print('#### step 4: Valid ####\n')
-				form.save()
-		if step == '5':
-			if form.is_valid():
-				print('#### step 5: Valid ####\n')
-				form.save()
-		if step == '6':
-			if form.is_valid():
-				print('#### step 6: Valid ####\n')
-				form.save()
-		if step == '7':
-			if form.is_valid():
-				print('#### step 7: Valid ####\n')
-				form.save()
-		if step == '8':
-			if form.is_valid():
-				print('#### step 8: Valid ####\n')
-				form.save()
+class TierOneWizard(NamedUrlSessionWizardView):
+	def done(self, form_list, **kwargs):
+		# a, 1 = BusinessInfo
+		# b, 2 = ConstructionInfo
+		# c, 3 = RefinanceInfo
+		# d, 4 = PropertyInfo
+		# e, 5 = BorrowerInfo
+		# f, 6= CreditRequest
+		# g, 7 = Declaration
+		# h, 8 = TransactionDetails
+		# i, 9 = AcknowledgeAgree
+		
+		# This block of code retrieves data and binds it to the form fields, then validates each step
+		a_data = self.storage.get_step_data('1')
+		a_valid = self.get_form(step='1', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('2')
+		b_valid = self.get_form(step='2', data=b_data).is_valid()
+		c_data = self.storage.get_step_data('3')
+		c_valid = self.get_form(step='3', data=c_data).is_valid()
+		d_data = self.storage.get_step_data('4')
+		d_valid = self.get_form(step='4', data=d_data).is_valid()
+		e_data = self.storage.get_step_data('5')
+		e_valid = self.get_form(step='5', data=e_data).is_valid()
+		f_data = self.storage.get_step_data('6')
+		f_valid = self.get_form(step='6', data=f_data).is_valid()
+		g_data = self.storage.get_step_data('7')
+		g_valid = self.get_form(step='7', data=g_data).is_valid()
+		h_data = self.storage.get_step_data('8')
+		h_valid = self.get_form(step='8', data=h_data).is_valid()
+		i_data = self.storage.get_step_data('9')
+		i_valid = self.get_form(step='9', data=i_data).is_valid()
+		
+		if (
+			a_valid and b_valid and c_valid
+			and d_valid and e_valid and f_valid
+			and g_valid and h_valid and i_valid
+		):
+			a = self.get_form(step='1', data=a_data).save()
+			b = self.get_form(step='2', data=b_data).save()
+			c = self.get_form(step='3', data=c_data).save()
+			d = self.get_form(step='4', data=d_data).save()
+			e = self.get_form(step='5', data=e_data).save(commit=False)
+			f = self.get_form(step='6', data=f_data).save()
+			g = self.get_form(step='7', data=g_data).save()
+			h = self.get_form(step='8', data=h_data).save()
+			i = self.get_form(step='9', data=i_data).save()
 			
-		return form
+			# Sets BorrowerInfo.user = currently logged in user
+			e.user = self.request.user
+			e.save()
+			
+		return render(self.request, 'pages/loan_apply_done.html')
+		
+class TierTwoWizard(NamedUrlSessionWizardView):
+	form_list = [
+		BusinessInfoForm,
+		ConstructionInfoForm, 
+		RefinanceInfoForm, 
+		PropertyInfoForm, 
+		EmploymentIncomeForm, 
+		BankAccountForm, 
+		BondForm, 
+		StockForm, 
+		VehicleForm, # this form causes issues when trying to save every step
+		AssetSummaryForm, # this form causes issues when trying to save every step 
+		DebtForm, # this form causes issues when trying to save every step 
+		ManagedPropertyForm, # this form causes issues when trying to save every step 
+		AlimonyForm, 
+		ChildSupportForm, 
+		SeparateMaintForm, 
+		LiabilitySummaryForm, # this form causes issues when trying to save every step 
+		ALSummaryForm, # this form causes issues when trying to save every step 
+		BorrowerInfoForm, # this form causes issues when trying to save every step 
+		CreditRequestForm, # this form causes issues when trying to save every step 
+		DeclarationForm, # this form causes issues when trying to save every step 
+		TransactionDetailsForm, # this form causes issues when trying to save every step 
+		AcknowledgeAgreeForm,
+	]
 	
 	def done(self, form_list, **kwargs):
-		return HttpResponseRedirect('loan_apply_done.html')
+		# a, 1 = BusinessInfo
+		# b, 2 = ConstructionInfo
+		# c, 3 = RefinanceInfo
+		# d, 4 = PropertyInfo
+		# e, 5 = EmploymentIncomeInfo
+		# f, 6 = BankAccount
+		# g, 7 = Bond
+		# h, 8 = Stock
+		# i, 9 = Vehicle
+		# j, 10 = Asset Summary
+		# k, 11 = Debt
+		# l, 12 = ManagedProperty
+		# m, 13 = Alimony
+		# n, 14 = ChildSupport
+		# o, 15 = SeperateMaintenance
+		# p, 16 = LiabilitySummary
+		# q, 17 = ALSummary
+		# r, 18 = BorrowerInformation
+		# s, 19 = CreditRequest
+		# t, 20 = Declaration
+		# u, 21 = TransactionDetails
+		# v, 22 = AcknowledgeAgree
 		
-class TierTwoWizard(CookieWizardView):
-	def get_form(self, step=None, data=None, files=None):
-		form = super(TierTwoWizard, self).get_form(step, data, files)
+		# This block of code retrieves data and binds it to the form fields, then validates each step
+		a_data = self.storage.get_step_data('1')
+		a_valid = self.get_form(step='1', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('2')
+		b_valid = self.get_form(step='2', data=b_data).is_valid()
+		c_data = self.storage.get_step_data('3')
+		c_valid = self.get_form(step='3', data=c_data).is_valid()
+		d_data = self.storage.get_step_data('4')
+		d_valid = self.get_form(step='4', data=d_data).is_valid()
+		e_data = self.storage.get_step_data('5')
+		e_valid = self.get_form(step='5', data=e_data).is_valid()
+		f_data = self.storage.get_step_data('6')
+		f_valid = self.get_form(step='6', data=f_data).is_valid()
+		g_data = self.storage.get_step_data('7')
+		g_valid = self.get_form(step='7', data=g_data).is_valid()
+		h_data = self.storage.get_step_data('8')
+		h_valid = self.get_form(step='8', data=h_data).is_valid()
+		i_data = self.storage.get_step_data('9')
+		i_valid = self.get_form(step='9', data=i_data).is_valid()
+		j_data = self.storage.get_step_data('10')
+		j_valid = self.get_form(step='10', data=j_data).is_valid()
+		k_data = self.storage.get_step_data('11')
+		k_valid = self.get_form(step='11', data=k_data).is_valid()
+		l_data = self.storage.get_step_data('12')
+		l_valid = self.get_form(step='12', data=l_data).is_valid()
+		m_data = self.storage.get_step_data('13')
+		m_valid = self.get_form(step='13', data=m_data).is_valid()
+		n_data = self.storage.get_step_data('14')
+		n_valid = self.get_form(step='14', data=n_data).is_valid()
+		o_data = self.storage.get_step_data('15')
+		o_valid = self.get_form(step='15', data=o_data).is_valid()
+		p_data = self.storage.get_step_data('16')
+		p_valid = self.get_form(step='16', data=p_data).is_valid()
+		q_data = self.storage.get_step_data('17')
+		q_valid = self.get_form(step='17', data=q_data).is_valid()
+		r_data = self.storage.get_step_data('18')
+		r_valid = self.get_form(step='18', data=r_data).is_valid()
+		s_data = self.storage.get_step_data('19')
+		s_valid = self.get_form(step='19', data=s_data).is_valid()
+		t_data = self.storage.get_step_data('20')
+		t_valid = self.get_form(step='20', data=t_data).is_valid()
+		u_data = self.storage.get_step_data('21')
+		u_valid = self.get_form(step='21', data=u_data).is_valid()
+		v_data = self.storage.get_step_data('22')
+		v_valid = self.get_form(step='22', data=v_data).is_valid()
 		
-		if step is None:
-			step = self.steps.current
-			print('\n#### self.steps.current ####')
-		if step == '0':
-			if form.is_valid():
-				print('#### step 0: Valid ####\n')
-				form.save()
-		if step == '1':
-			if form.is_valid():
-				print('#### step 1: Valid ####\n')
-				form.save()
-		if step == '2':
-			if form.is_valid():
-				print('#### step 2: Valid ####\n')
-				form.save()
-		if step == '3':
-			if form.is_valid():
-				print('#### step 3: Valid ####\n')
-				form.save()
-		if step == '4':
-			if form.is_valid():
-				print('#### step 4: Valid ####\n')
-				form.save()
-		if step == '5':
-			if form.is_valid():
-				print('#### step 5: Valid ####\n')
-				form.save()
-		if step == '6':
-			if form.is_valid():
-				print('#### step 6: Valid ####\n')
-				form.save()
-		if step == '7':
-			if form.is_valid():
-				print('#### step 7: Valid ####\n')
-				form.save()
-		if step == '8':
-			if form.is_valid():
-				print('#### step 8: Valid ####\n')
-				form.save()
-		if step == '9':
-			if form.is_valid():
-				print('#### step 9: Valid ####\n')
-				form.save()
-		if step == '10':
-			if form.is_valid():
-				print('#### step 10: Valid ####\n')
-				form.save()
-		if step == '11':
-			if form.is_valid():
-				print('#### step 11: Valid ####\n')
-				form.save()
-		if step == '12':
-			if form.is_valid():
-				print('#### step 12: Valid ####\n')
-				form.save()
-		if step == '13':
-			if form.is_valid():
-				print('#### step 13: Valid ####\n')
-				form.save()
-		if step == '14':
-			if form.is_valid():
-				print('#### step 14: Valid ####\n')
-				form.save()
-		if step == '15':
-			if form.is_valid():
-				print('#### step 15: Valid ####\n')
-				form.save()
-		if step == '16':
-			if form.is_valid():
-				print('#### step 16: Valid ####\n')
-				form.save()
-		if step == '17':
-			if form.is_valid():
-				print('#### step 17: Valid ####\n')
-				form.save()
-		if step == '18':
-			if form.is_valid():
-				print('#### step 18: Valid ####\n')
-				form.save()
-		if step == '19':
-			if form.is_valid():
-				print('#### step 19: Valid ####\n')
-				form.save()
-		if step == '20':
-			if form.is_valid():
-				print('#### step 20: Valid ####\n')
-				form.save()
-		if step == '21':
-			if form.is_valid():
-				print('#### step 21: Valid ####\n')
-				form.save()
+		if (
+			a_valid and b_valid and c_valid 
+			and d_valid and e_valid and f_valid
+			and g_valid and h_valid and i_valid
+			and j_valid and k_valid and l_valid
+			and m_valid and n_valid and o_valid
+			and p_valid and q_valid and r_valid
+			and s_valid and t_valid and u_valid
+			and v_valid
+		):
+			a = self.get_form(step='1', data=a_data).save()
+			b = self.get_form(step='2', data=b_data).save()
+			c = self.get_form(step='3', data=c_data).save()
+			d = self.get_form(step='4', data=d_data).save()
+			e = self.get_form(step='5', data=e_data).save()
+			f = self.get_form(step='6', data=f_data).save()
+			g = self.get_form(step='7', data=g_data).save()
+			h = self.get_form(step='8', data=h_data).save()
+			i = self.get_form(step='9', data=i_data).save()
+			j = self.get_form(step='10', data=j_data).save()
+			k = self.get_form(step='11', data=k_data).save()
+			l = self.get_form(step='12', data=l_data).save()
+			m = self.get_form(step='13', data=m_data).save()
+			n = self.get_form(step='14', data=n_data).save()
+			o = self.get_form(step='15', data=o_data).save()
+			p = self.get_form(step='16', data=p_data).save()
+			q = self.get_form(step='17', data=q_data).save()
+			r = self.get_form(step='18', data=r_data).save(commit=False)
+			s = self.get_form(step='19', data=s_data).save()
+			t = self.get_form(step='20', data=t_data).save()
+			u = self.get_form(step='21', data=u_data).save()
+			v = self.get_form(step='22', data=v_data).save()
 			
-		return form
-		
-	def done(self, form_list, **kwargs):
-		return HttpResponseRedirect('loan_apply_done.html')
+			# Sets BorrowerInfo.user = currently logged in user
+			r.user = self.request.user
+			r.save()
+			
+		return render(self.request, 'pages/loan_apply_done.html')
 
 # Below are working views that handle saving form data at end of form process
 # commented out to pursue session/serialize data handling - 7.2.18
