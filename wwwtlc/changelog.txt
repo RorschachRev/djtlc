@@ -1,3 +1,7 @@
+7.4.18 - Alex - second commit
+
+The navigation/form session issue seems resolved. I had to change the way that the form navigation interacted with the forms. Now, however, you can navigate freely through each step and access information that you've already submitted. The only caveat currently is that you must hit the 'submit' button on every step for it to save the session information for that form.
+
 7.4.18 - Alex
 
 So, due to the issues yesterday pointing me at using the NamedUrlWizardView of the formtools app, I decided to implement that feature instead of using the basic formtools WizardView. This is going to allow us to target specific steps via url and manipulate the data or store the session information. Currently, the code is mostly working. It hits the database, and saves all of the form data at the end. The features that will need implemented are as follows:
