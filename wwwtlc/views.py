@@ -143,31 +143,6 @@ class TierOneWizard(NamedUrlSessionWizardView):
 		return render(self.request, 'pages/loan_apply_done.html')
 		
 class TierTwoWizard(NamedUrlSessionWizardView):
-	form_list = [
-		BusinessInfoForm,
-		ConstructionInfoForm, 
-		RefinanceInfoForm, 
-		PropertyInfoForm, 
-		EmploymentIncomeForm, 
-		BankAccountForm, 
-		BondForm, 
-		StockForm, 
-		VehicleForm, # this form causes issues when trying to save every step
-		AssetSummaryForm, # this form causes issues when trying to save every step 
-		DebtForm, # this form causes issues when trying to save every step 
-		ManagedPropertyForm, # this form causes issues when trying to save every step 
-		AlimonyForm, 
-		ChildSupportForm, 
-		SeparateMaintForm, 
-		LiabilitySummaryForm, # this form causes issues when trying to save every step 
-		ALSummaryForm, # this form causes issues when trying to save every step 
-		BorrowerInfoForm, # this form causes issues when trying to save every step 
-		CreditRequestForm, # this form causes issues when trying to save every step 
-		DeclarationForm, # this form causes issues when trying to save every step 
-		TransactionDetailsForm, # this form causes issues when trying to save every step 
-		AcknowledgeAgreeForm,
-	]
-	
 	def done(self, form_list, **kwargs):
 		# a, 1 = BusinessInfo
 		# b, 2 = ConstructionInfo
