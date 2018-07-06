@@ -1,18 +1,32 @@
-"""wwwtlc URL Configuration
+''' 
+Original Dashboard URLs:
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
+    url(
+        r'^dashboard/new_apps/$',
+        views.new_apps,
+        name='new_apps'
+),
+    url(
+        r'^dashboard/in_progress_apps/$',
+        views.in_progress_apps,
+        name='in_progress_apps'
+),
+    url(
+        r'^dashboard/overdue/$',
+        views.overdue,
+        name='overdue'
+),
+    url(
+        r'^dashboard/loans/$',
+        views.dashboard_loans,
+        name='loans'
+),
+    url(
+        r'^dashboard/loans/(?P<pk>.+)/$',
+        views.loan_details,
+        name='loan_details'
+),
+'''
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
@@ -124,34 +138,44 @@ urlpatterns = [
         name='loan_apply_done'
 ),
     url(
-        r'^dashboard/$',
-        views.dashboard,
-        name='dashboard'
+        r'^merge_requests/$',
+        views.merge_requests,
+        name='merge_requests'
 ),
     url(
-        r'^dashboard/new_apps/$',
-        views.new_apps,
-        name='new_apps'
+        r'^workflow/$',
+        views.workflow,
+        name='workflow'
 ),
     url(
-        r'^dashboard/in_progress_apps/$',
-        views.in_progress_apps,
-        name='in_progress_apps'
+        r'^credit_verify/$',
+        views.credit_verify,
+        name='credit_verify'
 ),
     url(
-        r'^dashboard/overdue/$',
-        views.overdue,
-        name='overdue'
+        r'^package_loan/$',
+        views.package_loan,
+        name='package_loan'
 ),
     url(
-        r'^dashboard/loans/$',
-        views.dashboard_loans,
-        name='loans'
+        r'^manage_loan/$',
+        views.manage_loan,
+        name='manage_loan'
 ),
     url(
-        r'^dashboard/loans/(?P<pk>.+)/$',
-        views.loan_details,
-        name='loan_details'
+        r'^loan_payments/$',
+        views.loan_payments,
+        name='loan_payments'
+),
+    url(
+        r'^payment_history/$',
+        views.payment_history,
+        name='payment_history'
+),
+    url(
+        r'^loan_accounting/$',
+        views.loan_accounting,
+        name='loan_accounting'
 ),
     url(
         r'^admin/', 

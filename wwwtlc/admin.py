@@ -38,5 +38,6 @@ admin.site.register(ALSummary)
 # Loan Officer
 admin.site.register(LenderInfo)
 admin.site.register(LoanTerms)
-admin.site.register(LoanWorkflow)
+#admin.site.register(LoanWorkflow)
+admin.site.register(ApplicationSummary)
 admin.site.register(LoanSummary)

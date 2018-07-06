@@ -79,11 +79,36 @@ def account(request):
 		form = PersonForm()
 	return render(request, 'pages/account.html', {'form': form})
 	
-# Views for Loan Officer Dashboard
+# Views for Loan Officer Dashboard - currently just template rendering, no data handling
 def dashboard(request):
 	return render(request, 'dashboard/dashboard.html', {})
 	
-def new_apps(request):
+def merge_requests(request):
+	return render(request, 'dashboard/merge_request.html', {})
+	
+def workflow(request):
+	return render(request, 'dashboard/workflow.html', {})
+	
+def credit_verify(request):
+	return render(request, 'dashboard/credit_verify.html', {})
+	
+def package_loan(request):
+	return render(request, 'dashboard/package_loan.html', {})
+	
+def manage_loan(request):
+	return render(request, 'dashboard/manage_loan.html', {})
+	
+def loan_payments(request):
+	return render(request, 'dashboard/loan_payments.html', {})
+	
+def payment_history(request):
+	return render(request, 'dashboard/payment_history.html', {})
+	
+def loan_accounting(request):
+	return render(request, 'dashboard/loan_accounting.html', {})
+	
+# Original Dashboard Views - Deprecated
+'''def new_apps(request):
 	return render(request, 'dashboard/new_apps.html', {})
 	
 def in_progress_apps(request):
@@ -98,7 +123,7 @@ def dashboard_loans(request):
 def loan_details(request):
 	# this is where we query models to pull up information to plug into the template
 	# use pay() above as an example for this snippet
-	return render(request, 'dashboard/loan_details.html', {})
+	return render(request, 'dashboard/loan_details.html', {})'''
 	
 # BELOW IS NEW MODEL FORM INTEGRATION
 

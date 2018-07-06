@@ -5,55 +5,15 @@ from django.utils import timezone
 from .models import Address
 from django.contrib.auth.models import User
 
-#*************************************************************************************************************************************
-# v1.5 - Current																						\
-#																									\
-#of models from Commercial_loan_app2_transcript.txt															\
-# Will need extensive modifying - possibly within the djtlc/loan/models.py file as well									\
-# To be used in addition with models.loan_app.py (seperated for pdf referencing purposes)								\
-# 																									\
-# v1.1																								\
-# In it's current state there are a lot of foreign key calls for information that may need filled out multiple times,				\
-# may want to change this if there is a better way to handle that hierarchy											\
-# 																									\
-# v1.2																								\
-# The process of merging over the other models_loan_app.py models has begun, so there is a lot of refactoring				\
-# to take care of. Most things will still need to be renamed and modified/moved around.								\
-#																									\
-# v1.3																								\
-# Most models from the models_loan_app.py file have been moved over, and integrated									\
-# There is a small (2) exception to this though, where I don't know where the models are goint to fit in						\
-# Also, this is at the point where I need Ian to look through it so that we can discuss what stays and what					\
-# goes																								\
-#																									\
-# v1.4																								\
-# Changed a lot of models, renamed a few, moved some around. General revisioning. Created Loan Workflow model, as well		\
-# as a TransactionDetails model that will need to be looked over, some fields might need removed, some might get to stay.		\
-# 																									\
-# Also, this version, I modified the wwwtlc/admin.py, wwwtlc/views.py, wwwtlc/urls.py, and the templates/pages/tier1_app.html	\
-# && tier2_app.html to match the changes that I made in the models. The views and templates should correctly display each	\
-# tiered application correctly with headings attached to them so that the user can know what section of the form they are on.	\
-# Because the forms aren't in their final form (ha), many of the models necessitated null=True, blank=True (Especially all of the	\
-# FK's) but when I start implementing the FormWizard form for these applications, this won't be necissary, as I will just tie all	\
-# of the FK's in the view, like I did for the old loan application													\
-#																									\
-# In these models, you will also want to put -> , help_text='(required)'      anywhere that the field doesn't have				\
-#																		null=True, blank=True			\
-#																									\
-# It's super tedious, and annoying, I know, but when you go to fill out the form, it will help you out a lot by being				\
-# able to see which fields are required and to enter only those if you're testing whether or not the thing hits the db			\
-# Along those same lines, if the Tier 2 application actually fills out the database, then the Tier 1 probably won't need tested	\
-# as the view has the same syntax, and all of the Tier 1 ModelForms are included in the Tier 2 ModelForms					\
-#																									\
-# Any issues should be rather small, and confined within the models.py file as comments. There was some light confusion on	\
-# some of the models, but for the most part, it is pretty much to the point that it needs to be at. Of course there will be some	\
-# minor modifications, mostly to max_length properties of CharField fields, and some CHOICES fields, but all are minor, and can	\
-# be fixed easily. The forms still need quite a bit of work, but in this generation, they should be presentable. No work has begun	\
-# on customizing DjangoAdmin.																			\
-#																									\
-# v1.5																								\
-# Added Verbose Names																					\
-#*************************************************************************************************************************************
+#********************************************************************************************
+# TODO'S:
+#____________________________________________________________________________________________
+#
+#	- Read through all comments and handle each question/design concern
+#	- Trim down any unecessary/redundant fields
+#	- delete all commented code that can't fit into the new schema
+#	
+#********************************************************************************************
 # commented out for now, causes conflicts with original models, but those files will eventually be removed, in which case this block will be uncommented and the import will be removed
 '''class Address(models.Model):
 	street1=models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
@@ -641,28 +601,6 @@ class AcknowledgeAgree(models.Model):
 		else:
 			return 'Borrower: ' + str(self.borrower)
 
-class CreditRequest(models.Model):
-	CREDIT_REQUEST_CHOICES = (
-		(0, 'Applicant Only'),
-		(1, 'Joint with Co-Applicant(s)'),
-	)
-	borrower = models.ForeignKey(BorrowerInfo, null=True, blank=True)
-	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Amount Requested', help_text='(required)')
-	term_requested = models.CharField(max_length=256, verbose_name='Term Requested', help_text='(required)') # unsure of what this is going to be
-	loan_type = models.CharField(max_length=256, verbose_name='Loan Type', help_text='(required)') # will probably turn into a CHOICES field later
-	market_survey = models.CharField(max_length=256, null=True, blank=True, verbose_name='Market Survey') # unsure of what this is going to be
-	request_purpose = models.TextField(null=True, blank=True, verbose_name='Purpose of Request')
-	app_no = models.IntegerField(verbose_name='Application Number', help_text='(required)')
-	credit_request = models.IntegerField(
-		choices = CREDIT_REQUEST_CHOICES,
-		default = 0,
-		verbose_name = 'Credit Request'
-	)
-	submission_date = models.DateField(default=timezone.now, verbose_name='Date of Submission')
-	
-	def __str__(self):
-		return str(self.borrower) + ', $' + str(self.amt_requested) + ', ' + str(self.submission_date)
-	
 class LenderInfo(models.Model):
 	DECISION_CHOICES = (
 		(0, 'Approved'),
@@ -694,45 +632,72 @@ class LenderInfo(models.Model):
 	def __str__(self):
 		return str(self.app_number) + ' | Decision: ' + str(self.DECISION_CHOICES[self.decision]) + ', ' + str(self.decision_date)
 	
-# model based on existing LoanWorkflow model, the other one has	\
-# been commented out to prevent any kind of duplication error	
-class LoanWorkflow(models.Model):
-	APP_STATUS_CHOICES = (
-		(0, 'In Progress'),
-		(1, 'Submitted for Review'),
-		(2, 'Certified'),
+class ApplicationSummary(models.Model):
+	STATUS_CHOICES = (
+		(0, 'New'),
+		(1, 'Requires Additional Information'),
+		(2, 'Awaiting External Response'),
+		(3, 'Resubmitted'),
+		(4, 'Denied'),
+		(5, 'Approved, Awaiting Certification'),
+		(6, 'Escrow Filed'),
+		(7, 'Escrow Completed'),
+		(8, 'Title Filed'),
+		(9, 'Title Completed'),
+		(10, 'County Filed'),
+		(11, 'County Completed'),
+		(12, 'Certified'),
+		(13, 'IPFS Published'),
+		(14, 'Declared on Blockchain'),
 	)
-	property = models.ForeignKey(PropertyInfo, null=True, blank=True)
-	application_status = models.IntegerField(
-		choices = APP_STATUS_CHOICES,
+	user = models.ForeignKey(User)
+	property = models.ForeignKey(PropertyInfo)
+	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
+	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower')
+	acknowledge = models.ForeignKey(AcknowledgeAgree)
+	status = models.IntegerField(
+		choices = STATUS_CHOICES,
 		default = 0,
 	)
-	credit_approval = models.BooleanField(default=False, verbose_name='Credit Approval')
-	credit_approval_timestamp = models.DateTimeField(default=timezone.now, verbose_name='Credit Approval Timestamp')
-	data_merge = models.BooleanField(default=False, verbose_name='Data Merge')
-	data_merge_officer = models.ForeignKey(User, limit_choices_to={'is_staff__exact':True}, verbose_name='Data Merge Officer')
-	data_merge_timestamp = models.DateTimeField(default=timezone.now, verbose_name='Data Merge Timestamp')
-	transaction_details = models.ForeignKey(TransactionDetails, null=True, blank=True, verbose_name='Transaction Details')
-	agreement = models.BooleanField(default=False)
-	borrower = models.ForeignKey(BorrowerInfo, related_name='w_borrower')
-	coborrower = models.ForeignKey(BorrowerInfo, related_name='w_coborrower', null=True, blank=True, verbose_name='Co-Borrower')
-	agreement_timestamp = models.DateTimeField(default=timezone.now, verbose_name='Agreement Timestamp')
+	submission_date = models.DateTimeField(default=timezone.now)
+	resubmission_date = models.DateTimeField(null=True, blank=True)
+	approval_date = models.DateTimeField(null=True, blank=True)
+	certification_date = models.DateTimeField(null=True, blank=True)
+	blockchain_declared_date = models.DateTimeField(null=True, blank=True)
 	
 	def __str__(self):
-		return 'Property: ' + str(self.property) + ' | Agreement: ' + str(self.agreement) + ', ' + str(self.agreement_timestamp)
+		return str(self.id) + ', submitted: ' + str(self.submission_date)
 	
 # Below is a Loan Summary, all relevant information at a glance should be put here
 class LoanSummary(models.Model):
-	user = models.ForeignKey(User)
-	subject_address = models.ForeignKey(PropertyInfo, verbose_name='Subject Address')
-	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
-	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True, verbose_name='Co-Borrower')
+	application = models.ForeignKey(ApplicationSummary, verbose_name='Application Summary')
 	lender_info = models.ForeignKey(LenderInfo, verbose_name='Lender Information')
 	loan_terms = models.ForeignKey(LoanTerms, verbose_name='Loan Terms')
 	
 	def __str__(self):
 		return str(self.loan_terms)
+		
+class CreditRequest(models.Model):
+	CREDIT_REQUEST_CHOICES = (
+		(0, 'Applicant Only'),
+		(1, 'Joint with Co-Applicant(s)'),
+	)
+	borrower = models.ForeignKey(BorrowerInfo, null=True, blank=True)
+	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Amount Requested', help_text='(required)')
+	term_requested = models.CharField(max_length=256, verbose_name='Term Requested', help_text='(required)') # unsure of what this is going to be
+	loan_type = models.CharField(max_length=256, verbose_name='Loan Type', help_text='(required)') # will probably turn into a CHOICES field later
+	market_survey = models.CharField(max_length=256, null=True, blank=True, verbose_name='Market Survey') # unsure of what this is going to be
+	request_purpose = models.TextField(null=True, blank=True, verbose_name='Purpose of Request')
+	application = models.ForeignKey(ApplicationSummary)
+	credit_request = models.IntegerField(
+		choices = CREDIT_REQUEST_CHOICES,
+		default = 0,
+		verbose_name = 'Credit Request'
+	)
+	submission_date = models.DateField(default=timezone.now, verbose_name='Date of Submission')
 	
+	def __str__(self):
+		return str(self.borrower) + ', $' + str(self.amt_requested) + ', ' + str(self.submission_date)
 	
 # Will probably end up removing this model for now, as it is something that 
 # can't be useful until like 3 years from now when TLC has repeat customers
