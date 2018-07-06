@@ -124,6 +124,11 @@ urlpatterns = [
         name='loan_apply_done'
 ),
     url(
+        r'^dashboard/$',
+        views.dashboard,
+        name='dashboard'
+),
+    url(
         r'^admin/', 
         admin.site.urls
 ),

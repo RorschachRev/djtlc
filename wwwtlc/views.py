@@ -74,6 +74,10 @@ def account(request):
 		form = PersonForm()
 	return render(request, 'pages/account.html', {'form': form})
 	
+# View for Loan Officer Dashboard
+def dashboard(request):
+	return render(request, 'dashboard/dashboard.html', {})
+	
 # BELOW IS NEW MODEL FORM INTEGRATION
 
 # Django FormWizard view for Tier 1
