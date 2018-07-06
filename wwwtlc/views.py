@@ -80,9 +80,6 @@ def account(request):
 	return render(request, 'pages/account.html', {'form': form})
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
-def dashboard(request):
-	return render(request, 'dashboard/dashboard.html', {})
-	
 def merge_requests(request):
 	return render(request, 'dashboard/merge_request.html', {})
 	
