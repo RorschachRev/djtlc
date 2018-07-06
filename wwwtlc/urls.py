@@ -87,7 +87,7 @@ tier_two_wizard = TierTwoWizard.as_view(tier_two_forms, url_name='tier_two_step'
 urlpatterns = [
     url(
         r'^$', 
-        TemplateView.as_view(template_name = 'pages/home.html'), 
+        views.home, 
         name='home'
 ),
     url(

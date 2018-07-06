@@ -32,7 +32,11 @@ def payhistory(request):
 	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata })
 
 def home(request):
-	return render(request, 'pages/home.html')
+	user = request.user
+	if user.is_staff:
+		return render(request, 'dashboard/home.html', {})
+	else:
+		return render(request, 'pages/home.html')
 	
 def loan(request):
 	loan_iterable = Loan.objects.all().filter(user=request.user)
