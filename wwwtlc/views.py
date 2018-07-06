@@ -79,9 +79,26 @@ def account(request):
 		form = PersonForm()
 	return render(request, 'pages/account.html', {'form': form})
 	
-# View for Loan Officer Dashboard
+# Views for Loan Officer Dashboard
 def dashboard(request):
 	return render(request, 'dashboard/dashboard.html', {})
+	
+def new_apps(request):
+	return render(request, 'dashboard/new_apps.html', {})
+	
+def in_progress_apps(request):
+	return render(request, 'dashboard/in_progress_apps.html', {})
+	
+def overdue(request):
+	return render(request, 'dashboard/overdue.html', {})
+	
+def dashboard_loans(request):
+	return render(request, 'dashboard/loans.html', {})
+	
+def loan_details(request):
+	# this is where we query models to pull up information to plug into the template
+	# use pay() above as an example for this snippet
+	return render(request, 'dashboard/loan_details.html', {})
 	
 # BELOW IS NEW MODEL FORM INTEGRATION
 

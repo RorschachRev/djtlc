@@ -129,6 +129,31 @@ urlpatterns = [
         name='dashboard'
 ),
     url(
+        r'^dashboard/new_apps/$',
+        views.new_apps,
+        name='new_apps'
+),
+    url(
+        r'^dashboard/in_progress_apps/$',
+        views.in_progress_apps,
+        name='in_progress_apps'
+),
+    url(
+        r'^dashboard/overdue/$',
+        views.overdue,
+        name='overdue'
+),
+    url(
+        r'^dashboard/loans/$',
+        views.dashboard_loans,
+        name='loans'
+),
+    url(
+        r'^dashboard/loans/(?P<pk>.+)/$',
+        views.loan_details,
+        name='loan_details'
+),
+    url(
         r'^admin/', 
         admin.site.urls
 ),

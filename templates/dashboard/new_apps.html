@@ -1,0 +1,31 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<a href='..' class='btn btn-default'>Back</a>
+
+<table>
+	<caption>New Loan Applications</caption>
+	<tr>
+		<th>User</th>
+		<th>Date Submitted<th>
+	</tr>
+	{% if new_apps %}
+		{% for app in new_apps %}
+		<tr>
+			<td>{{ app.user }}</td>
+			<td>{{ app.date_submitted }}</td>
+			<td><a href='#' class='btn btn-default'>View Details</a></td>
+		</tr>
+		{% endfor %}
+	{% else %}
+		<tr>
+			<td>TEST ROW</td>
+		</tr>
+		<tr>
+			<td>app.user</td>
+			<td>app.date_submitted</td>
+			<td><a href='#' class='btn btn-default'>View Details</a></td>
+		</tr>
+	{% endif %}
+		
+{% endblock content %}
