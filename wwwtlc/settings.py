@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import moneyed
+from . import local_settings
 from moneyed.localization import _FORMATTER
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -147,3 +148,8 @@ LOGIN_REDIRECT_URL = 'home'
 # https://docs.djangoproject.com/en/1.11/topics/http/sessions/#settings
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
