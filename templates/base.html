@@ -45,9 +45,17 @@
                     {{ form.as_p }}
                     <button type="submit">Login</button>
                 </form>
+	    {% elif request.get_full_path == "/signup/" %}
+	        <h2>Signup</h2>
+		<form method="post">
+		    {% csrf_token %}
+		    {{ form.as_p }}
+		    <button type="submit">Signup</button>
+		</form>
             {% else %}
             <p> This application is only available to registered users. </p>
-            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'login' %}">Login</a><br>
+	    <a href="{% url 'signup' %}">Signup</a>
             {% endif %}
             {% endif %}
         </div>

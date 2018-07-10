@@ -27,16 +27,16 @@ Original Dashboard URLs:
         name='loan_details'
 ),
 '''
-from django.conf import settings
 from django.conf.urls import url
+from django.conf import settings
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
-from django.conf.urls.static import static
 from wwwtlc import views
+from wwwtlc.forms import *
 from wwwtlc import views_form
 from wwwtlc.views import TierOneWizard, TierTwoWizard
-from wwwtlc.forms import *
 from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import AddressForm, PersonForm, LoanDataForm, LoanRequestForm
@@ -89,6 +89,11 @@ urlpatterns = [
         r'^$', 
         views.home, 
         name='home'
+),
+    url(
+        r'^signup/$',
+        views.signup, 
+        name='signup'
 ),
     url(
         r'^login/$', 

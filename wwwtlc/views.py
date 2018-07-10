@@ -1,7 +1,9 @@
 from django import forms
-from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
 
@@ -82,6 +84,20 @@ def account(request):
 	except:
 		form = PersonForm()
 	return render(request, 'pages/account.html', {'form': form})
+	
+def signup(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			username = form.cleaned_data.get('username')
+			raw_password = form.cleaned_data.get('password1')
+			user = authenticate(username=username, password=raw_password)
+			login(request, user)
+			return redirect('home')
+	else:
+		form = UserCreationForm()
+	return render(request, 'base.html', {'form': form})
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
 def merge_requests(request):
