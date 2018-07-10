@@ -6,7 +6,7 @@
 {% block title %}TLC: Manage Loans{% endblock %}
 
 {% block content %}
-	<h2>List of Loans</h2>
+	<h2>List of Loans:</h2>
 	<div>Active Wallet: (from JS) </div>
 	<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
 	<table>
@@ -22,6 +22,27 @@
 			<td>{% money_localize loan.loan_wallet.address|get_loan_bal 'USD' %}</td>
 			<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
 			<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
+		</tr>
+		{% endfor %}
+	</table>
+	
+	<br>
+	<br>
+	<h2>Loans Applied For:</h2>
+	<table>
+		<tr>
+			<th>Property</th>
+			<th>Borrower</th>
+			<th>Status</th>
+			<th>Date Submitted</th>
+		</tr>
+		<tr>
+		{% for app in applied_loans %}
+		<tr>
+			<td>{{ app.property.address }}</td>
+			<td>{{ app.borrower.borrower_fname }}</td>
+			<td>{{ app.status }}</td>
+			<td>{{ app.submission_date }}</td>
 		</tr>
 		{% endfor %}
 	</table>

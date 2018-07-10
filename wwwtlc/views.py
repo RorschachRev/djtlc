@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
+from .models_loan_app import ApplicationSummary
 
 from wwwtlc.models import Person, Wallet
 from wwwtlc.ethereum import BC
@@ -43,7 +44,8 @@ def home(request):
 def loan(request):
 	loan_iterable = Loan.objects.all().filter(user=request.user)
 	blockdata=BC()
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata})
+	applied_loans = ApplicationSummary.objects.all().filter(user=request.user)
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans})
 	
 def wallet(request):
 	if request.method == 'POST':
@@ -159,6 +161,8 @@ def loan_details(request):
 '''
 class TierOneWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
+		aps = ApplicationSummary
+		
 		# a, 1 = BusinessInfo
 		# b, 2 = ConstructionInfo
 		# c, 3 = RefinanceInfo
@@ -208,6 +212,17 @@ class TierOneWizard(NamedUrlSessionWizardView):
 			e.user = self.request.user
 			e.save()
 			
+			# Populates and saves the ApplicationSummary table
+			app_sum = aps(
+				user = self.request.user,
+				property = d,
+				borrower = e, 
+				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
+				acknowledge = i,
+			)
+			
+			app_sum.save()
+			
 			# Sends email when data is submitted to DB
 			send_mail(
 				'A new loan has been submitted', # subject line - will change to add more info
@@ -220,6 +235,8 @@ class TierOneWizard(NamedUrlSessionWizardView):
 		
 class TierTwoWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
+		aps = ApplicationSummary
+		
 		# a, 1 = BusinessInfo
 		# b, 2 = ConstructionInfo
 		# c, 3 = RefinanceInfo
@@ -325,6 +342,17 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 			# Sets BorrowerInfo.user = currently logged in user
 			r.user = self.request.user
 			r.save()
+			
+			# Populates and saves the ApplicationSummary table
+			app_sum = aps(
+				user = self.request.user,
+				property = d,
+				borrower = r, 
+				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
+				acknowledge = v,
+			)
+			
+			app_sum.save()
 			
 			# Sends email when data is submitted to DB
 			send_mail(

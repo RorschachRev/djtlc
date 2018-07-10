@@ -653,7 +653,7 @@ class ApplicationSummary(models.Model):
 	user = models.ForeignKey(User)
 	property = models.ForeignKey(PropertyInfo)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
-	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower')
+	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)
 	acknowledge = models.ForeignKey(AcknowledgeAgree)
 	status = models.IntegerField(
 		choices = STATUS_CHOICES,
@@ -688,7 +688,7 @@ class CreditRequest(models.Model):
 	loan_type = models.CharField(max_length=256, verbose_name='Loan Type', help_text='(required)') # will probably turn into a CHOICES field later
 	market_survey = models.CharField(max_length=256, null=True, blank=True, verbose_name='Market Survey') # unsure of what this is going to be
 	request_purpose = models.TextField(null=True, blank=True, verbose_name='Purpose of Request')
-	application = models.ForeignKey(ApplicationSummary)
+	application = models.ForeignKey(ApplicationSummary, null=True, blank=True)
 	credit_request = models.IntegerField(
 		choices = CREDIT_REQUEST_CHOICES,
 		default = 0,
