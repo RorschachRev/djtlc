@@ -41,7 +41,7 @@
 		<tr>
 			<td>{{ app.property.address }}</td>
 			<td>{{ app.borrower.borrower_fname }}</td>
-			<td>{{ app.status }}</td>
+			<td>{{ app.get_status_display }}</td>
 			<td>{{ app.submission_date }}</td>
 		</tr>
 		{% endfor %}

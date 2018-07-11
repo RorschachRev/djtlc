@@ -1,0 +1,24 @@
+{% extends '../base.html' %}
+
+{% block content %}
+	<h2>Loan Applications:</h2>
+	<table>
+		<tr>
+			<th>User</th>
+			<th>Property</th>
+			<th>Borrower</th>
+			<th>Status</th>
+			<th>Date Submitted</th>
+		</tr>
+		<tr>
+		{% for request in requests %}
+		<tr>
+			<td>{{ request.user.username }}</td>
+			<td>{{ request.property.address }}</td>
+			<td>{{ request.borrower.borrower_fname }}</td>
+			<td>{{ request.get_status_display }}</td>
+			<td>{{ request.submission_date }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+{% endblock content %}

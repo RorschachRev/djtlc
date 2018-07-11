@@ -102,8 +102,9 @@ def signup(request):
 	return render(request, 'base.html', {'form': form})
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
-def merge_requests(request):
-	return render(request, 'dashboard/merge_request.html', {})
+def manage_requests(request):
+	loan_requests = ApplicationSummary.objects.all().order_by('submission_date')
+	return render(request, 'dashboard/manage_request.html', {'requests': loan_requests})
 	
 def workflow(request):
 	return render(request, 'dashboard/workflow.html', {})
@@ -163,15 +164,16 @@ class TierOneWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
-		# a, 1 = BusinessInfo
-		# b, 2 = ConstructionInfo
-		# c, 3 = RefinanceInfo
-		# d, 4 = PropertyInfo
-		# e, 5 = BorrowerInfo
-		# f, 6= CreditRequest
-		# g, 7 = Declaration
-		# h, 8 = TransactionDetails
-		# i, 9 = AcknowledgeAgree
+		# a, 1 = Address
+		# b, 2 = BusinessInfo
+		# c, 3 = ConstructionInfo
+		# d, 4 = RefinanceInfo
+		# e, 5 = PropertyInfo
+		# f, 6 = BorrowerInfo
+		# g, 7 = CreditRequest
+		# h, 8 = Declaration
+		# i, 9 = TransactionDetails
+		# j, 10 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -192,36 +194,61 @@ class TierOneWizard(NamedUrlSessionWizardView):
 		h_valid = self.get_form(step='8', data=h_data).is_valid()
 		i_data = self.storage.get_step_data('9')
 		i_valid = self.get_form(step='9', data=i_data).is_valid()
+		j_data = self.storage.get_step_data('10')
+		j_valid = self.get_form(step='10', data=j_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid
 			and d_valid and e_valid and f_valid
 			and g_valid and h_valid and i_valid
+			and j_valid
 		):
 			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
 			d = self.get_form(step='4', data=d_data).save()
 			e = self.get_form(step='5', data=e_data).save(commit=False)
-			f = self.get_form(step='6', data=f_data).save()
-			g = self.get_form(step='7', data=g_data).save()
+			f = self.get_form(step='6', data=f_data).save(commit=False)
+			g = self.get_form(step='7', data=g_data).save(commit=False)
 			h = self.get_form(step='8', data=h_data).save()
 			i = self.get_form(step='9', data=i_data).save()
+			j = self.get_form(step='10', data=j_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
 			
-			# Sets BorrowerInfo.user = currently logged in user
-			e.user = self.request.user
+			# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
+			e.address = a
+			e.construction_loan = c
+			e.refinance_loan = d
 			e.save()
+			
+			# Sets User, BusinessInfo, and Declarations to BorrowerInfo
+			f.user = self.request.user
+			f.business = b
+			f.declarations = h
+			f.save()
 			
 			# Populates and saves the ApplicationSummary table
 			app_sum = aps(
 				user = self.request.user,
-				property = d,
-				borrower = e, 
+				property = e,
+				borrower = f, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
-				acknowledge = i,
+				acknowledge = j,
 			)
 			
 			app_sum.save()
+			
+			# Sets Borrower and Application to CreditRequest
+			g.borrower = f
+			g.application = app_sum
+			g.save()
+			
+			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
+			# currently unsure of how to separate the two, however. Will need more work
+			'''
+			j.borrower = f
+			j.coborrower = f
+			j.save()
+			'''
 			
 			# Sends email when data is submitted to DB
 			send_mail(
@@ -237,28 +264,29 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
-		# a, 1 = BusinessInfo
-		# b, 2 = ConstructionInfo
-		# c, 3 = RefinanceInfo
-		# d, 4 = PropertyInfo
-		# e, 5 = EmploymentIncomeInfo
-		# f, 6 = BankAccount
-		# g, 7 = Bond
-		# h, 8 = Stock
-		# i, 9 = Vehicle
-		# j, 10 = Asset Summary
-		# k, 11 = Debt
-		# l, 12 = ManagedProperty
-		# m, 13 = Alimony
-		# n, 14 = ChildSupport
-		# o, 15 = SeperateMaintenance
-		# p, 16 = LiabilitySummary
-		# q, 17 = ALSummary
-		# r, 18 = BorrowerInformation
-		# s, 19 = CreditRequest
-		# t, 20 = Declaration
-		# u, 21 = TransactionDetails
-		# v, 22 = AcknowledgeAgree
+		# a, 1 = Address
+		# b, 2 = BusinessInfo
+		# c, 3 = ConstructionInfo
+		# d, 4 = RefinanceInfo
+		# e, 5 = PropertyInfo
+		# f, 6 = EmploymentIncomeInfo
+		# g, 7 = BankAccount
+		# h, 8 = Bond
+		# i, 9 = Stock
+		# j, 10 = Vehicle
+		# k, 11 = Asset Summary
+		# l, 12 = Debt
+		# m, 13 = ManagedProperty
+		# n, 14 = Alimony
+		# o, 15 = ChildSupport
+		# p, 16 = SeperateMaintenance
+		# q, 17 = LiabilitySummary
+		# r, 18 = ALSummary
+		# s, 19 = BorrowerInformation
+		# t, 20 = CreditRequest
+		# u, 21 = Declaration
+		# v, 22 = TransactionDetails
+		# w, 23 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -305,6 +333,8 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 		u_valid = self.get_form(step='21', data=u_data).is_valid()
 		v_data = self.storage.get_step_data('22')
 		v_valid = self.get_form(step='22', data=v_data).is_valid()
+		w_data = self.storage.get_step_data('23')
+		w_valid = self.get_form(step='23', data=w_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid 
@@ -314,45 +344,93 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 			and m_valid and n_valid and o_valid
 			and p_valid and q_valid and r_valid
 			and s_valid and t_valid and u_valid
-			and v_valid
+			and v_valid and w_valid
 		):
 			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
 			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save()
+			e = self.get_form(step='5', data=e_data).save(commit=False)
 			f = self.get_form(step='6', data=f_data).save()
 			g = self.get_form(step='7', data=g_data).save()
 			h = self.get_form(step='8', data=h_data).save()
 			i = self.get_form(step='9', data=i_data).save()
 			j = self.get_form(step='10', data=j_data).save()
-			k = self.get_form(step='11', data=k_data).save()
+			k = self.get_form(step='11', data=k_data).save(commit=False)
 			l = self.get_form(step='12', data=l_data).save()
 			m = self.get_form(step='13', data=m_data).save()
 			n = self.get_form(step='14', data=n_data).save()
 			o = self.get_form(step='15', data=o_data).save()
 			p = self.get_form(step='16', data=p_data).save()
-			q = self.get_form(step='17', data=q_data).save()
+			q = self.get_form(step='17', data=q_data).save(commit=False)
 			r = self.get_form(step='18', data=r_data).save(commit=False)
-			s = self.get_form(step='19', data=s_data).save()
-			t = self.get_form(step='20', data=t_data).save()
+			s = self.get_form(step='19', data=s_data).save(commit=False)
+			t = self.get_form(step='20', data=t_data).save(commit=False)
 			u = self.get_form(step='21', data=u_data).save()
 			v = self.get_form(step='22', data=v_data).save()
+			w = self.get_form(step='23', data=w_data).save()
 			
-			# Sets BorrowerInfo.user = currently logged in user
-			r.user = self.request.user
+			# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
+			e.address = a
+			e.construction_loan = c
+			e.refinance_loan = d
+			e.save()
+			
+			# Sets Account1, Stock1, Bond1, Vehicle1, and EmploymentIncome to AssetSummary
+			# will eventually look into how to get the form to submit multiple entries for
+			# Accounts, Stocks, Bonds, and Vehicles (as well as EmploymentIncome *possibly*)
+			# This will need edited later
+			k.acct1 = g
+			k.stock1 = i
+			k.bond1 = h
+			k.vehicle1 = j
+			k.employment_income = f
+			k.save()
+			
+			# Sets Debt1, Alimony1, ChildSupport1, and SeparateMaint1 to LiabilitySummary
+			# will eventually look into how to get the form to submit multiple entries for
+			# Debt, Alimony, ChildSupport, and SeparateMaint
+			# This will need edited later
+			q.debt1 = l
+			q.alimony1 = n
+			q.child_supp1 = o
+			q.separate_maint1 = p
+			q.save()
+			
+			# Sets AssetSummary and LiabilitySummary to ALSummary
+			r.assets = k
+			r.liabilities = q
 			r.save()
+			
+			# Sets User, BusinessInfo, and Declarations to BorrowerInfo
+			s.user = self.request.user
+			s.business = b
+			s.declarations = u
+			s.save()
 			
 			# Populates and saves the ApplicationSummary table
 			app_sum = aps(
 				user = self.request.user,
-				property = d,
-				borrower = r, 
+				property = e,
+				borrower = s, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
-				acknowledge = v,
+				acknowledge = w,
 			)
 			
 			app_sum.save()
+			
+			# Sets Borrower and Application to CreditRequest
+			t.borrower = s
+			t.application = app_sum
+			t.save()
+			
+			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
+			# currently unsure of how to separate the two, however. Will need more work
+			'''
+			w.borrower = f
+			w.coborrower = f
+			w.save()
+			'''
 			
 			# Sends email when data is submitted to DB
 			send_mail(

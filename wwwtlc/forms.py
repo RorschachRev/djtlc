@@ -1,5 +1,5 @@
 from django import forms
-from wwwtlc.models import Person, Wallet
+from wwwtlc.models import Person, Wallet, Address
 from wwwtlc.models_loan_app import *
 
 class WalletForm(forms.ModelForm):
@@ -11,6 +11,12 @@ class WalletForm(forms.ModelForm):
 	class Meta:
 		model = Account
 		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language', 'address']'''
+		
+class AddressForm(forms.ModelForm):
+	step_name = 'Property Address:'
+	class Meta:
+		model = Address
+		fields = '__all__'
 		
 # Below are forms for the new models - correlates to models_loan_app.py
 
@@ -36,7 +42,7 @@ class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfo
-		fields = '__all__'	
+		exclude = ['address', 'construction_loan', 'refinance_loan']
 
 class EmploymentIncomeForm(forms.ModelForm):
 	step_name = 'Employment Income Information:'
@@ -83,7 +89,7 @@ class AssetSummaryForm(forms.ModelForm):
 	step_name = 'Asset Summary:'
 	class Meta:
 		model = AssetSummary
-		fields = '__all__'
+		fields = ['life_insur_net', 'face_amount', 'subtotal_liquid', 'vested_interest', 'net_worth', 'other_description', 'other_amt_total', 'assets_total']
 
 class DebtForm(forms.ModelForm):
 	step_name = 'Debt(s):'
@@ -119,13 +125,13 @@ class LiabilitySummaryForm(forms.ModelForm):
 	step_name = 'Liability Summary:'
 	class Meta:
 		model = LiabilitySummary
-		fields = '__all__'
+		fields = ['job_related_expenses', 'total_monthly_payments', 'liabilities_total']
 
 class ALSummaryForm(forms.ModelForm):
 	step_name = 'Asset & Liability Information:'
 	class Meta:
 		model = ALSummary
-		fields = '__all__'		
+		exclude = ['assets', 'liabilities']
 
 class TransactionDetailsForm(forms.ModelForm):
 	step_name = 'Transaction Details:'
@@ -143,7 +149,7 @@ class BorrowerInfoForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
-		fields = '__all__'
+		exclude = ['user', 'business', 'assets_liabilities', 'declarations']
 
 class AcknowledgeAgreeForm(forms.ModelForm):
 	step_name = 'Acknowledgement & Agreement:'
@@ -155,4 +161,4 @@ class CreditRequestForm(forms.ModelForm):
 	step_name = 'Credit Request:'
 	class Meta:
 		model = CreditRequest
-		fields = '__all__'
+		exclude = ['borrower', 'application']

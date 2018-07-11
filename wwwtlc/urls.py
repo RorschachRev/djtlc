@@ -39,45 +39,47 @@ from wwwtlc import views_form
 from wwwtlc.views import TierOneWizard, TierTwoWizard
 from loan import views as views_loan
 from loan.views import LoanApplyWizard
-from loan.forms import AddressForm, PersonForm, LoanDataForm, LoanRequestForm
+from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 
 # below is for testing the NamedUrlSessionsView for the formtools app
 # https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
 tier_one_forms = (
-	(1, BusinessInfoForm),
-	(2, ConstructionInfoForm),
-	(3, RefinanceInfoForm),
-	(4, PropertyInfoForm),
-	(5, BorrowerInfoForm),
-	(6, CreditRequestForm),
-	(7, DeclarationForm),
-	(8, TransactionDetailsForm),
-	(9, AcknowledgeAgreeForm),
+	(1, AddressForm),
+	(2, BusinessInfoForm),
+	(3, ConstructionInfoForm),
+	(4, RefinanceInfoForm),
+	(5, PropertyInfoForm),
+	(6, BorrowerInfoForm),
+	(7, CreditRequestForm),
+	(8, DeclarationForm),
+	(9, TransactionDetailsForm),
+	(10, AcknowledgeAgreeForm),
 )
 
 tier_two_forms = (
-	(1, BusinessInfoForm),
-	(2, ConstructionInfoForm),
-	(3, RefinanceInfoForm),
-	(4, PropertyInfoForm),
-	(5, EmploymentIncomeForm),
-	(6, BankAccountForm),
-	(7, BondForm),
-	(8, StockForm),
-	(9, VehicleForm),
-	(10, AssetSummaryForm),
-	(11, DebtForm),
-	(12, ManagedPropertyForm),
-	(13, AlimonyForm),
-	(14, ChildSupportForm),
-	(15, SeparateMaintForm),
-	(16, LiabilitySummaryForm),
-	(17, ALSummaryForm),
-	(18, BorrowerInfoForm),
-	(19, CreditRequestForm),
-	(20, DeclarationForm),
-	(21, TransactionDetailsForm),
-	(22, AcknowledgeAgreeForm),
+	(1, AddressForm),
+	(2, BusinessInfoForm),
+	(3, ConstructionInfoForm),
+	(4, RefinanceInfoForm),
+	(5, PropertyInfoForm),
+	(6, EmploymentIncomeForm),
+	(7, BankAccountForm),
+	(8, BondForm),
+	(9, StockForm),
+	(10, VehicleForm),
+	(11, AssetSummaryForm),
+	(12, DebtForm),
+	(13, ManagedPropertyForm),
+	(14, AlimonyForm),
+	(15, ChildSupportForm),
+	(16, SeparateMaintForm),
+	(17, LiabilitySummaryForm),
+	(18, ALSummaryForm),
+	(19, BorrowerInfoForm),
+	(20, CreditRequestForm),
+	(21, DeclarationForm),
+	(22, TransactionDetailsForm),
+	(23, AcknowledgeAgreeForm),
 )
 
 tier_one_wizard = TierOneWizard.as_view(tier_one_forms, url_name='tier_one_step', template_name='pages/tier1_app.html')
@@ -143,9 +145,9 @@ urlpatterns = [
         name='loan_apply_done'
 ),
     url(
-        r'^merge_requests/$',
-        views.merge_requests,
-        name='merge_requests'
+        r'^manage_requests/$',
+        views.manage_requests,
+        name='manage_requests'
 ),
     url(
         r'^workflow/$',
