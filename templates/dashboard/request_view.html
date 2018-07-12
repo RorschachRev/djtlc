@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}TLC: Manage Loans{% endblock %}
+
+{% block content %}
+	<a href="/manage_requests" class="btn btn-default">Back</a>
+	<h2>{{ app.property.address }}, {{ app.user }} : {{ app.get_status_display }}</h2>
+	<h3> ({{ app.submission_date }})</h3>
+	<br>
+	<br>
+	<h2>Property Information</h2>
+	<p><strong>Address:</strong> {{ app.property.address }}</p>
+	<p><strong>Number of Units:</strong> {{ app.property.no_units }}</p>
+	<p><strong>Legal Description:</strong> {{ app.property.legal_description }}</p>
+	<p><strong>Year Built:</strong> {{ app.property.year_built }}</p>
+	<p><strong>Construction Loan:</strong> {{ app.property.construction_loan }}</p>
+	<p><strong>Refinance Loan:</strong> {{ app.property.refinance_loan }}</p>
+	<p><strong>Title Names:</strong> {{ app.property.title_names }}</p>
+	
+	<br>
+	<br>
+	<h2>Business Information</h2>
+	<p><strong>Business Name:</strong> {{ app.borrower.business.bus_name }}</p>
+	<p><strong>Business Description:</strong> {{ app.borrower.business.bus_description }}</p>
+	<p><strong>Base Employee Income:</strong> ${{ app.borrower.business.base_emp_income }}</p>
+	<p><strong>Rent:</strong> ${{ app.borrower.business.rent }}</p>
+	<p><strong>First Mortgage:</strong> ${{ app.borrower.business.first_mortgage }}</p>
+	<p><strong>Other Financing:</strong> ${{ app.borrower.business.other_financing }}</p>
+	<p><strong>Other Financing Description:</strong> {{ app.borrower.business.other_financing_description }}</p>
+	<p><strong>Hazard Insurance:</strong> ${{ app.borrower.business.hazard_insur }}</p>
+	<p><strong>Real Estate Taxes:</strong> ${{ app.borrower.business.real_estate_taxes }}</p>
+	<p><strong>Mortgage Insurance:</strong> ${{ app.borrower.business.mortgage_insur }}</p>
+	<p><strong>Overtime:</strong> ${{ app.borrower.business.overtime }}</p>
+	<p><strong>Bonuses:</strong> ${{ app.borrower.business.bonuses }}</p>
+	<p><strong>Commissions:</strong> ${{ app.borrower.business.commissions }}</p>
+	<p><strong>Dividends:</strong> ${{ app.borrower.business.dividends }}</p>
+	<p><strong>Interest:</strong> ${{ app.borrower.business.interest }}</p>
+	<p><strong>Net Rental Income:</strong> ${{ app.borrower.business.net_rental }}</p>
+	<p><strong>Income Other Total:</strong> ${{ app.borrower.business.income_other }}</p>
+	<p><strong>Income Other Description:</strong> {{ app.borrower.business.income_other_description }}</p>
+	<p><strong>Income Total:</strong> ${{ app.borrower.business.income_total }}</p>
+	<p><strong>Expense Other Total:</strong> ${{ app.borrower.business.expense_other_total }}</p>
+	<p><strong>Expense Other Description:</strong> {{ app.borrower.business.expense_other_description }}</p>
+	<p><strong>Expense Total</strong> ${{ app.borrower.business.expense_total }}</p>
+	<p><strong>Net Revenue</strong> ${{ app.borrower.business.net_revenue }}</p>
+	
+	<br>
+	<br>
+	<h2>Borrower Information</h2>
+	<p><strong>Application Type:</strong> {{ app.borrower.get_application_type_display }}</p>
+	<p><strong>First Name:</strong> {{ app.borrower.borrower_fname }}</p>
+	<p><strong>Last Name:</strong> {{ app.borrower.borrower_lname }}</p>
+	<p><strong>Applicant Type:</strong> {{ app.borrower.get_applicant_type_display }}</p>
+	<p><strong>Filing Type:</strong> {{ app.borrower.get_filing_type_display }}</p>
+	<p><strong>Assumed Business Name(s):</strong> {{ app.borrower.assumed_business_names }}</p>
+	<p><strong>DBA Name:</strong> {{ app.borrower.dba_name }}</p>
+	<p><strong>Borrower Type:</strong> {{ app.borrower.get_borrower_type_display }}</p>
+	<p><strong>Title:</strong> {{ app.borrower.title }}</p>
+	<p><strong>Authorization:</strong> {{ app.borrower.authorized }}</p>
+	<p><strong>Social Security Number:</strong> {{ app.borrower.ssn }}</p>
+	<p><strong>TIN Number:</strong> {{ app.borrower.tin_no }}</p>
+	<p><strong>Phone Number:</strong> {{ app.borrower.home_phone }}</p>
+	<p><strong>Date of Birth:</strong> {{ app.borrower.dob }}</p>
+	<p><strong>Years of Schooling Completed:</strong> {{ app.borrower.yrs_school }}</p>
+	<p><strong>Marital Status:</strong> {{ app.borrower.get_marital_status_display }}</p>
+	<p><strong>Number of Dependents:</strong> {{ app.borrower.dependents }}</p>
+	<p><strong>Present Address:</strong> {{ app.borrower.present_addr }}</p>
+	<p><strong>Rent/Own:</strong> {{ app.borrower.get_own_rent_display }}</p>
+	<p><strong>Years at Address:</strong> {{ app.borrower.living_yrs }}</p>
+	<p><strong>Mailing Address:</strong> {{ app.borrower.mail_addr }}</p>
+	<p><strong>Pricipal Office Address:</strong> {{ app.borrower.principal_office_addr }}</p>
+	<p><strong>Organization's State:</strong> {{ app.borrower.get_organizations_state_display }}</p>
+	<p><strong>Former Address:</strong> {{ app.borrower.former_addr }}</p>
+	<p><strong>Rent/Own:</strong> {{ app.borrower.get_former_own_rent_display }}</p>
+	<p><strong>Years at Address:</strong> {{ app.borrower.former_yrs_lived }}</p>
+	<p><strong>Assets & Liabilities Summary:</strong> {{ app.borrower.assets_liabilities }}</p>
+	<p><strong>Declarations:</strong> {{ app.borrower.declarations }}</p>
+{% endblock %}

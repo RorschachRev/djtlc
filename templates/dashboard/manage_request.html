@@ -15,9 +15,10 @@
 		<tr>
 			<td>{{ request.user.username }}</td>
 			<td>{{ request.property.address }}</td>
-			<td>{{ request.borrower.borrower_fname }}</td>
+			<td>{{ request.borrower.borrower_lname }}, {{ request.borrower.borrower_fname }}</td>
 			<td>{{ request.get_status_display }}</td>
 			<td>{{ request.submission_date }}</td>
+			<td><a href="{{ request.id }}" class="btn btn-default">View Details</a></td>
 		</tr>
 		{% endfor %}
 	</table>

@@ -150,6 +150,11 @@ urlpatterns = [
         name='manage_requests'
 ),
     url(
+        r'^manage_requests/(?P<app_id>[0-9]+)$',
+        views.request_view,
+        name='manage_requests'
+),
+    url(
         r'^workflow/$',
         views.workflow,
         name='workflow'

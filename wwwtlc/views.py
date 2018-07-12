@@ -103,8 +103,12 @@ def signup(request):
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
 def manage_requests(request):
-	loan_requests = ApplicationSummary.objects.all().order_by('submission_date')
+	loan_requests = ApplicationSummary.objects.all().order_by('-submission_date')
 	return render(request, 'dashboard/manage_request.html', {'requests': loan_requests})
+	
+def request_view(request, app_id):
+	loan_request = ApplicationSummary.objects.get(pk=app_id)
+	return render(request, 'dashboard/request_view.html', {'app': loan_request})
 	
 def workflow(request):
 	return render(request, 'dashboard/workflow.html', {})
