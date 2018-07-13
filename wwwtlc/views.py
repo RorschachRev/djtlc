@@ -46,7 +46,7 @@ def loan(request):
 	blockdata=BC()
 	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
 	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
-	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user)
+	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user).order_by('-workflow_status', '-loan_request_date')
 	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
 	
 def wallet(request):
@@ -105,8 +105,8 @@ def signup(request):
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
 def loan_requests(request):
-	active_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
-	sleep_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
+	active_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
+	sleep_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
 	priority_requests = Loan_Request.objects.filter(workflow_status=4).order_by('-loan_request_date')
 	if request.method == 'GET':
 		sleep_vis = request.GET.get('sleep_vis')

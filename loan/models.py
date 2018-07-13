@@ -50,8 +50,8 @@ class Loan_Data(models.Model):
 		
 class Loan_Request(models.Model):
 	WORKFLOW_CHOICES = (
-		(0, 'Active'),
-		(1, 'Sleep'),
+		(0, 'Sleep'),
+		(1, 'Active'),
 		(2, 'Tier 1'),
 		(3, 'Tier 2'),
 		(4, 'Priority'),
@@ -64,7 +64,7 @@ class Loan_Request(models.Model):
 	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")
 	loan_request_date = models.DateTimeField(default=timezone.now) #creates timestamp upon entry, and allows for edits
 	workflow_status = models.IntegerField(
-		default = 0,
+		default = 1,
 		choices = WORKFLOW_CHOICES,
 	)
 	
