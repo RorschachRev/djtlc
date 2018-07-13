@@ -149,7 +149,7 @@ def workflow_request(request, app_id):
 				form = ChangeReqForm(request.POST, instance=app)
 				if form.is_valid():
 					form.save()
-					return HttpResponseRedirect('/loan_requests')
+					return HttpResponseRedirect('/workflow')
 			else:
 				form = ChangeReqForm(instance=app)
 				return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
