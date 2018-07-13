@@ -2,7 +2,11 @@
 
 {% block content %}
 	<h2>Loan Requests:</h2>
-	<a href="">View Slept Requests</a>
+	{% if sleep_vis == True%}
+		<a href="/loan_requests/?sleep_vis=0">Hide Slept Requests</a>
+	{% else %}
+		<a href="/loan_requests/?sleep_vis=1">View Slept Requests</a>
+	{% endif %}
 	<br>
 	<br>
 	<h3><u>Priority Requests:</u></h3>
@@ -72,37 +76,38 @@
 		<p>There are no active requests</p>
 	{% endif %}
 	
-	
-	<h3><u>Slept Requests:</u></h3>
-	{% if sleep %}
-		<table>
-			<tr>
-				<th>User</th>
-				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
-				<th>Contact Person</th>
-				<th>Phone Number</th>
-				<th>Email Address</th>
-				<th>Request Date</th>
-				<th>Workflow Status</th>
-			</tr>
-			<tr>
-			{% for app in sleep %}
-			<tr>
-				<td>{{ app.user.username }}</td>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Change</a></td>
-			</tr>
-			{% endfor %}
-		</table>
-	{% else %}
-		<p>There are no slept requests</p>
+	{% if sleep_vis %}
+		<h3><u>Slept Requests:</u></h3>
+		{% if sleep %}
+			<table>
+				<tr>
+					<th>User</th>
+					<th>Address of Property</th>
+					<th>Borrower</th>
+					<th>Amount Requested</th>
+					<th>Contact Person</th>
+					<th>Phone Number</th>
+					<th>Email Address</th>
+					<th>Request Date</th>
+					<th>Workflow Status</th>
+				</tr>
+				<tr>
+				{% for app in sleep %}
+				<tr>
+					<td>{{ app.user.username }}</td>
+					<td>{{ app.request_data.loan_address }}</td>
+					<td>{{ app.borrower_requested }}</td>
+					<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+					<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+					<td>{{ app.request_data.contact_person.phone }}</td>
+					<td>{{ app.request_data.contact_person.email_address }}</td>
+					<td>{{ app.loan_request_date }}</td>
+					<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Change</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+		{% else %}
+			<p>There are no slept requests</p>
+		{% endif %}
 	{% endif %}
 {% endblock content %}

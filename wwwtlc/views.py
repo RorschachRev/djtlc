@@ -106,7 +106,16 @@ def loan_requests(request):
 	active_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
 	sleep_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
 	priority_requests = Loan_Request.objects.filter(workflow_status=4).order_by('-loan_request_date')
-	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests})
+	
+	if request.method == 'GET':
+		sleep_vis = request.GET.get('sleep_vis')
+		if sleep_vis == '0':
+			sleep_vis = False
+		elif sleep_vis == '1':
+			sleep_vis = True
+	
+	print(str(sleep_vis))
+	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests, 'sleep_vis': sleep_vis})
 	
 def workflow(request):
 	tier1 = ApplicationSummary.objects.filter(is_tier1=True)
