@@ -1,5 +1,48 @@
-{% extends '../base.html' %}
-
-{% block content %}
-
-{% endblock content %}
+ {% extends '../base.html' %}
+ 
+ {% block content %}
+ 	<h2>Tier 1 Applications:</h2>
+ 	<table>
+ 		<tr>
+ 			<th>User</th>
+ 			<th>Property</th>
+ 			<th>Borrower</th>
+ 			<th>Status</th>
+ 			<th>Date Submitted</th>
+ 		</tr>
+ 		<tr>
+ 		{% for app in tier1 %}
+ 		<tr>
+ 			<td>{{ app.user.username }}</td>
+ 			<td>{{ app.property.address }}</td>
+			<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+ 			<td>{{ app.get_status_display }}</td>
+ 			<td>{{ app.submission_date }}</td>
+			<td><a href="{{ app.id }}" class="btn btn-default">View Details</a></td>
+ 		</tr>
+ 		{% endfor %}
+ 	</table>
+	<br>
+	<br>
+	<h2>Tier 2 Applications:</h2>
+ 	<table>
+ 		<tr>
+ 			<th>User</th>
+ 			<th>Property</th>
+ 			<th>Borrower</th>
+ 			<th>Status</th>
+ 			<th>Date Submitted</th>
+ 		</tr>
+ 		<tr>
+ 		{% for app in tier2 %}
+ 		<tr>
+ 			<td>{{ app.user.username }}</td>
+ 			<td>{{ app.property.address }}</td>
+			<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+ 			<td>{{ app.get_status_display }}</td>
+ 			<td>{{ app.submission_date }}</td>
+			<td><a href="{{ app.id }}" class="btn btn-default">View Details</a></td>
+ 		</tr>
+ 		{% endfor %}
+ 	</table>
+ {% endblock content %}

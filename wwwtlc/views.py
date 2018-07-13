@@ -13,7 +13,7 @@ from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
 
 from loan.models import Loan, Loan_Data, Loan_Request
-from loan.forms import PersonEditForm, PersonForm, OfficerLoanRequestForm
+from loan.forms import PersonEditForm, PersonForm, ChangeWfForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
@@ -103,30 +103,30 @@ def signup(request):
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
 def loan_requests(request):
-	loan_requests = Loan_Request.objects.all().order_by('-loan_request_date')
+	active_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
+	sleep_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
+	priority_requests = Loan_Request.objects.filter(workflow_status=4).order_by('-loan_request_date')
+	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests})
+	
+def workflow(request):
+	tier1 = ApplicationSummary.objects.filter(is_tier1=True)
+	tier2 = ApplicationSummary.objects.filter(is_tier2=True)
+	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2})
+	
+def change_wfstatus(request, app_id):
+	app = Loan_Request.objects.get(pk=app_id)
 	
 	try:
 		if request.method == 'POST':
-			loanid=0
-			print(dir(request.POST.update))
-			print('###' + str(request.POST))
-			for key in request.POST:
-				if key.startswith('loan_'):
-					loanid=int(key[5:])	
-			app = Loan_Request.objects.get(user=loanid)
-			
-			form = OfficerLoanRequestForm(request.POST, instance=app)
+			form = ChangeWfForm(request.POST, instance=app)
 			if form.is_valid():
 				form.save()
-			
-		app = Loan_Request.objects.all()	
-		form = OfficerLoanRequestForm(instance=app)
+				return HttpResponseRedirect('/loan_requests')
+		else:
+			form = ChangeWfForm(instance=app)
 	except:
-		form = OfficerLoanRequestForm()
-	return render(request, 'dashboard/loan_request.html', {'requests': loan_requests, 'form': form})
-	
-def workflow(request):
-	return render(request, 'dashboard/workflow.html', {})
+		form = ChangeWfForm()
+	return render(request, 'dashboard/change_wfstatus.html', {'app': app, 'form': form})
 	
 def workflow_detail(request, app_id):
 	loan_request = ApplicationSummary.objects.get(pk=app_id)
@@ -256,6 +256,7 @@ class TierOneWizard(NamedUrlSessionWizardView):
 				borrower = f, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = j,
+				is_tier1 = True,
 			)
 			
 			app_sum.save()
@@ -438,6 +439,8 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 				borrower = s, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = w,
+				is_tier1 = False,
+				is_tier2 = True,
 			)
 			
 			app_sum.save()

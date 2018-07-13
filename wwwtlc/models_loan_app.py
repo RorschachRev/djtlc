@@ -659,6 +659,8 @@ class ApplicationSummary(models.Model):
 		choices = STATUS_CHOICES,
 		default = 0,
 	)
+	is_tier1 = models.BooleanField(default=False)
+	is_tier2 = models.BooleanField(default=False)
 	submission_date = models.DateTimeField(default=timezone.now)
 	resubmission_date = models.DateTimeField(null=True, blank=True)
 	approval_date = models.DateTimeField(null=True, blank=True)

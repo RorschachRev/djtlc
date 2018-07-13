@@ -17,7 +17,7 @@ class LoanRequestForm(forms.ModelForm):
 		model = Loan_Request
 		fields = ['borrower_requested', 'loan_request_amt', 'loan_payment_request', 'loan_intrate_request', 'loan_request_date']
 		
-class OfficerLoanRequestForm(forms.ModelForm):
+class ChangeWfForm(forms.ModelForm):
 	class Meta:
 		model = Loan_Request
 		fields = ['workflow_status']
