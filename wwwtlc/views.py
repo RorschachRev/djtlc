@@ -12,8 +12,8 @@ from wwwtlc.models import Person, Wallet
 from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
 
-from loan.models import Loan, Loan_Data
-from loan.forms import PersonEditForm, PersonForm
+from loan.models import Loan, Loan_Data, Loan_Request
+from loan.forms import PersonEditForm, PersonForm, OfficerLoanRequestForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
@@ -44,7 +44,7 @@ def home(request):
 def loan(request):
 	loan_iterable = Loan.objects.all().filter(user=request.user)
 	blockdata=BC()
-	applied_loans = ApplicationSummary.objects.all().filter(user=request.user)
+	applied_loans = Loan_Request.objects.all().filter(user=request.user)
 	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans})
 	
 def wallet(request):
@@ -102,16 +102,35 @@ def signup(request):
 	return render(request, 'base.html', {'form': form})
 	
 # Views for Loan Officer Dashboard - currently just template rendering, no data handling
-def manage_requests(request):
-	loan_requests = ApplicationSummary.objects.all().order_by('-submission_date')
-	return render(request, 'dashboard/manage_request.html', {'requests': loan_requests})
+def loan_requests(request):
+	loan_requests = Loan_Request.objects.all().order_by('-loan_request_date')
 	
-def request_view(request, app_id):
-	loan_request = ApplicationSummary.objects.get(pk=app_id)
-	return render(request, 'dashboard/request_view.html', {'app': loan_request})
+	try:
+		if request.method == 'POST':
+			loanid=0
+			print(dir(request.POST.update))
+			print('###' + str(request.POST))
+			for key in request.POST:
+				if key.startswith('loan_'):
+					loanid=int(key[5:])	
+			app = Loan_Request.objects.get(user=loanid)
+			
+			form = OfficerLoanRequestForm(request.POST, instance=app)
+			if form.is_valid():
+				form.save()
+			
+		app = Loan_Request.objects.all()	
+		form = OfficerLoanRequestForm(instance=app)
+	except:
+		form = OfficerLoanRequestForm()
+	return render(request, 'dashboard/loan_request.html', {'requests': loan_requests, 'form': form})
 	
 def workflow(request):
 	return render(request, 'dashboard/workflow.html', {})
+	
+def workflow_detail(request, app_id):
+	loan_request = ApplicationSummary.objects.get(pk=app_id)
+	return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})
 	
 def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})

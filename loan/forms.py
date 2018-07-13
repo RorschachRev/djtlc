@@ -17,6 +17,14 @@ class LoanRequestForm(forms.ModelForm):
 		model = Loan_Request
 		fields = ['borrower_requested', 'loan_request_amt', 'loan_payment_request', 'loan_intrate_request', 'loan_request_date']
 		
+class OfficerLoanRequestForm(forms.ModelForm):
+	class Meta:
+		model = Loan_Request
+		fields = ['workflow_status']
+		labels = {
+			'workflow_status': '',
+		}
+		
 class AddressForm(forms.ModelForm):
 	class Meta:
 		model = Address
@@ -25,7 +33,7 @@ class AddressForm(forms.ModelForm):
 class PersonForm(forms.ModelForm):
 	class Meta:
 		model = Person
-		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language']
+		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'email_address', 'taxid', 'language']
 
 class PersonEditForm(forms.ModelForm):
 	class Meta:

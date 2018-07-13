@@ -1,0 +1,39 @@
+{% extends '../base.html' %}
+
+{% block content %}
+	<h2>Loan Requests:</h2>
+	<table>
+		<tr>
+			<th>User</th>
+			<th>Address of Property</th>
+			<th>Borrower</th>
+			<th>Amount Requested</th>
+			<th>Contact Person</th>
+			<th>Phone Number</th>
+			<th>Email Address</th>
+			<th>Request Date</th>
+			<th>Workflow Status</th>
+		</tr>
+		<tr>
+		{% for app_request in requests %}
+		<tr>
+			<td>{{ app_request.user.username }}</td>
+			<td>{{ app_request.request_data.loan_address }}</td>
+			<td>{{ app_request.borrower_requested }}</td>
+			<td>${{ app_request.loan_request_amt | floatformat:2 }}</td>
+			<td>{{ app_request.request_data.contact_person.name_first }}, {{ app_request.request_data.contact_person.name_last }}</td>
+			<td>{{ app_request.request_data.contact_person.phone }}</td>
+			<td>{{ app_request.request_data.contact_person.email_address }}</td>
+			<td>{{ app_request.loan_request_date }}</td>
+			<td>
+				<form id="{{ app_request }}" action="" method="post">
+					{% csrf_token %}
+					{{ form.as_p }}
+					<input type="hidden" id="loan_userid" value="{{ app_request.user.id }}" />
+					<input type="submit" name="loan_{{ app_request.user.id }}" value="Update" />
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+{% endblock content %}

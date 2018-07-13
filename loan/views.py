@@ -23,7 +23,7 @@ class LoanApplyWizard(SessionWizardView):
 		
 		# This block of code sets the foreign keys of each table to the entries entered in the previous form step, if the data is valid
 		if a_valid and b_valid and c_valid:
-			a = self.get_form(step='0', data=a_data).save()
+			a = self.get_form(step='0', data=a_data).save(commit=False)
 			b = self.get_form(step='1', data=b_data).save(commit=False)
 			c = self.get_form(step='2', data=c_data).save()
 			d = self.get_form(step='3', data=d_data).save(commit=False)
@@ -35,6 +35,10 @@ class LoanApplyWizard(SessionWizardView):
 			b.contact_person = d
 			b.save()
 			
+			a.user = self.request.user
+			a.request_data = b
+			a.save()
+			
 			# sends email when data is submitted and validated
 			send_mail(
 				str(b) + ' (loan request)', # subject line - returns LoanData __str__ method
@@ -44,10 +48,10 @@ class LoanApplyWizard(SessionWizardView):
 				'\n\nLoan_Requests (' + str(a) + '),'
 				'\nLoan_Data (' + str(b) + '),' 
 				'\nAddress (' + str(c) + '),'
-				'\nPerson (' + str(d) + ', the contact person)', 
+				'\nContact Person (' + str(d) + ')', 
 				
-				'example@email.address', # 'from' email address
-				['loanofficer@email.address'] # recipient email address
+				'no_reply@tlc.com', # 'from' email address
+				['loanofficer@tlc.com'] # recipient email address
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': d.name_first + ' ' + d.name_last} )

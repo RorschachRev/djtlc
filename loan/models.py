@@ -5,30 +5,12 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class Loan_Request(models.Model):
-	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money")
-	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount")
-	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment")
-	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")
-	loan_request_date = models.DateField(default=timezone.now) #creates timestamp upon entry, and allows for edits
-	
-	def __str__(self):
-		return self.borrower_requested + ', ' + str(self.loan_request_date)
-	
-
 class Loan_Data(models.Model):
-	loan_address = models.ForeignKey(Address, help_text="The address of the property needing financed")
-	contracts = models.ForeignKey(Contract, blank=True, null=True, help_text="(optional)")
-	contact_person = models.ForeignKey(Person, related_name='contact_person', help_text="The facilitator for loan processing")
 	LOAN_STATUS_CHOICES = (
 			(0, 'active'),
 			(1, 'suspended'),
 			(2, 'foreclosure'),
 			(3, 'closed'),
-		)
-	loan_status = models.IntegerField(
-			choices=LOAN_STATUS_CHOICES,
-			default=0
 		)
 	BORROWER_TYPE_CHOICES = (
 			(0, 'Individual'),
@@ -40,14 +22,21 @@ class Loan_Data(models.Model):
 			(6, 'Investment Group'),
 			(7, 'Other'),
 		)
-	borrower_type = models.IntegerField(
-			choices=BORROWER_TYPE_CHOICES,
-			default=0
-		)
 	LOAN_TYPE_CHOICES = (
 			(0, 'FIXED'),
 			(1, 'ARM'),
 			#(2, 'TYPE_SHARIAH'),
+		)
+	loan_address = models.ForeignKey(Address, help_text="The address of the property needing financed")
+	contracts = models.ForeignKey(Contract, blank=True, null=True, help_text="(optional)")
+	contact_person = models.ForeignKey(Person, related_name='contact_person', help_text="The facilitator for loan processing")
+	loan_status = models.IntegerField(
+			choices=LOAN_STATUS_CHOICES,
+			default=0
+		)
+	borrower_type = models.IntegerField(
+			choices=BORROWER_TYPE_CHOICES,
+			default=0
 		)
 	loan_type = models.IntegerField(
 			choices=LOAN_TYPE_CHOICES,
@@ -58,6 +47,29 @@ class Loan_Data(models.Model):
 	
 	def __str__(self):
 		return str(self.contact_person) + ', ' + str(self.loan_address)
+		
+class Loan_Request(models.Model):
+	WORKFLOW_CHOICES = (
+		(0, 'Active'),
+		(1, 'Sleep'),
+		(2, 'Tier 1'),
+		(3, 'Tier 2'),
+		(4, 'Priority'),
+	)
+	user = models.ForeignKey(User)
+	request_data = models.ForeignKey(Loan_Data)
+	borrower_requested = models.CharField(max_length=60, verbose_name="Borrower", help_text="At time of loan request, the person/entity trying to borrow the money")
+	loan_request_amt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name="Desired loan amount")
+	loan_payment_request = models.DecimalField(decimal_places=4, max_digits=12, help_text="Desired monthly payment")
+	loan_intrate_request = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Desired interest rate")
+	loan_request_date = models.DateTimeField(default=timezone.now) #creates timestamp upon entry, and allows for edits
+	workflow_status = models.IntegerField(
+		default = 0,
+		choices = WORKFLOW_CHOICES,
+	)
+	
+	def __str__(self):
+		return self.borrower_requested + ', ' + str(self.loan_request_date)
 
 class Loan(models.Model):
 	user = models.ForeignKey(User)

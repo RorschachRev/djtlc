@@ -87,6 +87,7 @@ class Person(models.Model):
 	name_middle= models.CharField(max_length=30, blank=True, verbose_name="Middle Name", help_text="(optional)")
 	name_last= models.CharField(max_length=30, verbose_name="Last Name")
 	phone= models.CharField(max_length=15, help_text="Please use this format: (xxx) xxx-xxxx")
+	email_address = models.CharField(max_length=100, blank=True, null=True, verbose_name="Email Address")
 	taxid= models.CharField(max_length=12, blank=True, null=True, verbose_name="Tax ID")
 	language= models.CharField(max_length=3)
 

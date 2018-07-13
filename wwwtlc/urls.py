@@ -145,19 +145,19 @@ urlpatterns = [
         name='loan_apply_done'
 ),
     url(
-        r'^manage_requests/$',
-        views.manage_requests,
-        name='manage_requests'
-),
-    url(
-        r'^manage_requests/(?P<app_id>[0-9]+)$',
-        views.request_view,
-        name='manage_requests'
+        r'^loan_requests/$',
+        views.loan_requests,
+        name='loan_requests'
 ),
     url(
         r'^workflow/$',
         views.workflow,
         name='workflow'
+),
+    url(
+        r'^workflow/(?P<app_id>[0-9]+)$',
+        views.workflow_detail,
+        name='workflow_loan'
 ),
     url(
         r'^credit_verify/$',

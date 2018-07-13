@@ -31,18 +31,26 @@
 	<h2>Loans Applied For:</h2>
 	<table>
 		<tr>
-			<th>Property</th>
+			<th>Address of Property</th>
 			<th>Borrower</th>
+			<th>Amount Requested</th>
+			<th>Contact Person</th>
+			<th>Phone Number</th>
+			<th>Email Address</th>
+			<th>Request Date</th>
 			<th>Status</th>
-			<th>Date Submitted</th>
 		</tr>
 		<tr>
 		{% for app in applied_loans %}
 		<tr>
-			<td>{{ app.property.address }}</td>
-			<td>{{ app.borrower.borrower_fname }}</td>
-			<td>{{ app.get_status_display }}</td>
-			<td>{{ app.submission_date }}</td>
+			<td>{{ app.request_data.loan_address }}</td>
+			<td>{{ app.borrower_requested }}</td>
+			<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+			<td>{{ app.request_data.contact_person.name_first }}, {{ app_request.request_data.contact_person.name_last }}</td>
+			<td>{{ app.request_data.contact_person.phone }}</td>
+			<td>{{ app.request_data.contact_person.email_address }}</td>
+			<td>{{ app.loan_request_date }}</td>
+			<td>{{ app.get_workflow_status_display }}</td>
 		</tr>
 		{% endfor %}
 	</table>
