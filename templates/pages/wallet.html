@@ -8,7 +8,7 @@
 		{% endfor %}
 			<h2>Wallet Management</h2>
 			<div>
-				<form action="/wallet.html" method="post">
+				<form action="/wallet" method="post">
 					{% csrf_token %}
 					<div>Blockchain: <strong>ETH</strong></div>
 					{{ form }}

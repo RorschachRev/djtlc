@@ -6,52 +6,124 @@
 {% block title %}TLC: Manage Loans{% endblock %}
 
 {% block content %}
-	<h2>List of Loans:</h2>
-	<div>Active Wallet: (from JS) </div>
-	<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
-	<table>
-		<tr>
-			<th>Loan</th>
-			<th>Principal Owed</th>
-			<th>Status</th>
-			<th>Pay</th>
-		</tr>
-		{% for loan in loan_iterable %}
-		<tr>
-			<td>{{ loan.loan_wallet}} </td>
-			<td>{% money_localize loan.loan_wallet.address|get_loan_bal 'USD' %}</td>
-			<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
-			<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
-		</tr>
-		{% endfor %}
-	</table>
+	<h2>List of Loans :</h2>
+	{% if loan_iterable %}
+		<div>Active Wallet: (from JS) </div>
+		<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
+		<table>
+			<tr>
+				<th>Loan</th>
+				<th>Principal Owed</th>
+				<th>Status</th>
+				<th>Pay</th>
+			</tr>
+			{% for loan in loan_iterable %}
+			<tr>
+				<td>{{ loan.loan_wallet}} </td>
+				<td>{% money_localize loan.loan_wallet.address|get_loan_bal 'USD' %}</td>
+				<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
+				<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>You have no active loans.</p>
+		<br>
+	{% endif %}
+	
+	{% if req_tier1 %}
+		<h2>Requests Approved for Tier 1 :</h2>
+		<h3>(Application Unsubmitted)</h3>
+		<table>
+			<tr>
+				<th>Address of Property</th>
+				<th>Borrower</th>
+				<th>Amount Requested</th>
+				<th>Contact Person</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Request Date</th>
+				<th>Workflow Status</th>
+			</tr>
+			<tr>
+			{% for app in req_tier1 %}
+			<tr>
+				<td>{{ app.request_data.loan_address }}</td>
+				<td>{{ app.borrower_requested }}</td>
+				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+				<td>{{ app.request_data.contact_person.phone }}</td>
+				<td>{{ app.request_data.contact_person.email_address }}</td>
+				<td>{{ app.loan_request_date }}</td>
+				<td>{{ app.get_workflow_status_display }}</td>
+				<td><a href="/tier_one_app">Apply Here</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+	
+	{% if req_tier2 %}
+		<h2>Requests Approved for Tier 2 :</h2>
+		<h3>(Application Unsubmitted)</h3>
+		<table>
+			<tr>
+				<th>Address of Property</th>
+				<th>Borrower</th>
+				<th>Amount Requested</th>
+				<th>Contact Person</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Request Date</th>
+				<th>Workflow Status</th>
+			</tr>
+			<tr>
+			{% for app in req_tier2 %}
+			<tr>
+				<td>{{ app.request_data.loan_address }}</td>
+				<td>{{ app.borrower_requested }}</td>
+				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+				<td>{{ app.request_data.contact_person.phone }}</td>
+				<td>{{ app.request_data.contact_person.email_address }}</td>
+				<td>{{ app.loan_request_date }}</td>
+				<td>{{ app.get_workflow_status_display }}</td>
+				<td><a href="/tier_two_app">Apply Here</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
 	
 	<br>
 	<br>
-	<h2>Loans Applied For:</h2>
-	<table>
-		<tr>
-			<th>Address of Property</th>
-			<th>Borrower</th>
-			<th>Amount Requested</th>
-			<th>Contact Person</th>
-			<th>Phone Number</th>
-			<th>Email Address</th>
-			<th>Request Date</th>
-			<th>Status</th>
-		</tr>
-		<tr>
-		{% for app in applied_loans %}
-		<tr>
-			<td>{{ app.request_data.loan_address }}</td>
-			<td>{{ app.borrower_requested }}</td>
-			<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-			<td>{{ app.request_data.contact_person.name_first }}, {{ app_request.request_data.contact_person.name_last }}</td>
-			<td>{{ app.request_data.contact_person.phone }}</td>
-			<td>{{ app.request_data.contact_person.email_address }}</td>
-			<td>{{ app.loan_request_date }}</td>
-			<td>{{ app.get_workflow_status_display }}</td>
-		</tr>
-		{% endfor %}
-	</table>
+	<h2>Loans Applied For :</h2>
+	{% if applied_loans %}
+		<table>
+			<tr>
+				<th>Address of Property</th>
+				<th>Borrower</th>
+				<th>Amount Requested</th>
+				<th>Contact Person</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Request Date</th>
+				<th>Status</th>
+			</tr>
+			<tr>
+			{% for app in applied_loans %}
+			<tr>
+				<td>{{ app.request_data.loan_address }}</td>
+				<td>{{ app.borrower_requested }}</td>
+				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+				<td>{{ app.request_data.contact_person.phone }}</td>
+				<td>{{ app.request_data.contact_person.email_address }}</td>
+				<td>{{ app.loan_request_date }}</td>
+				<td>{{ app.get_workflow_status_display }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>You have not submitted any loan applications.</p>
+		</p><a href='/loan_apply'>Click Here</a> to apply</p>
+	{% endif %}
 {% endblock %}

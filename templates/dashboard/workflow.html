@@ -1,48 +1,126 @@
  {% extends '../base.html' %}
  
  {% block content %}
+	<h2>Requests Approved for Tier 1:</h2>
+	<h3>(Application Unsubmitted)</h3>
+	{% if req_tier1 %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Address of Property</th>
+				<th>Borrower</th>
+				<th>Amount Requested</th>
+				<th>Contact Person</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Request Date</th>
+				<th>Workflow Status</th>
+			</tr>
+			<tr>
+			{% for app in req_tier1 %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.request_data.loan_address }}</td>
+				<td>{{ app.borrower_requested }}</td>
+				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+				<td>{{ app.request_data.contact_person.phone }}</td>
+				<td>{{ app.request_data.contact_person.email_address }}</td>
+				<td>{{ app.loan_request_date }}</td>
+				<td>{{ app.get_workflow_status_display }}<br><a href="req_{{ app.id }}">Update</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Requests that have been approved for Tier 1</p>
+	{% endif %}
+	<br>
+	<br>
+	<h2>Requests Approved for Tier 2:</h2>
+	<h3>(Application Unsubmitted)</h3>
+	{% if req_tier2 %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Address of Property</th>
+				<th>Borrower</th>
+				<th>Amount Requested</th>
+				<th>Contact Person</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Request Date</th>
+				<th>Workflow Status</th>
+			</tr>
+			<tr>
+			{% for app in req_tier2 %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.request_data.loan_address }}</td>
+				<td>{{ app.borrower_requested }}</td>
+				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
+				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
+				<td>{{ app.request_data.contact_person.phone }}</td>
+				<td>{{ app.request_data.contact_person.email_address }}</td>
+				<td>{{ app.loan_request_date }}</td>
+				<td>{{ app.get_workflow_status_display }}<br><a href="req_{{ app.id }}">Update</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Requests approved for Tier 2</p>
+	{% endif %}
+	<br>
+	<br>
  	<h2>Tier 1 Applications:</h2>
- 	<table>
- 		<tr>
- 			<th>User</th>
- 			<th>Property</th>
- 			<th>Borrower</th>
- 			<th>Status</th>
- 			<th>Date Submitted</th>
- 		</tr>
- 		<tr>
- 		{% for app in tier1 %}
- 		<tr>
- 			<td>{{ app.user.username }}</td>
- 			<td>{{ app.property.address }}</td>
-			<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
- 			<td>{{ app.get_status_display }}</td>
- 			<td>{{ app.submission_date }}</td>
-			<td><a href="{{ app.id }}" class="btn btn-default">View Details</a></td>
- 		</tr>
- 		{% endfor %}
- 	</table>
+	{% if tier1 %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Submitted</th>
+			</tr>
+			<tr>
+			{% for app in tier1 %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Tier 1 Applications</p>
+	{% endif %}
 	<br>
 	<br>
 	<h2>Tier 2 Applications:</h2>
- 	<table>
- 		<tr>
- 			<th>User</th>
- 			<th>Property</th>
- 			<th>Borrower</th>
- 			<th>Status</th>
- 			<th>Date Submitted</th>
- 		</tr>
- 		<tr>
- 		{% for app in tier2 %}
- 		<tr>
- 			<td>{{ app.user.username }}</td>
- 			<td>{{ app.property.address }}</td>
-			<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
- 			<td>{{ app.get_status_display }}</td>
- 			<td>{{ app.submission_date }}</td>
-			<td><a href="{{ app.id }}" class="btn btn-default">View Details</a></td>
- 		</tr>
- 		{% endfor %}
- 	</table>
+	{% if tier2 %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Submitted</th>
+			</tr>
+			<tr>
+			{% for app in tier2 %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Tier 2 Applications</p>
+	{% endif %}
  {% endblock content %}

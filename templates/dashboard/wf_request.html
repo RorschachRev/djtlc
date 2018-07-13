@@ -1,0 +1,17 @@
+{% extends '../base.html' %}
+
+{% block content %}
+	<a href="/workflow" class="btn btn-default">Back</a>
+	<br>
+	<h2>User : {{ app.user.username }}</h2>
+	<h3>Address : {{ app.request_data.loan_address }}</h3>
+	<h3>Submitted: ({{ app.loan_request_date }})</h3>
+	<h3>Borrower: {{ app.borrower_requested }}</h3>
+	<h3>Requested Amount: {{ app.loan_request_amt }}</h3>
+	<form method="post">
+		{% csrf_token %}
+		<h3>Workflow Status:</h3> {{ form.as_p	}}
+		<br>
+		<input type="submit" value="Submit" />
+	</form>
+{% endblock content %}

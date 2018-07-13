@@ -110,37 +110,37 @@ urlpatterns = [
         name='logout'
 ),
     url(
-        r'^account.html$', 
+        r'^account$', 
         views.account, 
         name='account'
 ),
     url(
-        r'^wallet.html$', 
+        r'^wallet$', 
         views.wallet, 
         name='wallet'
 ),
     url(
-        r'^loan.html$', 
+        r'^loan$', 
         views.loan, 
         name='loan'
 ),
     url(
-        r'^pay.html/(?P<loan_id>\d+)/$',  #allows the specific row's data id to be passed from loan.html to pay.html
+        r'^pay/(?P<loan_id>\d+)/$',  #allows the specific row's data id to be passed from loan.html to pay.html
         views.pay, 
         name='pay'
 ),
     url(
-        r'^payhistory.html$', 
+        r'^payhistory$', 
         views.payhistory, 
         name='payhistory'
 ),
     url(
-        r'^test.html$', 
+        r'^test$', 
         views.test, 
         name='test'
 ),
     url(
-        r'^loan_apply_done.html$', 
+        r'^loan_apply_done$', 
         TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
         name='loan_apply_done'
 ),
@@ -151,8 +151,8 @@ urlpatterns = [
 ),
     url(
         r'^loan_requests/(?P<app_id>[0-9]+)$',
-        views.change_wfstatus,
-        name='wf_status'
+        views.change_reqstatus,
+        name='req_status'
 ),
     url(
         r'^workflow/$',
@@ -160,9 +160,9 @@ urlpatterns = [
         name='workflow'
 ),
     url(
-        r'^workflow/(?P<app_id>[0-9]+)$',
-        views.workflow_detail,
-        name='workflow_loan'
+        r'^workflow/(?P<app_id>[req_0-9]+)$',
+        views.workflow_request,
+        name='wf_request_status'
 ),
     url(
         r'^credit_verify/$',
@@ -200,7 +200,7 @@ urlpatterns = [
 ),
 # url for LoanApply Wizard Form
     url(
-        r'^loan_apply.html$', 
+        r'^loan_apply$', 
         LoanApplyWizard.as_view(
             [
                 LoanRequestForm, 

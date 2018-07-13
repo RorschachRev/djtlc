@@ -13,7 +13,7 @@ from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
 
 from loan.models import Loan, Loan_Data, Loan_Request
-from loan.forms import PersonEditForm, PersonForm, ChangeWfForm
+from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
@@ -42,10 +42,12 @@ def home(request):
 		return render(request, 'pages/home.html')
 	
 def loan(request):
-	loan_iterable = Loan.objects.all().filter(user=request.user)
+	loan_iterable = Loan.objects.filter(user=request.user)
 	blockdata=BC()
-	applied_loans = Loan_Request.objects.all().filter(user=request.user)
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans})
+	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
+	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
+	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user)
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
 	
 def wallet(request):
 	if request.method == 'POST':
@@ -106,40 +108,57 @@ def loan_requests(request):
 	active_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
 	sleep_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
 	priority_requests = Loan_Request.objects.filter(workflow_status=4).order_by('-loan_request_date')
-	
 	if request.method == 'GET':
 		sleep_vis = request.GET.get('sleep_vis')
 		if sleep_vis == '0':
 			sleep_vis = False
 		elif sleep_vis == '1':
 			sleep_vis = True
-	
-	print(str(sleep_vis))
 	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests, 'sleep_vis': sleep_vis})
 	
-def workflow(request):
-	tier1 = ApplicationSummary.objects.filter(is_tier1=True)
-	tier2 = ApplicationSummary.objects.filter(is_tier2=True)
-	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2})
-	
-def change_wfstatus(request, app_id):
+def change_reqstatus(request, app_id):
 	app = Loan_Request.objects.get(pk=app_id)
 	
 	try:
 		if request.method == 'POST':
-			form = ChangeWfForm(request.POST, instance=app)
+			form = ChangeReqForm(request.POST, instance=app)
 			if form.is_valid():
 				form.save()
 				return HttpResponseRedirect('/loan_requests')
 		else:
-			form = ChangeWfForm(instance=app)
+			form = ChangeReqForm(instance=app)
 	except:
-		form = ChangeWfForm()
-	return render(request, 'dashboard/change_wfstatus.html', {'app': app, 'form': form})
+		form = ChangeReqForm()
+	return render(request, 'dashboard/change_reqstatus.html', {'app': app, 'form': form})
 	
-def workflow_detail(request, app_id):
-	loan_request = ApplicationSummary.objects.get(pk=app_id)
-	return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})
+	
+def workflow(request):
+	req_tier1 = Loan_Request.objects.filter(workflow_status=2).order_by('-loan_request_date')
+	req_tier2 = Loan_Request.objects.filter(workflow_status=3).order_by('-loan_request_date')
+	tier1 = ApplicationSummary.objects.filter(is_tier1=True).order_by('-submission_date')
+	tier2 = ApplicationSummary.objects.filter(is_tier2=True).order_by('-submission_date')
+	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
+	
+def workflow_request(request, app_id):
+	if app_id[:4] == 'req_':
+		app = app_id[4:]
+		app = Loan_Request.objects.get(pk=app)
+		
+		try:
+			if request.method == 'POST':
+				form = ChangeReqForm(request.POST, instance=app)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/loan_requests')
+			else:
+				form = ChangeReqForm(instance=app)
+				return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
+		except:
+			form = ChangeReqForm()
+			return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
+	else:
+		loan_request = ApplicationSummary.objects.get(pk=app_id)
+		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})
 	
 def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})

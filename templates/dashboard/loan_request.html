@@ -34,7 +34,7 @@
 				<td>{{ app.request_data.contact_person.phone }}</td>
 				<td>{{ app.request_data.contact_person.email_address }}</td>
 				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Change</a></td>
+				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -68,7 +68,7 @@
 				<td>{{ app.request_data.contact_person.phone }}</td>
 				<td>{{ app.request_data.contact_person.email_address }}</td>
 				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Change</a></td>
+				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -77,6 +77,8 @@
 	{% endif %}
 	
 	{% if sleep_vis %}
+		<br>
+		<br>
 		<h3><u>Slept Requests:</u></h3>
 		{% if sleep %}
 			<table>
@@ -102,7 +104,7 @@
 					<td>{{ app.request_data.contact_person.phone }}</td>
 					<td>{{ app.request_data.contact_person.email_address }}</td>
 					<td>{{ app.loan_request_date }}</td>
-					<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Change</a></td>
+					<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
 				</tr>
 				{% endfor %}
 			</table>
