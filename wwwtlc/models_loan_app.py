@@ -673,6 +673,9 @@ class NewLoan(models.Model):
 	loan_wallet = models.OneToOneField(Wallet)
 	TLC_balance = models.DecimalField(decimal_places=18, max_digits=65)
 	
+	def __str__(self):
+		return str(self.user) + ', ' + str(self.loan_wallet)
+	
 # Below is a Loan Summary, all relevant information at a glance should be put here
 class LoanSummary(models.Model):
 	application = models.ForeignKey(ApplicationSummary, verbose_name='Application Summary')

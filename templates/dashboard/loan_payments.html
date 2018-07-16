@@ -25,7 +25,7 @@
 				<td>{{ loan.id }}</td>
 				<td>{% money_localize loan.principal_balance 'USD' %}</td>
 				<td>{% money_localize loan.payment_due 'USD' %} due</td>
-				<td>{{ loan.payment_due_date|ordinal }} of {% now 'F' %}</td><!-- will need to change 'now' function later to turnover to the next month when that date is past -->
+				<td>{{ loan.payment_due_date|ordinal }} of each month</td><!-- will need to change 'now' function later to turnover to the next month when that date is past -->
 				<td><a href="{% url 'make_payment' loan.id %}"><button>Submit Payment</button></a></td>
 			</tr>
 			{% endfor %}
