@@ -17,64 +17,18 @@ from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView
 
-class WalletForm(forms.ModelForm):
-	class Meta:
-		model = Wallet
-		fields = ['address']	
 
-class loaninfo():
-	"""
-	Stub for blockchain state. Will include config data later.
-	"""
-	def __init__(self):
-		pass
-def payhistory(request):
-	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
-	blockdata=BC()
-	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100	
-	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata })
-
+'''##################################################
+# Basic Functionality Views	
+##################################################'''	
 def home(request):
 	user = request.user
 	if user.is_staff:
 		return render(request, 'dashboard/home.html', {})
 	else:
 		return render(request, 'pages/home.html')
-	
-def loan(request):
-	loan_iterable = NewLoan.objects.filter(user=request.user)
-	blockdata=BC()
-	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
-	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
-	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user).order_by('-workflow_status', '-loan_request_date')
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
-	
-def wallet(request):
-	if request.method == 'POST':
-		form = WalletForm(request.POST)
-		if form.is_valid():
-			obj=form.save(commit=False)
-			obj.wallet=request.user
-			obj.blockchain="ETH"
-			obj.save()
-	w=Wallet.objects.all().filter(wallet=request.user)
-	form=WalletForm()
-	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
-	
-# this function selects a specific loan associated with the user and displays just that one	
-def pay(request, loan_id):
-	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
-	blockdata=BC()
-	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-	loaninfo.payment=NewLoan.objects.get(pk=loan_id).payment_due
-	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
-	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
-	return render(request, 'pages/pay.html', {'loan': loaninfo, 'blockdata':blockdata} )
-	
-def test(request):
-	return render(request, 'pages/test.html')
-	
-#needs more testing with multiple different users.
+		
+#needs more testing with multiple different users.		
 def account(request):
 	user = request.user
 	try:
@@ -103,7 +57,62 @@ def signup(request):
 		form = UserCreationForm()
 	return render(request, 'base.html', {'form': form})
 	
-# Views for Loan Officer Dashboard - currently just template rendering, no data handling
+def test(request):
+	return render(request, 'pages/test.html')
+	
+	
+'''##################################################
+# User Views - mostly unused in current state
+##################################################'''
+def loan(request):
+	loan_iterable = NewLoan.objects.filter(user=request.user)
+	blockdata=BC()
+	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
+	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
+	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user).order_by('-workflow_status', '-loan_request_date')
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
+	
+class loaninfo():
+	"""
+	Stub for blockchain state. Will include config data later.
+	"""
+	def __init__(self):
+		pass
+		
+def payhistory(request):
+	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
+	blockdata=BC()
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100	
+	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata })
+	
+def wallet(request):
+	if request.method == 'POST':
+		form = WalletForm(request.POST)
+		if form.is_valid():
+			obj=form.save(commit=False)
+			obj.wallet=request.user
+			obj.blockchain="ETH"
+			obj.save()
+	w=Wallet.objects.all().filter(wallet=request.user)
+	form=WalletForm()
+	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
+	
+# this function selects a specific loan associated with the user and displays just that one	
+def pay(request, loan_id):
+	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
+	blockdata=BC()
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
+	loaninfo.payment=NewLoan.objects.get(pk=loan_id).payment_due
+	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
+	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
+	return render(request, 'pages/pay.html', {'loan': loaninfo, 'blockdata':blockdata} )
+	
+'''##################################################
+# Loan Officer/Dashboard Views
+##################################################'''
+# REQUESTS / WORKFLOW
+##################
+
 def loan_requests(request):
 	active_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
 	sleep_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
@@ -135,8 +144,8 @@ def change_reqstatus(request, app_id):
 def workflow(request):
 	req_tier1 = Loan_Request.objects.filter(workflow_status=2).order_by('-loan_request_date')
 	req_tier2 = Loan_Request.objects.filter(workflow_status=3).order_by('-loan_request_date')
-	tier1 = ApplicationSummary.objects.filter(is_tier1=True).order_by('-submission_date')
-	tier2 = ApplicationSummary.objects.filter(is_tier2=True).order_by('-submission_date')
+	tier1 = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
+	tier2 = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
 	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
 	
 def workflow_request(request, app_id):
@@ -156,19 +165,30 @@ def workflow_request(request, app_id):
 		except:
 			form = ChangeReqForm()
 			return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
+			
+	elif app_id[:4] == 'cta_':
+		app = app_id[4:]
+		app = ApplicationSummary.objects.get(pk=app)
+		
+		try:
+			if request.method == 'POST':
+				form = ChangeTierForm(request.POST, instance=app)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/workflow')
+			else:
+				form = ChangeTierForm(instance=app)
+				return render(request, 'dashboard/workflow_tier.html', {'app': app, 'form': form})
+		except:
+			form = ChangeTierForm()
+			return render(request, 'dashboard/workflow_tier.html', {'app': app, 'form': form})
 	else:
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})
 	
-def credit_verify(request):
-	return render(request, 'dashboard/credit_verify.html', {})
-	
-def package_loan(request):
-	return render(request, 'dashboard/package_loan.html', {})
-	
-def manage_loan(request):
-	return render(request, 'dashboard/manage_loan.html', {})
-	
+# PAYMENTS / ACCOUNTING
+###################
+
 # currently allows for user to select both wallet and loan id, 
 # which will need to change to minimize human error
 # (ie. picking wrong wallet for loan)
@@ -195,39 +215,22 @@ def payment_history(request):
 def loan_accounting(request):
 	return render(request, 'dashboard/loan_accounting.html', {})
 	
-# Original Dashboard Views - Deprecated
-'''def new_apps(request):
-	return render(request, 'dashboard/new_apps.html', {})
+def credit_verify(request):
+	return render(request, 'dashboard/credit_verify.html', {})
 	
-def in_progress_apps(request):
-	return render(request, 'dashboard/in_progress_apps.html', {})
+def package_loan(request):
+	return render(request, 'dashboard/package_loan.html', {})
 	
-def overdue(request):
-	return render(request, 'dashboard/overdue.html', {})
+def manage_loan(request):
+	return render(request, 'dashboard/manage_loan.html', {})
 	
-def dashboard_loans(request):
-	return render(request, 'dashboard/loans.html', {})
 	
-def loan_details(request):
-	# this is where we query models to pull up information to plug into the template
-	# use pay() above as an example for this snippet
-	return render(request, 'dashboard/loan_details.html', {})'''
-	
-# BELOW IS NEW MODEL FORM INTEGRATION
-
+'''##################################################
+# Form Views
+##################################################'''
 # Django FormWizard view for Tier 1
 # (BizInfo -> ConstrInfo -> RefineInfo -> PropInfo -> BorrowerInfo -> CreditReq -> Decl -> Transaction -> Agree)
 
-# These views implement the save on every step strategy, this was done originally but
-# was removed and replaced due to saving form once on every step and once at the end.
-# reimplemented due to session/serialize data testing
-'''
-# Original formview double save:
-# https://github.com/RorschachRev/djtlc/commit/fc0e30e977f45729a38624e50fa4250d4763c900
-
-# Updated save-at end formview:
-# https://github.com/RorschachRev/djtlc/commit/ae009f0386159be9732cc75c835d0f6efe9a3991
-'''
 class TierOneWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -301,7 +304,7 @@ class TierOneWizard(NamedUrlSessionWizardView):
 				borrower = f, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = j,
-				is_tier1 = True,
+				tier = 0,
 			)
 			
 			app_sum.save()
@@ -484,8 +487,7 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 				borrower = s, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = w,
-				is_tier1 = False,
-				is_tier2 = True,
+				tier = 1
 			)
 			
 			app_sum.save()

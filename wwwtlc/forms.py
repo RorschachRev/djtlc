@@ -63,6 +63,11 @@ class BusinessInfoForm(forms.ModelForm):
 	class Meta:
 		model = BusinessInfo
 		fields = '__all__'	
+		
+class ChangeTierForm(forms.ModelForm):
+	class Meta:
+		model = ApplicationSummary
+		fields = ['tier']
 
 class ChildSupportForm(forms.ModelForm):
 	step_name = 'Child Support:'
@@ -156,7 +161,7 @@ class VehicleForm(forms.ModelForm):
 class WalletForm(forms.ModelForm):
 	class Meta:
 		model = Wallet
-		fields = ['blockchain', 'address']	
+		fields = ['address']	
 		
 '''class AccountForm(forms.ModelForm):
 	class Meta:

@@ -604,6 +604,10 @@ class ApplicationSummary(models.Model):
 		(13, 'IPFS Published'),
 		(14, 'Declared on Blockchain'),
 	)
+	TIER_CHOICES = (
+		(0, 'Tier 1'),
+		(1, 'Tier 2'),
+	)
 	user = models.ForeignKey(User)
 	property = models.ForeignKey(PropertyInfo)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
@@ -613,8 +617,10 @@ class ApplicationSummary(models.Model):
 		choices = STATUS_CHOICES,
 		default = 0,
 	)
-	is_tier1 = models.BooleanField(default=False)
-	is_tier2 = models.BooleanField(default=False)
+	tier = models.IntegerField(
+		choices = TIER_CHOICES,
+		default = 0,
+	)
 	submission_date = models.DateTimeField(default=timezone.now)
 	resubmission_date = models.DateTimeField(null=True, blank=True)
 	approval_date = models.DateTimeField(null=True, blank=True)

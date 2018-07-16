@@ -87,6 +87,7 @@ tier_one_wizard = TierOneWizard.as_view(tier_one_forms, url_name='tier_one_step'
 tier_two_wizard = TierTwoWizard.as_view(tier_two_forms, url_name='tier_two_step', template_name='pages/tier2_app.html')
 
 urlpatterns = [
+# Core URLs
     url(
         r'^$', 
         views.home, 
@@ -110,14 +111,20 @@ urlpatterns = [
         name='logout'
 ),
     url(
+        r'^admin/', 
+        admin.site.urls
+),
+    url(
+        r'^test$', 
+        views.test, 
+        name='test'
+),
+
+# User URLs
+    url(
         r'^account$', 
         views.account, 
         name='account'
-),
-    url(
-        r'^wallet$', 
-        views.wallet, 
-        name='wallet'
 ),
     url(
         r'^loan$', 
@@ -125,9 +132,9 @@ urlpatterns = [
         name='loan'
 ),
     url(
-        r'^pay/(?P<loan_id>\d+)/$',  #allows the specific row's data id to be passed from loan.html to pay.html
-        views.pay, 
-        name='pay'
+        r'^wallet$', 
+        views.wallet, 
+        name='wallet'
 ),
     url(
         r'^payhistory$', 
@@ -135,15 +142,12 @@ urlpatterns = [
         name='payhistory'
 ),
     url(
-        r'^test$', 
-        views.test, 
-        name='test'
+        r'^pay/(?P<loan_id>\d+)/$',  #allows the specific row's data id to be passed from loan.html to pay.html
+        views.pay, 
+        name='pay'
 ),
-    url(
-        r'^loan_apply_done$', 
-        TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
-        name='loan_apply_done'
-),
+
+# Loan Officer URLs
     url(
         r'^loan_requests/$',
         views.loan_requests,
@@ -165,19 +169,9 @@ urlpatterns = [
         name='wf_request_status'
 ),
     url(
-        r'^credit_verify/$',
-        views.credit_verify,
-        name='credit_verify'
-),
-    url(
-        r'^package_loan/$',
-        views.package_loan,
-        name='package_loan'
-),
-    url(
-        r'^manage_loan/$',
-        views.manage_loan,
-        name='manage_loan'
+        r'^workflow/(?P<app_id>[cta_0-9]+)$',
+        views.workflow_request,
+        name='wf_status_change'
 ),
     url(
         r'^loan_payments/$',
@@ -195,14 +189,28 @@ urlpatterns = [
         name='payment_history'
 ),
     url(
+        r'^credit_verify/$',
+        views.credit_verify,
+        name='credit_verify'
+),
+    url(
+        r'^package_loan/$',
+        views.package_loan,
+        name='package_loan'
+),
+    url(
+        r'^manage_loan/$',
+        views.manage_loan,
+        name='manage_loan'
+),
+    url(
         r'^loan_accounting/$',
         views.loan_accounting,
         name='loan_accounting'
 ),
-    url(
-        r'^admin/', 
-        admin.site.urls
-),
+
+# Form URLs
+
 # url for LoanApply Wizard Form
     url(
         r'^loan_apply$', 
@@ -217,6 +225,11 @@ urlpatterns = [
         ), 
         name='loan_apply'
 ), 
+    url(
+        r'^loan_apply_done$', 
+        TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
+        name='loan_apply_done'
+),
 # urls for TierOneWizard form
     url(
         r'^tier_one_app/(?P<step>.+)/$', 

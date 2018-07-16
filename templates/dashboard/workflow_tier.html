@@ -1,0 +1,17 @@
+{% extends '../base.html' %}
+
+{% block content %}
+	<a href="/workflow" class="btn btn-default">Back</a>
+	
+	<p><strong>User :</strong> {{ app.user }}</p>
+	<p><strong>Property : </strong>{{ app.property }}</p>
+	<p><strong>Borrower : </strong>{{ app.borrower }}</p>
+	<p><strong>Status : </strong>{{ app.get_status_display }}</p>
+	<p><strong>Date Last Modified : </strong>{{ app.submission_date }}</p>
+	
+	<form method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Submit">
+	</form>
+{% endblock content %}

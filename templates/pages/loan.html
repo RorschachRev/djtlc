@@ -100,8 +100,8 @@
 	
 	<br>
 	<br>
-	<h2>Loans Applied For :</h2>
 	{% if applied_loans %}
+	<h2>Loans Applied For :</h2>
 		<table>
 			<tr>
 				<th>Address of Property</th>
@@ -127,7 +127,8 @@
 			</tr>
 			{% endfor %}
 		</table>
-	{% else %}
+	{% elif applied_loans == False and req_tier1 == False and req_tier2 == False %}
+		<h2>Loans Applied For :</h2>
 		<p>You have not submitted any loan applications.</p>
 		</p><a href='/loan_apply'>Click Here</a> to apply</p>
 	{% endif %}
