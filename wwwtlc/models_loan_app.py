@@ -2,7 +2,7 @@ import datetime
 from decimal import Decimal
 from django.db import models
 from django.utils import timezone
-from .models import Address
+from .models import Address, Wallet
 from django.contrib.auth.models import User
 
 #********************************************************************************************
@@ -11,54 +11,8 @@ from django.contrib.auth.models import User
 #
 #	- Read through all comments and handle each question/design concern
 #	- Trim down any unecessary/redundant fields
-#	- delete all commented code that can't fit into the new schema
 #	
 #********************************************************************************************
-# commented out for now, causes conflicts with original models, but those files will eventually be removed, in which case this block will be uncommented and the import will be removed
-'''class Address(models.Model):
-	street1=models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
-	street2=models.CharField(max_length=254, blank=True, verbose_name="Street 2", help_text="(optional)")
-	street3=models.CharField(max_length=254, blank=True, verbose_name="Street 3", help_text="(optional)")
-	city=models.CharField(max_length=127)
-	state=models.CharField(max_length=25)
-	zipcode=models.CharField(max_length=10)
-	country	=models.CharField(max_length=3)
-	
-	def __str__(self):
-		return self.street1'''
-
-class LoanTerms (models.Model):
-	MORTGAGE_CHOICES = (
-		(0, 'VA'),
-		(1, 'FHA'),
-		(2, 'Conventional'),
-		(3, 'USDA/Rural Housing Service'),
-		(4, 'Other'),
-	)
-	AMORTIZATION_CHOICES = (
-		(0, 'Fixed Rate'),
-		(1, 'GPM'),
-		(2, 'ARM (type)'),
-		(3, 'Other'),
-	)
-	mortgage_applied = models.IntegerField(
-		choices = MORTGAGE_CHOICES,
-		default = 0,
-		verbose_name = 'Mortgage Type'
-	)
-	agency_case_no = models.IntegerField(verbose_name='Agency Case Number', help_text='(required)')
-	lender_case_no = models.IntegerField(verbose_name='Lender Case Number', help_text='(required)')
-	loan_amount = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Loan Amount', help_text='(required)')
-	int_rate = models.DecimalField(max_digits=4, decimal_places=2, verbose_name='Interest Rate', help_text='(required)')
-	months_left = models.IntegerField(verbose_name='Months Left on Loan', help_text='(required)')
-	amortization_type = models.IntegerField(
-		choices = AMORTIZATION_CHOICES,
-		default = 0,
-		verbose_name = 'Amortization Type',
-	)
-	
-	def __str__(self):
-		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: ' + str(self.loan_amount)
 		
 # Added null=True & blank=True to both ConstructionInfo	\
 # and RefinanceInfo models so that the form doesn't require 	\
@@ -669,6 +623,55 @@ class ApplicationSummary(models.Model):
 	
 	def __str__(self):
 		return str(self.id) + ', submitted: ' + str(self.submission_date)
+		
+class LoanTerms (models.Model):
+	MORTGAGE_CHOICES = (
+		(0, 'VA'),
+		(1, 'FHA'),
+		(2, 'Conventional'),
+		(3, 'USDA/Rural Housing Service'),
+		(4, 'Other'),
+	)
+	AMORTIZATION_CHOICES = (
+		(0, 'Fixed Rate'),
+		(1, 'GPM'),
+		(2, 'ARM (type)'),
+		(3, 'Other'),
+	)
+	mortgage_applied = models.IntegerField(
+		choices = MORTGAGE_CHOICES,
+		default = 0,
+		verbose_name = 'Mortgage Type'
+	)
+	agency_case_no = models.IntegerField(verbose_name='Agency Case Number', help_text='(required)')
+	lender_case_no = models.IntegerField(verbose_name='Lender Case Number', help_text='(required)')
+	loan_amount = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Loan Amount', help_text='(required)')
+	int_rate = models.DecimalField(max_digits=4, decimal_places=2, verbose_name='Interest Rate', help_text='(required)')
+	months_left = models.IntegerField(verbose_name='Months Left on Loan', help_text='(required)')
+	amortization_type = models.IntegerField(
+		choices = AMORTIZATION_CHOICES,
+		default = 0,
+		verbose_name = 'Amortization Type',
+	)
+	
+	def __str__(self):
+		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: ' + str(self.loan_amount)
+		
+# This model will replace the other loan model in ./models.py
+class NewLoan(models.Model):
+	user = models.ForeignKey(User)
+	borrower = models.ForeignKey(BorrowerInfo, related_name='loan_borrower')
+	coborrower = models.ForeignKey(BorrowerInfo, related_name='loan_coborrower', null=True, blank=True)
+	loan_terms = models.ForeignKey(LoanTerms) # contains all originally agreed upon numbers
+	payment_due = models.DecimalField(decimal_places=4, max_digits=12)
+	payment_due_date = models.IntegerField()
+	payments_left = models.IntegerField()
+	principal_balance = models.DecimalField(decimal_places=4, max_digits=12)
+	loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4)
+	principal_paid = models.DecimalField(decimal_places=4, max_digits=12)
+	interest_paid = models.DecimalField(decimal_places=4, max_digits=12)
+	loan_wallet = models.OneToOneField(Wallet)
+	TLC_balance = models.DecimalField(decimal_places=18, max_digits=65)
 	
 # Below is a Loan Summary, all relevant information at a glance should be put here
 class LoanSummary(models.Model):
@@ -700,54 +703,19 @@ class CreditRequest(models.Model):
 	
 	def __str__(self):
 		return str(self.borrower) + ', $' + str(self.amt_requested) + ', ' + str(self.submission_date)
-	
-# Will probably end up removing this model for now, as it is something that 
-# can't be useful until like 3 years from now when TLC has repeat customers
-# and want to track their own records based on each customer
-'''# Totally unsure of what this model is going to provide
-# or even where it goes/connects to
-class RelationshipInfo(models.Model):
-	CUSTOMER_CHOICES = (
-		(0, 'New Customer'),
-		(1, 'Existing Customer'),
-	)
-	customer_type = models.IntegerField(
-		choices = CUSTOMER_CHOICES,
-		default = 0,
-	)
-	customer_since = models.IntegerField(null=True, blank=True)
-	last_tax_return = models.DateField(null=True, blank=True)
-	last_financial_statement = models.DateField(null=True, blank=True)
-	last_credit_report = models.DateField(null=True, blank=True)
-	last_credit_bureau = models.CharField(max_length=256, null=True, blank=True)
-	
-	# below fields are a part of a subcategory called ("Liabilities with Lender")
-	direct = models.DecimalField(max_digits=12, decimal_places=2)
-	contingent = models.DecimalField(max_digits=12, decimal_places=2)
-	total = models.DecimalField(max_digits=12, decimal_places=2)
-	
-	# below fields are a part of a subcategory called ("Deposits with Lender")
-	dda_avg = models.DecimalField(max_digits=12, decimal_places=2)
-	other_avg = models.DecimalField(max_digits=12, decimal_places=2)
-	total_avg = models.DecimalField(max_digits=12, decimal_places=2)
-	
-	# below fields are a part of a subcategory called ("Deposits with Lender")
-	new_credit = models.DecimalField(max_digits=12, decimal_places=2)
-	proposed_total = models.DecimalField(max_digits=12, decimal_places=2)'''
-	
 		
-# commented out b/c I merged it into BusinessInfo, they contained a lot of redundant information	
-'''class ExpenseInfo(models.Model):
-	rent = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	first_mortgage = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	other_financing = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	hazard_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	real_estate_taxes = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	mortgage_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	base_empl_income = models.DecimalField(max_digits=12, decimal_places=4, help_text='(required)')
-	overtime = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	bonuses = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	commissions = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	other_description = models.TextField(null=True, blank=True)
-	expense_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	expense_total = models.DecimalField(max_digits=12, decimal_places=4, help_text='(required)')'''
+# Below are Payment History Models
+
+class LoanPaymentHistory(models.Model):
+	wallet = models.ForeignKey(Wallet)
+	loan = models.ForeignKey(NewLoan)
+	pmt_total = models.DecimalField(decimal_places=4, max_digits=12)
+	principal_pmt = models.DecimalField(decimal_places=4, max_digits=12)
+	interest_pmt = models.DecimalField(decimal_places=4, max_digits=12)
+	pmt_date = models.DateTimeField(default=timezone.now)
+	
+#class LoanBlockHistory(models.Model):
+	# wallet ?
+	# loan ?
+	# payment ?
+	# principal ?

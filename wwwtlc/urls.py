@@ -185,6 +185,11 @@ urlpatterns = [
         name='loan_payments'
 ),
     url(
+        r'loan_payments/(?P<loan_id>\d+)/$',
+        views.make_payment,
+        name='make_payment'
+),
+    url(
         r'^payment_history/$',
         views.payment_history,
         name='payment_history'

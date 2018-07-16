@@ -6,13 +6,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
-from .models_loan_app import ApplicationSummary
+from .models_loan_app import ApplicationSummary, NewLoan
 
 from wwwtlc.models import Person, Wallet
 from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
 
-from loan.models import Loan, Loan_Data, Loan_Request
+from loan.models import Loan_Data, Loan_Request#, Loan
 from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView
@@ -42,7 +42,7 @@ def home(request):
 		return render(request, 'pages/home.html')
 	
 def loan(request):
-	loan_iterable = Loan.objects.filter(user=request.user)
+	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
 	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
 	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
@@ -63,10 +63,10 @@ def wallet(request):
 	
 # this function selects a specific loan associated with the user and displays just that one	
 def pay(request, loan_id):
-	loaninfo.wallet_addr= str(Loan.objects.get(pk=loan_id).loan_wallet.address)
+	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
 	blockdata=BC()
 	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-	loaninfo.payment=Loan.objects.get(pk=loan_id).loan_payment_due
+	loaninfo.payment=NewLoan.objects.get(pk=loan_id).payment_due
 	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
 	return render(request, 'pages/pay.html', {'loan': loaninfo, 'blockdata':blockdata} )
@@ -169,11 +169,28 @@ def package_loan(request):
 def manage_loan(request):
 	return render(request, 'dashboard/manage_loan.html', {})
 	
+# currently allows for user to select both wallet and loan id, 
+# which will need to change to minimize human error
+# (ie. picking wrong wallet for loan)
+def make_payment(request, loan_id):
+	loan = NewLoan.objects.get(pk=loan_id)
+	
+	if request.method == 'POST':
+		form = PaymentForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/loan_payments')
+	else:
+		form = PaymentForm()
+	return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+	
 def loan_payments(request):
-	return render(request, 'dashboard/loan_payments.html', {})
+	loan_iterable = NewLoan.objects.all()
+	return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
 	
 def payment_history(request):
-	return render(request, 'dashboard/payment_history.html', {})
+	history_iterable = LoanPaymentHistory.objects.all().order_by('-pmt_date')
+	return render(request, 'dashboard/payment_history.html', {'payments': history_iterable})
 	
 def loan_accounting(request):
 	return render(request, 'dashboard/loan_accounting.html', {})

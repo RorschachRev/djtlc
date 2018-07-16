@@ -111,6 +111,7 @@ class Wallet(models.Model):
 		#max mysql is 65 digits
 	def __str__(self):
 		return self.address[:8]+"..."
+		
 
 #Payments
 #Business

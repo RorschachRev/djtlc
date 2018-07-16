@@ -2,6 +2,7 @@
 {% load djmoney %}
 {% money_localize money %}
 {% load loan_bal %}
+{% load humanize %}
 
 {% block title %}TLC: Manage Loans{% endblock %}
 
@@ -12,17 +13,21 @@
 		<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
 		<table>
 			<tr>
-				<th>Loan</th>
+				<th>User</th>
+				<th>Loan Wallet</th>
+				<th>Loan ID</th>
 				<th>Principal Owed</th>
 				<th>Status</th>
-				<th>Pay</th>
+				<th>Payment Due</th>
 			</tr>
 			{% for loan in loan_iterable %}
 			<tr>
-				<td>{{ loan.loan_wallet}} </td>
-				<td>{% money_localize loan.loan_wallet.address|get_loan_bal 'USD' %}</td>
-				<td>{% money_localize loan.loan_payment_due 'USD' %} due</td>
-				<td><a href={% url 'pay' loan.id %}><button>Pay with TLC</button></a></td>
+				<td>{{ loan.user.username }}</td>
+				<td>{{ loan.loan_wallet }}</td>
+				<td>{{ loan.id }}</td>
+				<td>{% money_localize loan.principal_balance 'USD' %}</td>
+				<td>{% money_localize loan.payment_due 'USD' %} due</td>
+				<td>{{ loan.payment_due_date|ordinal }} of {% now 'F' %}</td><!-- will need to change 'now' function later to turnover to the next month when that date is past -->
 			</tr>
 			{% endfor %}
 		</table>
