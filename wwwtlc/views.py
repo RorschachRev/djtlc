@@ -144,9 +144,11 @@ def change_reqstatus(request, app_id):
 def workflow(request):
 	req_tier1 = Loan_Request.objects.filter(workflow_status=2).order_by('-loan_request_date')
 	req_tier2 = Loan_Request.objects.filter(workflow_status=3).order_by('-loan_request_date')
-	tier1 = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
-	tier2 = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
-	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
+	tier1 = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
+	tier2 = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
+	cert_tier1 = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
+	cert_tier2 = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
+	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2, 'cert_tier1': cert_tier1, 'cert_tier2': cert_tier2})
 	
 def workflow_request(request, app_id):
 	if app_id[:4] == 'req_':
@@ -178,10 +180,26 @@ def workflow_request(request, app_id):
 					return HttpResponseRedirect('/workflow')
 			else:
 				form = ChangeTierForm(instance=app)
-				return render(request, 'dashboard/workflow_tier.html', {'app': app, 'form': form})
+				return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 		except:
 			form = ChangeTierForm()
-			return render(request, 'dashboard/workflow_tier.html', {'app': app, 'form': form})
+			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
+	elif app_id[:4] == 'cer_':
+		app = app_id[4:]
+		app = ApplicationSummary.objects.get(pk=app)
+		
+		try:
+			if request.method == 'POST':
+				form = CertifyAppForm(request.POST, instance=app)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/workflow')
+			else:
+				form = CertifyAppForm(instance=app)
+				return render(request, 'dashboard/workflow_update.html', {'app': app, 'form':form})
+		except:
+			form = CertifyAppForm()
+			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 	else:
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})

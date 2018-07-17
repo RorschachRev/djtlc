@@ -68,6 +68,11 @@ class ChangeTierForm(forms.ModelForm):
 	class Meta:
 		model = ApplicationSummary
 		fields = ['tier']
+		
+class CertifyAppForm(forms.ModelForm):
+	class Meta:
+		model = ApplicationSummary
+		fields = ['status']
 
 class ChildSupportForm(forms.ModelForm):
 	step_name = 'Child Support:'
