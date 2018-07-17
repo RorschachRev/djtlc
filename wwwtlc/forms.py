@@ -1,5 +1,5 @@
 from django import forms
-from wwwtlc.models import Person, Wallet, Address
+from wwwtlc.models import *
 from wwwtlc.models_loan_app import *
 		
 # Below are forms for the new models - correlates to models_loan_app.py
@@ -167,6 +167,36 @@ class WalletForm(forms.ModelForm):
 	class Meta:
 		model = Wallet
 		fields = ['address']	
+		
+''' 
+Below are super disgusting hack and slash forms for the new loanapply
+form specified in the email recieved on 7/17
+'''
+
+class ContactRequestForm(forms.ModelForm):
+	class Meta:
+		model = ContactRequest
+		fields = '__all__'
+		
+class PropertyInfoRequestForm(forms.ModelForm):
+	class Meta:
+		model = PropertyInfoRequest
+		fields = '__all__'
+		
+class CurrentMortgageForm(forms.ModelForm):
+	class Meta:
+		model = CurrentMortgage
+		fields = '__all__'
+		
+class MortgageDesiredForm(forms.ModelForm):
+	class Meta:
+		model = MortgageDesired
+		fields = '__all__'
+		
+class BorrowerInfoRequestForm(forms.ModelForm):
+	class Meta:
+		model = BorrowerInfoRequest 
+		fields = '__all__'
 		
 '''class AccountForm(forms.ModelForm):
 	class Meta:

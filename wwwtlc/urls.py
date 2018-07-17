@@ -192,10 +192,11 @@ urlpatterns = [
         r'^loan_apply$', 
         LoanApplyWizard.as_view(
             [
-                LoanRequestForm, 
-                LoanDataForm, 
-                AddressForm, 
-                PersonForm
+                ContactRequestForm,
+                PropertyInfoRequestForm,
+                CurrentMortgageForm,
+                MortgageDesiredForm,
+                BorrowerInfoRequestForm
             ], 
             template_name='pages/loan_apply.html'
         ), 

@@ -116,3 +116,56 @@ class Wallet(models.Model):
 #Payments
 #Business
 #Fees
+
+
+'''
+Super disgusting hack and slash models to meet requirements of new loanapply form
+specified in email recieved on 7/17.
+'''
+class ContactRequest(models.Model):
+	first_name = models.CharField(max_length=255)
+	last_name = models.CharField(max_length=255)
+	phone = models.CharField(max_length=255)
+	email_address = models.CharField(max_length=255)
+	
+class PropertyInfoRequest(models.Model):
+	property_type = models.CharField(max_length=255)
+	property_use = models.CharField(max_length=255)
+	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12)
+	lease_rate = models.DecimalField(decimal_places=4, max_digits=12)
+	rent = models.DecimalField(decimal_places=4, max_digits=12)
+	property_address = models.CharField(max_length=255)
+	property_age = models.IntegerField()
+	
+class CurrentMortgage(models.Model):
+	date_loan_originated = models.DateField()
+	current_loan_type = models.CharField(max_length=255)
+	original_amount = models.DecimalField(decimal_places=4, max_digits=12)
+	current_balance = models.DecimalField(decimal_places=4, max_digits=12)
+	current_term = models.CharField(max_length=255)
+	current_intrate = models.DecimalField(decimal_places=2, max_digits=4)
+	late_payments = models.BooleanField(default=False)
+	
+class MortgageDesired(models.Model):
+	amount_desired = models.DecimalField(decimal_places=4, max_digits=12)
+	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12)
+	loan_currency = models.CharField(max_length=3, default='USD')
+	loan_type_desired = models.CharField(max_length=255)
+	payment_desired = models.DecimalField(decimal_places=4, max_digits=12)
+	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4)
+	time_frame = models.CharField(max_length=255)
+	term_desired = models.CharField(max_length=255)
+	
+class BorrowerInfoRequest(models.Model):
+	B_TYPE_CHOICES = (
+		(0, 'Personal'),
+		(1, 'Business'),
+	)
+	language = models.CharField(max_length=3)
+	type = models.IntegerField(
+		default = 0,
+		choices = B_TYPE_CHOICES,
+	)
+	annual_income = models.DecimalField(decimal_places=4, max_digits=12)
+	net_worth = models.DecimalField(decimal_places=4, max_digits=12)
+	fico = models.CharField(max_length=255)
