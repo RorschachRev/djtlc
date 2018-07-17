@@ -2,10 +2,12 @@
 
 {% block content %}
 	<h2>Loan Requests:</h2>
-	{% if sleep_vis == True%}
-		<a href="/loan_requests/?sleep_vis=0">Hide Slept Requests</a>
-	{% else %}
-		<a href="/loan_requests/?sleep_vis=1">View Slept Requests</a>
+	{% if sleep %}
+		{% if sleep_vis == True%}
+			<a href="/loan_requests/?sleep_vis=0">Hide Slept Requests</a>
+		{% else %}
+			<a href="/loan_requests/?sleep_vis=1">View Slept Requests</a>
+		{% endif %}
 	{% endif %}
 	<br>
 	<br>

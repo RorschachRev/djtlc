@@ -1,32 +1,3 @@
-''' 
-Original Dashboard URLs:
-
-    url(
-        r'^dashboard/new_apps/$',
-        views.new_apps,
-        name='new_apps'
-),
-    url(
-        r'^dashboard/in_progress_apps/$',
-        views.in_progress_apps,
-        name='in_progress_apps'
-),
-    url(
-        r'^dashboard/overdue/$',
-        views.overdue,
-        name='overdue'
-),
-    url(
-        r'^dashboard/loans/$',
-        views.dashboard_loans,
-        name='loans'
-),
-    url(
-        r'^dashboard/loans/(?P<pk>.+)/$',
-        views.loan_details,
-        name='loan_details'
-),
-'''
 from django.conf.urls import url
 from django.conf import settings
 from django.contrib import admin
@@ -41,7 +12,7 @@ from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 
-# below is for testing the NamedUrlSessionsView for the formtools app
+# below is the forms for the NamedUrlSessionsView of the formtools app
 # https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
 tier_one_forms = (
 	(1, AddressForm),

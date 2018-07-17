@@ -150,6 +150,9 @@ def workflow(request):
 	cert_tier2 = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
 	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2, 'cert_tier1': cert_tier1, 'cert_tier2': cert_tier2})
 	
+# This function handles all possible requests on the '/workflow' page
+# handling for this comes from passing data via url into the view,
+# hence the "if app_id[:4] == 'foo_':"
 def workflow_request(request, app_id):
 	if app_id[:4] == 'req_':
 		app = app_id[4:]
