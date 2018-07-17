@@ -33,13 +33,23 @@ class ALSummaryForm(forms.ModelForm):
 	class Meta:
 		model = ALSummary
 		exclude = ['assets', 'liabilities']
+		
+class AppStatusForm(forms.ModelForm):
+	class Meta:
+		model = ApplicationSummary
+		fields = ['status']
+
+class AppTierForm(forms.ModelForm):
+	class Meta:
+		model = ApplicationSummary
+		fields = ['tier']
 
 class AssetSummaryForm(forms.ModelForm):
 	step_name = 'Asset Summary:'
 	class Meta:
 		model = AssetSummary
 		fields = ['life_insur_net', 'face_amount', 'subtotal_liquid', 'vested_interest', 'net_worth', 'other_description', 'other_amt_total', 'assets_total']
-
+		
 class BankAccountForm(forms.ModelForm):
 	step_name = 'Bank Account(s):'
 	class Meta:
@@ -63,16 +73,6 @@ class BusinessInfoForm(forms.ModelForm):
 	class Meta:
 		model = BusinessInfo
 		fields = '__all__'	
-		
-class ChangeTierForm(forms.ModelForm):
-	class Meta:
-		model = ApplicationSummary
-		fields = ['tier']
-		
-class CertifyAppForm(forms.ModelForm):
-	class Meta:
-		model = ApplicationSummary
-		fields = ['status']
 
 class ChildSupportForm(forms.ModelForm):
 	step_name = 'Child Support:'

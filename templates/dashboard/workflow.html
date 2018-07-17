@@ -89,8 +89,9 @@
 				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
+				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
-				<td><a href="cta_{{ app.id }}">Change Tier</a></td>
+				<td><a href="cht_{{ app.id }}">Change Tier</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -117,9 +118,9 @@
 				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
-				<td><a href="cer_{{ app.id }}">Update Status</a></td>
+				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
-				<td><a href="cta_{{ app.id }}">Change Tier</a></td>
+				<td><a href="cht_{{ app.id }}">Change Tier</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -147,9 +148,9 @@
 				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
-				<td><a href="cer_{{ app.id }}">Update Status</a></td>
+				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
-				<td><a href="cta_{{ app.id }}">Change Tier</a></td>
+				<td><a href="cht_{{ app.id }}">Change Tier</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -175,9 +176,9 @@
 				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
-				<td><a href="cer_{{ app.id }}">Update Status</a></td>
+				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
-				<td><a href="cta_{{ app.id }}">Change Tier</a></td>
+				<td><a href="cht_{{ app.id }}">Change Tier</a></td>
 			</tr>
 			{% endfor %}
 		</table>

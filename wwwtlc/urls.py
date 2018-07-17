@@ -169,14 +169,14 @@ urlpatterns = [
         name='wf_request_status'
 ),
     url(
-        r'^workflow/(?P<app_id>[cta_0-9]+)$',
+        r'^workflow/(?P<app_id>[cht_0-9]+)$',
         views.workflow_request,
-        name='wf_status_change'
+        name='wf_change_tier'
 ),
     url(
-        r'^workflow/(?P<app_id>[cer_0-9]+)$',
+        r'^workflow/(?P<app_id>[chs_0-9]+)$',
         views.workflow_request,
-        name='wf_certify'
+        name='wf_change_status'
 ),
     url(
         r'^loan_payments/$',

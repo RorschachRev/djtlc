@@ -168,37 +168,37 @@ def workflow_request(request, app_id):
 			form = ChangeReqForm()
 			return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
 			
-	elif app_id[:4] == 'cta_':
+	elif app_id[:4] == 'cht_':
 		app = app_id[4:]
 		app = ApplicationSummary.objects.get(pk=app)
 		
 		try:
 			if request.method == 'POST':
-				form = ChangeTierForm(request.POST, instance=app)
+				form = AppTierForm(request.POST, instance=app)
 				if form.is_valid():
 					form.save()
 					return HttpResponseRedirect('/workflow')
 			else:
-				form = ChangeTierForm(instance=app)
+				form = AppTierForm(instance=app)
 				return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 		except:
-			form = ChangeTierForm()
+			form = AppTierForm()
 			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
-	elif app_id[:4] == 'cer_':
+	elif app_id[:4] == 'chs_':
 		app = app_id[4:]
 		app = ApplicationSummary.objects.get(pk=app)
 		
 		try:
 			if request.method == 'POST':
-				form = CertifyAppForm(request.POST, instance=app)
+				form = AppStatusForm(request.POST, instance=app)
 				if form.is_valid():
 					form.save()
 					return HttpResponseRedirect('/workflow')
 			else:
-				form = CertifyAppForm(instance=app)
+				form = AppStatusForm(instance=app)
 				return render(request, 'dashboard/workflow_update.html', {'app': app, 'form':form})
 		except:
-			form = CertifyAppForm()
+			form = AppStatusForm()
 			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 	else:
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
