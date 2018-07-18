@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 from wwwtlc import views
 from wwwtlc.forms import *
 from wwwtlc import views_form
-from wwwtlc.views import TierOneWizard, TierTwoWizard
+from wwwtlc.views import TierOneWizard, TierTwoWizard, LoanWizard
 from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
@@ -170,9 +170,17 @@ urlpatterns = [
         name='credit_verify'
 ),
     url(
-        r'^package_loan/$',
-        views.package_loan,
-        name='package_loan'
+        r'^submit_loan/$',
+        LoanWizard.as_view(
+            [
+                BorrowerInfoLoanForm,
+                LoanTermsForm,
+                WalletForm,
+                LoanForm,
+            ],
+            template_name='dashboard/submit_loan.html'
+        ),
+        name='submit_loan'
 ),
     url(
         r'^manage_loan/$',

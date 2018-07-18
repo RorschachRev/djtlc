@@ -116,6 +116,16 @@ class LiabilitySummaryForm(forms.ModelForm):
 		model = LiabilitySummary
 		fields = ['job_related_expenses', 'total_monthly_payments', 'liabilities_total']
 
+class LoanForm(forms.ModelForm):
+	class Meta:
+		model = NewLoan
+		exclude = ['user', 'borrower', 'coborrower', 'loan_terms', 'loan_wallet']
+		
+class LoanTermsForm(forms.ModelForm):
+	class Meta:
+		model = LoanTerms
+		fields = '__all__'
+
 class ManagedPropertyForm(forms.ModelForm):
 	step_name = 'Managed Properties:'
 	class Meta:
@@ -125,7 +135,7 @@ class ManagedPropertyForm(forms.ModelForm):
 class PaymentForm(forms.ModelForm):
 	class Meta:
 		model = LoanPaymentHistory
-		fields = '__all__'
+		exclude = ['wallet', 'loan']
 
 class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
@@ -166,7 +176,7 @@ class VehicleForm(forms.ModelForm):
 class WalletForm(forms.ModelForm):
 	class Meta:
 		model = Wallet
-		fields = ['address']	
+		exclude = ['wallet']
 		
 ''' 
 Below are super disgusting hack and slash forms for the new loanapply
@@ -197,6 +207,12 @@ class BorrowerInfoRequestForm(forms.ModelForm):
 	class Meta:
 		model = BorrowerInfoRequest 
 		fields = '__all__'
+		
+# Form for 'Submit a Loan'
+class BorrowerInfoLoanForm(forms.ModelForm):
+	class Meta:
+		model = BorrowerInfo
+		exclude = ['business', 'assets_liabilities', 'declarations']
 		
 '''class AccountForm(forms.ModelForm):
 	class Meta:

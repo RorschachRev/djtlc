@@ -651,7 +651,7 @@ class LoanTerms (models.Model):
 	)
 	agency_case_no = models.IntegerField(verbose_name='Agency Case Number', help_text='(required)')
 	lender_case_no = models.IntegerField(verbose_name='Lender Case Number', help_text='(required)')
-	application = models.ForeignKey(ApplicationSummary)
+	application = models.ForeignKey(ApplicationSummary, null=True, blank=True)
 	loan_amount = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Loan Amount', help_text='(required)')
 	int_rate = models.DecimalField(max_digits=4, decimal_places=2, verbose_name='Interest Rate', help_text='(required)')
 	months_left = models.IntegerField(verbose_name='Months Left on Loan', help_text='(required)')

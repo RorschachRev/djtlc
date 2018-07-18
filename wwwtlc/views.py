@@ -15,7 +15,7 @@ from wwwtlc.forms import *
 from loan.models import Loan_Data, Loan_Request#, Loan
 from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
-from formtools.wizard.views import NamedUrlSessionWizardView
+from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
 
 '''##################################################
@@ -219,7 +219,10 @@ def make_payment(request, loan_id):
 	if request.method == 'POST':
 		form = PaymentForm(request.POST)
 		if form.is_valid():
-			form.save()
+			obj = form.save(commit=False)
+			obj.wallet = loan.loan_wallet
+			obj.loan = loan
+			obj.save()
 			return HttpResponseRedirect('/loan_payments')
 	else:
 		form = PaymentForm()
@@ -239,8 +242,9 @@ def loan_accounting(request):
 def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})
 	
-def package_loan(request):
-	return render(request, 'dashboard/package_loan.html', {})
+def submit_loan(request):
+	form = LoanForm
+	return render(request, 'dashboard/submit_loan.html', {'form': form})
 	
 def manage_loan(request):
 	return render(request, 'dashboard/manage_loan.html', {})
@@ -535,3 +539,42 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html')
+		
+# Form to Create a Loan
+# will probably remove or at the very least update
+class LoanWizard(SessionWizardView):
+	def done(self, form_list, **kwargs):
+		# a, 0 = BorrowerInfo
+		# b, 1 = LoanTerms
+		# c, 2 = Loan Wallet
+		# d, 3 = NewLoan
+		
+		a_data = self.storage.get_step_data('0')
+		a_valid = self.get_form(step='0', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('1')
+		b_valid = self.get_form(step='1', data=b_data).is_valid()
+		c_data = self.storage.get_step_data('2')
+		c_valid = self.get_form(step='2', data=c_data).is_valid()
+		d_data = self.storage.get_step_data('3')
+		d_valid = self.get_form(step='3', data=d_data).is_valid()
+		
+		if (
+			a_valid and b_valid and
+			c_valid and d_valid
+		):
+			a = self.get_form(step='0', data=a_data).save()
+			b = self.get_form(step='1', data=b_data).save()
+			c = self.get_form(step='2', data=c_data).save(commit=False)
+			d = self.get_form(step='3', data=d_data).save(commit=False)
+			
+			c.wallet = a.user
+			c.save()
+			
+			d.user = a.user
+			d.borrower = a
+			d.loan_terms = b
+			d.loan_wallet = c
+			
+			d.save()
+			
+		return HttpResponseRedirect('/loan_payments')
