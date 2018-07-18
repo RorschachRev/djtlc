@@ -169,3 +169,23 @@ class BorrowerInfoRequest(models.Model):
 	annual_income = models.DecimalField(decimal_places=4, max_digits=12)
 	net_worth = models.DecimalField(decimal_places=4, max_digits=12)
 	fico = models.CharField(max_length=255)
+	
+class NewRequestSummary(models.Model):
+	STATUS_CHOICES = (
+		(0, 'Sleep'),
+		(1, 'Active'),
+		(2, 'Priority'),
+		(3, 'Tier 1'),
+		(4, 'Tier 2'),
+	)
+	status = models.IntegerField(
+		default = 1,
+		choices = STATUS_CHOICES,
+	)
+	user = models.ForeignKey(User)
+	contact = models.ForeignKey(ContactRequest)
+	property = models.ForeignKey(PropertyInfoRequest)
+	curr_mortgage = models.ForeignKey(CurrentMortgage)
+	desired_mortgage = models.ForeignKey(MortgageDesired)
+	borrower = models.ForeignKey(BorrowerInfoRequest)
+	submitted = models.DateTimeField(default=timezone.now)

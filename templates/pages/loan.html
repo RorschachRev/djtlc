@@ -41,26 +41,29 @@
 		<h3>(Application Unsubmitted)</h3>
 		<table>
 			<tr>
+				<th>User</th>
 				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
 				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
 				<th>Phone Number</th>
 				<th>Email Address</th>
+				<th>Borrower Type</th>
 				<th>Date Last Modified</th>
-				<th>Workflow Status</th>
+				<th>Status</th>
 			</tr>
 			<tr>
 			{% for app in req_tier1 %}
 			<tr>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}</td>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
 				<td><a href="/tier_one_app">Apply Here</a></td>
 			</tr>
 			{% endfor %}
@@ -72,26 +75,29 @@
 		<h3>(Application Unsubmitted)</h3>
 		<table>
 			<tr>
+				<th>User</th>
 				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
 				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
 				<th>Phone Number</th>
 				<th>Email Address</th>
+				<th>Borrower Type</th>
 				<th>Date Last Modified</th>
-				<th>Workflow Status</th>
+				<th>Status</th>
 			</tr>
 			<tr>
 			{% for app in req_tier2 %}
 			<tr>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}</td>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
 				<td><a href="/tier_two_app">Apply Here</a></td>
 			</tr>
 			{% endfor %}
@@ -104,29 +110,33 @@
 	<h2>Loans Applied For :</h2>
 		<table>
 			<tr>
+				<th>User</th>
 				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
 				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
 				<th>Phone Number</th>
 				<th>Email Address</th>
+				<th>Borrower Type</th>
 				<th>Date Last Modified</th>
 				<th>Status</th>
 			</tr>
 			<tr>
 			{% for app in applied_loans %}
 			<tr>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				{% if app.workflow_status == 0 %}
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
+				{% if app.status == 0 %}
 					<td>Pending</td>
 				{% else %}
-					<td>{{ app.get_workflow_status_display }}</td>
+					<td>{{ app.get_status_display }}</td>
 				{% endif %}
 			</tr>
 			{% endfor %}

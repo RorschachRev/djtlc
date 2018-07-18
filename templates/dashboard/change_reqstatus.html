@@ -4,14 +4,13 @@
 	<a href="/loan_requests" class="btn btn-default">Back</a>
 	<br>
 	<h2>User : {{ app.user.username }}</h2>
-	<h3>Address : {{ app.request_data.loan_address }}</h3>
-	<h3>Date Last Modified: ({{ app.loan_request_date }})</h3>
-	<h3>Borrower: {{ app.borrower_requested }}</h3>
-	<h3>Requested Amount: {{ app.loan_request_amt }}</h3>
+	<h3>Address : {{ app.property.property_address }}</h3>
+	<h3>Date Last Modified: ({{ app.submitted }})</h3>
+	<h3>Contact: {{ app.contact.last_name }}, {{ app.contact.first_name }}</h3>
+	<h3>Desired Mortgage Amount: ${{ app.desired_mortgage.amount_desired | floatformat:2 }}</h3>
 	<form method="post">
 		{% csrf_token %}
-		<h3>Workflow Status:</h3> {{ form.as_p	}}
-		
+		<h3>Status:</h3> {{ form.as_p }}
 		<br>
 		<input type="submit" value="Submit" />
 	</form>

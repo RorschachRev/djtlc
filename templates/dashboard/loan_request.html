@@ -17,26 +17,28 @@
 			<tr>
 				<th>User</th>
 				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
 				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
 				<th>Phone Number</th>
 				<th>Email Address</th>
+				<th>Borrower Type</th>
 				<th>Date Last Modified</th>
-				<th>Workflow Status</th>
+				<th>Status</th>
 			</tr>
 			<tr>
 			{% for app in priority %}
 			<tr>
 				<td>{{ app.user.username }}</td>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
+				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -51,26 +53,28 @@
 			<tr>
 				<th>User</th>
 				<th>Address of Property</th>
-				<th>Borrower</th>
-				<th>Amount Requested</th>
 				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
 				<th>Phone Number</th>
 				<th>Email Address</th>
+				<th>Borrower Type</th>
 				<th>Date Last Modified</th>
-				<th>Workflow Status</th>
+				<th>Status</th>
 			</tr>
 			<tr>
 			{% for app in active %}
 			<tr>
 				<td>{{ app.user.username }}</td>
-				<td>{{ app.request_data.loan_address }}</td>
-				<td>{{ app.borrower_requested }}</td>
-				<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-				<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-				<td>{{ app.request_data.contact_person.phone }}</td>
-				<td>{{ app.request_data.contact_person.email_address }}</td>
-				<td>{{ app.loan_request_date }}</td>
-				<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
+				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -84,30 +88,32 @@
 		<h3><u>Slept Requests:</u></h3>
 		{% if sleep %}
 			<table>
-				<tr>
-					<th>User</th>
-					<th>Address of Property</th>
-					<th>Borrower</th>
-					<th>Amount Requested</th>
-					<th>Contact Person</th>
-					<th>Phone Number</th>
-					<th>Email Address</th>
-					<th>Date Last Modified</th>
-					<th>Workflow Status</th>
-				</tr>
-				<tr>
-				{% for app in sleep %}
-				<tr>
-					<td>{{ app.user.username }}</td>
-					<td>{{ app.request_data.loan_address }}</td>
-					<td>{{ app.borrower_requested }}</td>
-					<td>${{ app.loan_request_amt | floatformat:2 }}</td>
-					<td>{{ app.request_data.contact_person.name_first }}, {{ app.request_data.contact_person.name_last }}</td>
-					<td>{{ app.request_data.contact_person.phone }}</td>
-					<td>{{ app.request_data.contact_person.email_address }}</td>
-					<td>{{ app.loan_request_date }}</td>
-					<td>{{ app.get_workflow_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
-				</tr>
+			<tr>
+				<th>User</th>
+				<th>Address of Property</th>
+				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Borrower Type</th>
+				<th>Date Last Modified</th>
+				<th>Status</th>
+			</tr>
+			<tr>
+			{% for app in sleep %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
+				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+			</tr>
 				{% endfor %}
 			</table>
 		{% else %}

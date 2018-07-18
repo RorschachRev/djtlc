@@ -67,9 +67,9 @@ def test(request):
 def loan(request):
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
-	req_tier1 = Loan_Request.objects.filter(user=request.user, workflow_status=2).order_by('-loan_request_date')
-	req_tier2 = Loan_Request.objects.filter(user=request.user, workflow_status=3).order_by('-loan_request_date')
-	applied_loans = Loan_Request.objects.filter(workflow_status__in=[0, 1, 4], user=request.user).order_by('-workflow_status', '-loan_request_date')
+	req_tier1 = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
+	req_tier2 = NewRequestSummary.objects.filter(user=request.user, status=4).order_by('-submitted')
+	applied_loans = NewRequestSummary.objects.filter(status__in=[0, 1, 2], user=request.user).order_by('-status', '-submitted')
 	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
 	
 class loaninfo():
@@ -114,9 +114,9 @@ def pay(request, loan_id):
 ##################
 
 def loan_requests(request):
-	active_requests = Loan_Request.objects.filter(workflow_status=1).order_by('-loan_request_date')
-	sleep_requests = Loan_Request.objects.filter(workflow_status=0).order_by('-loan_request_date')
-	priority_requests = Loan_Request.objects.filter(workflow_status=4).order_by('-loan_request_date')
+	sleep_requests = NewRequestSummary.objects.filter(status=0).order_by('-submitted')
+	active_requests = NewRequestSummary.objects.filter(status=1).order_by('-submitted')
+	priority_requests = NewRequestSummary.objects.filter(status=2).order_by('-submitted')
 	if request.method == 'GET':
 		sleep_vis = request.GET.get('sleep_vis')
 		if sleep_vis == '0':
@@ -126,7 +126,7 @@ def loan_requests(request):
 	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests, 'sleep_vis': sleep_vis})
 	
 def change_reqstatus(request, app_id):
-	app = Loan_Request.objects.get(pk=app_id)
+	app = NewRequestSummary.objects.get(pk=app_id)
 	
 	try:
 		if request.method == 'POST':
@@ -142,8 +142,8 @@ def change_reqstatus(request, app_id):
 	
 	
 def workflow(request):
-	req_tier1 = Loan_Request.objects.filter(workflow_status=2).order_by('-loan_request_date')
-	req_tier2 = Loan_Request.objects.filter(workflow_status=3).order_by('-loan_request_date')
+	req_tier1 = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
+	req_tier2 = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
 	tier1 = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
 	tier2 = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
 	cert_tier1 = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
@@ -156,7 +156,7 @@ def workflow(request):
 def workflow_request(request, app_id):
 	if app_id[:4] == 'req_':
 		app = app_id[4:]
-		app = Loan_Request.objects.get(pk=app)
+		app = NewRequestSummary.objects.get(pk=app)
 		
 		try:
 			if request.method == 'POST':

@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.core.mail import send_mail
 from formtools.wizard.views import SessionWizardView
+from wwwtlc.models import NewRequestSummary
 
 class LoanApplyWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
+		summary = NewRequestSummary
+		
 		# a, 0 = ContactRequestForm
 		# b, 1 = PropertyInfoRequestForm
 		# c, 2 = CurrentMortgageForm
@@ -33,6 +36,17 @@ class LoanApplyWizard(SessionWizardView):
 			c = self.get_form(step='2', data=c_data).save()
 			d = self.get_form(step='3', data=d_data).save()
 			e = self.get_form(step='4', data=e_data).save()
+			
+			summary = summary(
+				user = self.request.user,
+				contact = a,
+				property = b,
+				curr_mortgage = c,
+				desired_mortgage = d,
+				borrower = e,
+			)
+			
+			summary.save()
 			
 			# sends email when data is submitted and validated
 			send_mail(

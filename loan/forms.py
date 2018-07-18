@@ -1,6 +1,6 @@
 from django import forms
-from .models import Loan_Data, Loan_Request
-from wwwtlc.models import Address, Person
+from .models import *
+from wwwtlc.models import *
 
 # deleted from forms :
 # 	loan_data = contact_person, loan_address
@@ -19,10 +19,10 @@ class LoanRequestForm(forms.ModelForm):
 		
 class ChangeReqForm(forms.ModelForm):
 	class Meta:
-		model = Loan_Request
-		fields = ['workflow_status']
+		model = NewRequestSummary
+		fields = ['status']
 		labels = {
-			'workflow_status': '',
+			'status': '',
 		}
 		
 class AddressForm(forms.ModelForm):
