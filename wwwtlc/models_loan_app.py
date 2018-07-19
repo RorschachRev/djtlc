@@ -589,7 +589,7 @@ class LenderInfo(models.Model):
 class ApplicationSummary(models.Model):
 	STATUS_CHOICES = (
 		(0, 'New'),
-		(1, 'Requires Additional Information'),
+		(1, 'Requires Additional User Information'),
 		(2, 'Awaiting External Response'),
 		(3, 'Resubmitted'),
 		(4, 'Denied'),
@@ -601,7 +601,7 @@ class ApplicationSummary(models.Model):
 		(10, 'County Filed'),
 		(11, 'County Completed'),
 		(12, 'Certified'),
-		(13, 'IPFS Published'),
+		(13, 'Deed Published'),
 		(14, 'Declared on Blockchain'),
 	)
 	TIER_CHOICES = (
@@ -613,6 +613,7 @@ class ApplicationSummary(models.Model):
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)
 	acknowledge = models.ForeignKey(AcknowledgeAgree)
+	transaction_details = models.ForeignKey(TransactionDetails)
 	status = models.IntegerField(
 		choices = STATUS_CHOICES,
 		default = 0,

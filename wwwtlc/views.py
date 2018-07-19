@@ -205,7 +205,8 @@ def workflow_request(request, app_id):
 			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 	else:
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
-		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request})
+		credit_request = CreditRequest.objects.get(application=app_id)
+		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 	
 # PAYMENTS / ACCOUNTING
 ###################
@@ -257,6 +258,10 @@ def manage_loan(request):
 # (BizInfo -> ConstrInfo -> RefineInfo -> PropInfo -> BorrowerInfo -> CreditReq -> Decl -> Transaction -> Agree)
 
 class TierOneWizard(NamedUrlSessionWizardView):
+	
+	'''if self.request.method == 'POST':
+		print(str(self.request.POST))'''
+	
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
@@ -329,6 +334,7 @@ class TierOneWizard(NamedUrlSessionWizardView):
 				borrower = f, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = j,
+				transaction_details = i,
 				tier = 0,
 			)
 			
