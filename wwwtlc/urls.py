@@ -175,6 +175,11 @@ urlpatterns = [
         name='certify'
 ),
     url(
+        r'^certify/(?P<app_id>[t1_0-9]+)$',
+        views.certify,
+        name='add_data_source'
+),
+    url(
         r'^submit_loan/$',
         LoanWizard.as_view(
             [

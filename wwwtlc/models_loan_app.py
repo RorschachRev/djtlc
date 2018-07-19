@@ -619,6 +619,7 @@ class ApplicationSummary(models.Model):
 		default = 0,
 	)
 	user = models.ForeignKey(User)
+	application = models.ForeignKey('self', null=True, blank=True)
 	property = models.ForeignKey(PropertyInfo)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)

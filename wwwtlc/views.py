@@ -208,8 +208,42 @@ def workflow_request(request, app_id):
 		credit_request = CreditRequest.objects.get(application=app_id)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 		
-def certify(request):
-	return render(request, 'dashboard/certify.html', {})
+def certify(request, app_id=0):
+	tier1 = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
+	tier2 = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
+	
+	'''if app_id[:3] != 0 and app_id[:3] == 't1_':
+		app = ApplicationSummary.objects.get(pk=app_id)
+		
+		# a, 0 = AddressForm
+		# b, 1 = BusinessForm
+		# c, 2 = ConstructionInfoForm
+		# d, 3 = RefinanceInfoForm
+		# e, 4 = PropertyInfoForm
+		# f, 5 = BorrowerInfoForm
+		# g, 6 = CreditRequestForm
+		# h, 7 = DeclarationForm
+		# i, 8 = TransactionDetailsForm
+		# j, 9 = AcknowledgeAgreeForm
+		
+		a_inst = app.property.address
+		b_inst = app.borrower.business
+		c_inst = app.property.construction_loan
+		d_inst = app.property.refinance_loan
+		#e_inst = 
+		
+		if requet.method == 'POST':
+			form = AddSourceForm(request.POST, instance=app)
+			if form.is_valid():
+				obj = form.save(commit=False)
+				obj.application = app
+				obj.save()
+				return HttpResponseRedirect('/certify')
+		else:
+			form = AddSourceForm(instance=app)
+			return render(request, 'dashboard/add_source.html', {'form': form})'''
+			
+	return render(request, 'dashboard/certify.html', {'tier1': tier1, 'tier2': tier2})
 	
 # PAYMENTS / ACCOUNTING
 ###################
