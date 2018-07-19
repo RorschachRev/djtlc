@@ -207,6 +207,9 @@ def workflow_request(request, app_id):
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
 		credit_request = CreditRequest.objects.get(application=app_id)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
+		
+def certify(request):
+	return render(request, 'dashboard/certify.html', {})
 	
 # PAYMENTS / ACCOUNTING
 ###################

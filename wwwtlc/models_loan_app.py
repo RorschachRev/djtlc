@@ -608,6 +608,16 @@ class ApplicationSummary(models.Model):
 		(0, 'Tier 1'),
 		(1, 'Tier 2'),
 	)
+	SOURCE_CHOICES = (
+		(0, 'User'),
+		(1, 'Credit 1'),
+		(2, 'Credit 2'),
+		(3, 'Gov\'t'),
+	)
+	source = models.IntegerField(
+		choices = SOURCE_CHOICES,
+		default = 0,
+	)
 	user = models.ForeignKey(User)
 	property = models.ForeignKey(PropertyInfo)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')

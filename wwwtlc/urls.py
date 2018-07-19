@@ -170,6 +170,11 @@ urlpatterns = [
         name='credit_verify'
 ),
     url(
+        r'^certify/$',
+        views.certify,
+        name='certify'
+),
+    url(
         r'^submit_loan/$',
         LoanWizard.as_view(
             [
