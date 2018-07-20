@@ -7,55 +7,38 @@ from django.views.generic.base import TemplateView
 from wwwtlc import views
 from wwwtlc.forms import *
 from wwwtlc import views_form
-from wwwtlc.views import TierOneWizard, TierTwoWizard, LoanWizard
+from wwwtlc.views import BasicWizard, StandardWizard, LoanWizard
 from loan import views as views_loan
 from loan.views import LoanApplyWizard
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 
 # below is the forms for the NamedUrlSessionsView of the formtools app
 # https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
-tier_one_forms = (
+basic_app_forms = (
 	(1, AddressForm),
 	(2, BusinessInfoForm),
 	(3, ConstructionInfoForm),
-	(4, RefinanceInfoForm),
-	(5, PropertyInfoForm),
-	(6, BorrowerInfoForm),
-	(7, CreditRequestForm),
-	(8, DeclarationForm),
-	(9, TransactionDetailsForm),
-	(10, AcknowledgeAgreeForm),
+	(4, PropertyInfoForm),
+	(5, BorrowerInfoForm),
+	(6, CreditRequestForm),
+	(7, DeclarationForm),
+	(8, AcknowledgeAgreeForm),
 )
 
-tier_two_forms = (
+standard_app_forms = (
 	(1, AddressForm),
 	(2, BusinessInfoForm),
 	(3, ConstructionInfoForm),
-	(4, RefinanceInfoForm),
-	(5, PropertyInfoForm),
-	(6, EmploymentIncomeForm),
-	(7, BankAccountForm),
-	(8, BondForm),
-	(9, StockForm),
-	(10, VehicleForm),
-	(11, AssetSummaryForm),
-	(12, DebtForm),
-	(13, ManagedPropertyForm),
-	(14, AlimonyForm),
-	(15, ChildSupportForm),
-	(16, SeparateMaintForm),
-	(17, LiabilitySummaryForm),
-	(18, ALSummaryForm),
-	(19, BorrowerInfoForm),
-	(20, CreditRequestForm),
-	(21, DeclarationForm),
-	(22, TransactionDetailsForm),
-	(23, AcknowledgeAgreeForm),
+	(4, PropertyInfoForm),
+	(5, EmploymentIncomeForm),
+	(6, BankAccountForm),
+	(7, AssetSummaryForm),
+	(8, ManagedPropertyForm),
 )
 
-tier_one_wizard = TierOneWizard.as_view(tier_one_forms, url_name='tier_one_step', template_name='pages/tier1_app.html')
+basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')
 
-tier_two_wizard = TierTwoWizard.as_view(tier_two_forms, url_name='tier_two_step', template_name='pages/tier2_app.html')
+standard_wizard = StandardWizard.as_view(standard_app_forms, url_name='standard_app_step', template_name='pages/standard_app.html')
 
 urlpatterns = [
 # Core URLs
@@ -225,27 +208,38 @@ urlpatterns = [
         TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
         name='loan_apply_done'
 ),
-# urls for TierOneWizard form
+# urls for StandardWizard form
     url(
-        r'^tier_one_app/(?P<step>.+)/$', 
-        tier_one_wizard,
-        name='tier_one_step'
+        r'^basic_app/(?P<step>.+)/$', 
+        basic_wizard,
+        name='basic_app_step'
 ),
     url(
-        r'^tier_one_app/$',
-        tier_one_wizard,
-        name='tier_one_app'
+        r'^basic_app/$',
+        basic_wizard,
+        name='basic_app'
 ),
-# url for TierTwoWizard form
+# urls for StandardWizard form
     url(
-        r'^tier_two_app/(?P<step>.+)/$',
-        tier_two_wizard,
-        name='tier_two_step'
+        r'^standard_app/(?P<step>.+)/$',
+        standard_wizard,
+        name='standard_app_step'
 ),
     url(
-        r'^tier_two_app/$',
-        tier_two_wizard,
-        name='tier_two_app'
+        r'^standard_app/$',
+        standard_wizard,
+        name='standard_app'
 ),
+# urls for ExtendedWizard - Yet to be created
+#   url(
+#        r'^extended_app/(?P<step>.+)/$',
+#        extended_wizard,
+#        name='extended_app_step'
+#),
+#    url(
+#        r'^extended_app/$',
+#        extended_wizard,
+#        name='extended_app'
+#),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

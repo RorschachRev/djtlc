@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 #____________________________________________________________________________________________
 #
 #	- Read through all comments and handle each question/design concern
-#	- Trim down any unnecessary/redundant fields
+#	- Trim down any unecessary/redundant fields
 #	
 #********************************************************************************************
 		
@@ -30,12 +30,23 @@ class ConstructionInfo(models.Model):
 	def __str__(self):
 		return str(self.total)
 	
+class RefinanceInfo(models.Model):
+	year_acquired = models.DateField(default=timezone.now, null=True, blank=True, verbose_name='Year Acquired')
+	original_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Original Cost')
+	amt_existing_liens = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Existing Liens Amount')
+	refine_purpose = models.CharField(max_length=256, null=True, blank=True, verbose_name='Purpose of Refinance')
+	total_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Total')
+	
+	def __str__(self):
+		return str(self.total_cost)
+	
 class PropertyInfo (models.Model):
 	address = models.ForeignKey(Address, null=True, blank=True)
 	no_units = models.IntegerField(verbose_name='Number of Units', help_text='(required)') # number of units
-	legal_description = models.CharField(max_length=256, null=True, blank=True, verbose_name='Legal Description')
+	legal_description = models.CharField(max_length=256, verbose_name='Legal Description', help_text='(required)')
 	year_built = models.IntegerField(verbose_name='Year Built', help_text='(required)')
 	construction_loan = models.ForeignKey(ConstructionInfo, null=True, blank=True, verbose_name='Construction Loan')
+	refinance_loan = models.ForeignKey(RefinanceInfo, null=True, blank=True, verbose_name='Refinance Loan')
 	title_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Names on Title') #will probably want a many-to-many relation - unsure if should be linked to BorrowerInfo or not
 	
 	def __str__(self):
@@ -65,13 +76,19 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 class BusinessInfo(models.Model):
 	bus_name = models.CharField(max_length=256, verbose_name='Business Name', help_text='(required)')
 	bus_description = models.TextField(verbose_name='Business Description', help_text='(required)')
-	income = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Income', help_text='(required)')
+	base_empl_income = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Base Employee Income', help_text='(required)')
 	rent = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
 	first_mortgage = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='First Mortgage Amount')
-	other_mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Mortgage Amount')
-	other_mortgage_description = models.TextField(null=True, blank=True, verbose_name='Other Mortgage Description')
+	other_financing = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Financing Amount')
+	other_financing_description = models.TextField(null=True, blank=True, verbose_name='Other Financing Description')
 	hazard_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Hazard Insurance')
 	real_estate_taxes = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Real Estate Taxes')
+	mortgage_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Mortgage Insurance')
+	overtime = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+	bonuses = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+	commissions = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+	dividends = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
+	interest = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
 	net_rental = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Rental Income')
 	income_other_description = models.TextField(null=True, blank=True, verbose_name='Other Income')
 	income_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Income Total')
@@ -79,6 +96,7 @@ class BusinessInfo(models.Model):
 	expense_other_description = models.TextField(null=True, blank=True, verbose_name='Other Expense(s)')
 	expense_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Expense Total')
 	expense_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Expense Total', help_text='(required)')
+	net_revenue = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Net Revenue', help_text='(required)')
 	
 	def __str__(self):
 		return self.bus_name + ', $' + str(self.net_revenue)
@@ -92,6 +110,32 @@ class BankAccount(models.Model):
 	def __str__(self):
 		return str(self.acct_no) + ', $' + str(self.amount)
 	
+class Stock(models.Model):
+	stock_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Name')
+	stock_number = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Number')
+	stock_description = models.TextField(null=True, blank=True, verbose_name='Stock Description')
+	stock_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cash or Market Value')
+	
+	def __str__(self):
+		return str(self.stock_number) + ', $' + str(self.stock_amount)
+	
+class Bond(models.Model):
+	bond_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Name')
+	bond_number = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Number')
+	bond_description = models.TextField(null=True, blank=True, verbose_name='Bond Description')
+	bond_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cash or Market Value')
+	
+	def __str__(self):
+		return str(self.bond_number) + ', $' + str(self.bond_amount)
+	
+class Vehicle(models.Model):
+	vehicle_make = models.CharField(max_length=256, null=True, blank=True, verbose_name='Make')
+	vehicle_model = models.CharField(max_length=256, null=True, blank=True, verbose_name='Model')
+	vehicle_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cash or Market Value')
+	
+	def __str__(self):
+		return '{}, {} ${}'.format(self.vehicle_make, self.vehicle_model, self.vehicle_amount)
+	
 class AssetSummary(models.Model):
 	holding_deposit = models.CharField(max_length=256, null=True, blank=True, verbose_name='Holding Deposit') # unsure what this field is supposed 	\
 															       # to be. on pdf, it just states:			\
@@ -104,14 +148,32 @@ class AssetSummary(models.Model):
 	acct1 = models.ForeignKey(BankAccount, related_name='acc_1', null=True, blank=True, verbose_name='Account 1')
 	acct2 = models.ForeignKey(BankAccount, related_name='acc_2', null=True, blank=True, verbose_name='Account 2')
 	acct3 = models.ForeignKey(BankAccount, related_name='acc_3', null=True, blank=True, verbose_name='Account 3')
-	stock_value = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Stock Value')
-	bond_value = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Bond Value')
 	
-	life_ins_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Life Insurance Value')
+	# below fields are for stocks
+	stock1 = models.ForeignKey(Stock, related_name='stock_1', null=True, blank=True, verbose_name='Stock 1')
+	stock2 = models.ForeignKey(Stock, related_name='stock_2', null=True, blank=True, verbose_name='Stock 2')
+	stock3 = models.ForeignKey(Stock, related_name='stock_3', null=True, blank=True, verbose_name='Stock 3')
+	stock4 = models.ForeignKey(Stock, related_name='stock_4', null=True, blank=True, verbose_name='Stock 4')
+	stock5 = models.ForeignKey(Stock, related_name='stock_5', null=True, blank=True, verbose_name='Stock 5')
+	
+	# below fields are for bonds
+	bond1 = models.ForeignKey(Bond, related_name='bond_1', null=True, blank=True, verbose_name='Bond 1')
+	bond2 = models.ForeignKey(Bond, related_name='bond_2', null=True, blank=True, verbose_name='Bond 2')
+	bond3 = models.ForeignKey(Bond, related_name='bond_3', null=True, blank=True, verbose_name='Bond 3')
+	bond4 = models.ForeignKey(Bond, related_name='bond_4', null=True, blank=True, verbose_name='Bond 4')
+	bond5 = models.ForeignKey(Bond, related_name='bond_5', null=True, blank=True, verbose_name='Bond 5')
+	
+	life_insur_net = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Life Insurance Net Cash Value')
 	face_amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Face Amount')
 	subtotal_liquid = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Subtotal Liquid Assets', help_text='(required)')
 	vested_interest = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Vested Interest in Retirement Fund')
 	net_worth = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Worth of Business(es) Owned') # of business(es) owned
+	
+	vehicle1 = models.ForeignKey(Vehicle, related_name='vehicle_1', null=True, blank=True, verbose_name='Vehicle 1')
+	vehicle2 = models.ForeignKey(Vehicle, related_name='vehicle_2', null=True, blank=True, verbose_name='Vehicle 2')
+	vehicle3 = models.ForeignKey(Vehicle, related_name='vehicle_3', null=True, blank=True, verbose_name='Vehicle 3')
+	vehicle4 = models.ForeignKey(Vehicle, related_name='vehicle_4', null=True, blank=True, verbose_name='Vehicle 4')
+	vehicle5 = models.ForeignKey(Vehicle, related_name='vehicle_5', null=True, blank=True, verbose_name='Vehicle 5')
 	
 	employment_income = models.ForeignKey(EmploymentIncome, null=True, blank=True, verbose_name='Employment Income Information')
 	
@@ -122,10 +184,40 @@ class AssetSummary(models.Model):
 	
 	def __str__(self):
 		return str(self.assets_total)
-
-# From Ian's notes:	
-# Allow all properties to be listed, we need to have more fields based on 
-#"Number of Properties owned"
+	
+class Debt(models.Model):
+	company_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Name')
+	company_address = models.CharField(max_length=256, null=True, blank=True, verbose_name='Company Address')
+	acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
+	monthly_payment = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Monthly Payment')
+	months_left = models.IntegerField(null=True, blank=True, verbose_name='Months Left to Pay') # months left on monthly_payment
+	unpaid_balance = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Unpaid Balance')
+	
+	def __str__(self):
+		return str(self.acct_no) + ', $' + str(self.unpaid_balance)
+	
+class Alimony(models.Model):
+	owed_to = models.CharField(max_length=256, null=True, blank=True, verbose_name='Payments Owed to')
+	amt_owed = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Amount Owed')
+	
+	def __str__(self):
+		return '$' + str(self.amt_owed) + '/month' 
+	
+class ChildSupport(models.Model):
+	owed_to = models.CharField(max_length=256, null=True, blank=True, verbose_name='Payments Owed to')
+	amt_owed = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Amount Owed')
+	
+	def __str__(self):
+		return '$' + str(self.amt_owed) + '/month' 
+	
+class SeparateMaint(models.Model):
+	owed_to = models.CharField(max_length=256, null=True, blank=True, verbose_name='Payments Owed to')
+	amt_owed = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Amount Owed')
+	
+	def __str__(self):
+		return '$' + str(self.amt_owed) + '/month' 
+	
+# previously in Liability summary block, unsure if this should go into the liability summary or the asset summary as a FK
 class ManagedProperty(models.Model):
 	real_estate_schedule = models.CharField(max_length=256, null=True, blank=True, verbose_name='Schedule of Real Estate') # may want to be a CHOICES field
 	property_address = models.ForeignKey(Address, null=True, blank=True, verbose_name='Address of Property')
@@ -140,10 +232,101 @@ class ManagedProperty(models.Model):
 	
 	def __str__(self):
 		return str(self.property_address) + ', $' + str(self.net_rental_income)
+	
+class LiabilitySummary(models.Model):
+	debt1 = models.ForeignKey(Debt, related_name='debt1', null=True, blank=True, verbose_name='Debt 1')
+	debt2 = models.ForeignKey(Debt, related_name='debt2', null=True, blank=True, verbose_name='Debt 2')
+	debt3 = models.ForeignKey(Debt, related_name='debt3', null=True, blank=True, verbose_name='Debt 3')
+	debt4 = models.ForeignKey(Debt, related_name='debt4', null=True, blank=True, verbose_name='Debt 4')
+	debt5 = models.ForeignKey(Debt, related_name='debt5', null=True, blank=True, verbose_name='Debt 5')
+	debt6 = models.ForeignKey(Debt, related_name='debt6', null=True, blank=True, verbose_name='Debt 6')
+	
+	alimony1 = models.ForeignKey(Alimony, related_name='alimony1', null=True, blank=True, verbose_name='Alimony 1')
+	alimony2 = models.ForeignKey(Alimony, related_name='alimony2', null=True, blank=True, verbose_name='Alimony 2')
+	alimony3 = models.ForeignKey(Alimony, related_name='alimony3', null=True, blank=True, verbose_name='Alimony 3')
+	
+	child_supp1 = models.ForeignKey(ChildSupport, related_name='child_supp1', null=True, blank=True, verbose_name='Child Support 1')
+	child_supp2 = models.ForeignKey(ChildSupport, related_name='child_supp2', null=True, blank=True, verbose_name='Child Support 2')
+	child_supp3 = models.ForeignKey(ChildSupport, related_name='child_supp3', null=True, blank=True, verbose_name='Child Support 3')
+	
+	separate_maint1 = models.ForeignKey(SeparateMaint, related_name='sep_maint1', null=True, blank=True, verbose_name='Separate Maintenance 1')
+	separate_maint2 = models.ForeignKey(SeparateMaint, related_name='sep_maint2', null=True, blank=True, verbose_name='Separate Maintenance 2')
+	separate_maint3 = models.ForeignKey(SeparateMaint, related_name='sep_maint3', null=True, blank=True, verbose_name='Separate Maintenance 3')
+	
+	job_related_expenses = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Job Related Expenses')
+	
+	total_monthly_payments = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Total Monthly Payments', help_text='(required)')
+	liabilities_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Total Liabilities', help_text='(required)')	
+	
+	def __str__(self):
+		return str(self.liabilities_total)
+	
+class ALSummary(models.Model):
+	joint = models.BooleanField(default=False, verbose_name='Joint Filing', help_text='Check if you are filing jointly') # Are you filing jointly or not?
+	assets = models.ForeignKey(AssetSummary, null=True, blank=True, verbose_name='Assets Summary')
+	liabilities = models.ForeignKey(LiabilitySummary, null=True, blank=True, verbose_name='Liabilities Summary')
+	net_worth = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Worth', help_text='(Assets - Liabilities)')
+	annual_income = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Annual Income', help_text='(required)')
+	annual_expenses = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Annual Expenses', help_text='(required)')
+	net_annual_cash_flow = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Net Annual Cash Flow', help_text='(required)')
+	
+	# below fields are for listing any additional names under which credit has previously been recieved
+	prev_alt_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Alternate Name')
+	prev_creditor_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Creditor Name')
+	prev_acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
+	
+	def __str__(self):
+		return 'Net Worth: ' + str(self.net_worth) + ' | Annual Cash Flow: ' + str(self.net_annual_cash_flow)
+	
+#***********************************************************************************************
+# "Details of Transaction" -> SECTION VII/commercial_loan_app2.pdf					\
+# will go here, but it will require some modification by Ian, is also part of officer workflow	\
+# A lot of these fields have long names, I just briefly ran through it, so I didn't think of		\
+# any good names to condense the field titles a bit more than they are					\
+#***********************************************************************************************
+class TransactionDetails(models.Model):
+	purchase_price = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # a.
+	alterations = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # b. 1/3
+	improvements = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # b. 2/3
+	repairs = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # b. 3/3
+	land = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # c. # if acquired seperately
+	refinance = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # d. # including debts to be paid off
+	estimated_prepaid_items = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # e.
+	estimated_closing_costs = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # f.
+	pmi = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # g. 1/3
+	mip = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # g. 2/3
+	funding_fee = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # g. 3/3
+	discount = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # h.
+	total_costs = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # i. # add items a through h
+	subordinate_financing = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # j.
+	closing_cost_paid = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # k. # "Borrower's closing costs paid by Seller"
+	other_credits_description = models.TextField(null=True, blank=True) # l. 1/2
+	other_credits_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True) # l. 2/2
+	loan_amount_exclude = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # m. # exclude PMI, MIP, Funding Fee financed
+	financed_pmi = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # n. 1/3
+	financed_mip = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # n. 2/3
+	financed_funding_fee = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # n. 3/3
+	loan_amount = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # o. # add m. & n.
+	borrower_cash = models.DecimalField(max_digits=12, decimal_places=2, help_text='(required)') # p. # "Cash from/to Borrower (subtract j, k, l & o from i)
+	
+	def __str__(self):
+		return 'Cash from/to Borrower: $' + str(self.borrower_cash)
 
 class Declaration(models.Model):
 	# on pdf, it states: "If 'Yes' to any questions a-i, use continuation sheet for explanation"	\
 	# I put a textbox in this model to satisfy this requirement
+	
+	PROPERTY_TYPE_CHOICES = (
+		(0, 'PR'),
+		(1, 'SH'),
+		(2, 'IP'),
+	)
+	TITLE_METHOD_CHOICES = (
+		(0, 'S'),
+		(1, 'SP'),
+		(2, 'O'),
+	)
+	
 	outstanding_judgements = models.BooleanField(default=False, verbose_name='Are there any outstanding judgements against you?', help_text='a.') # a.
 	bankrupt = models.BooleanField(default=False, verbose_name='Have you been declared bankrupt within the past 7 years?', help_text='b.') # b.
 	forclosed = models.BooleanField(default=False, verbose_name='Have you had property foreclosed upon or given title or deed in lieu thereof in the last 7 years?', help_text='c.') # c.
@@ -158,8 +341,36 @@ class Declaration(models.Model):
 	
 	us_citizen = models.BooleanField(default=False, verbose_name='Are you a U.S. citizen?', help_text='j.') # j.
 	permanent_res_alien = models.BooleanField(default=False, verbose_name='Are you a permanent resident alien?', help_text='k.') # k.
+	primary_residence = models.BooleanField(default=False, verbose_name='Do you intend to occupy the property as your primary residence?', help_text='l. (If "Yes", complete question m below)') # l.
 	
-	explanation = models.TextField(null=True, blank=True, verbose_name='Explanation')
+	# ownership_interest in the last 3 years		\
+	# if True, user will need to fill out below fields
+	
+	ownership_interest = models.BooleanField(default=False, verbose_name='Have you had an ownership interest in a property in the last three years?', help_text='m. 1/3') # m. 1/3
+	
+	m_property_type = models.IntegerField(
+		choices = PROPERTY_TYPE_CHOICES,
+		default = 0,
+		verbose_name = 'Property Type',
+		help_text = 'm. 2/3',
+	)# m. 2/3 # on pdf, it says "What type of property did	\
+			# you own--principal residence (PR), second	\
+			# home (SH), or investment property (IP)?	\
+			# will probably just specify this in help_text later
+			
+	m_title_method = models.IntegerField(
+		choices = TITLE_METHOD_CHOICES,
+		default = 0,
+		verbose_name = 'Title Method',
+		help_text = 'm. 3/3',
+	)# m 3/3 # there should be a better name for this field	\
+			# on pdf, it says, "How did you hold title to 	\
+			# the home -- solely by yourself (S), jointly 	\
+			#with your spouse (SP), or jointly with 		\
+			# another person (O)?"					\
+			# will probably just specify this in help_text later
+	
+	continuation = models.TextField(null=True, blank=True, verbose_name='Continuation')
 			
 	def __str__(self):
 		return 'Borrower\'s Declarations'
@@ -276,6 +487,7 @@ class BorrowerInfo (models.Model):
 		default = 0,
 		verbose_name = 'Filing Type'
 	)
+	assumed_business_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Assumed Business Name(s)') # unsure what to name this field/what it is supposed to provide
 	dba_name = models.CharField(max_length=256, null=True, blank=True, verbose_name='DBA Name')
 	borrower_type = models.IntegerField(
 		choices = BORROWER_CHOICES,
@@ -288,11 +500,13 @@ class BorrowerInfo (models.Model):
 	tin_no = models.IntegerField(verbose_name='TIN Number', null=True, blank=True)
 	home_phone = models.CharField(max_length=256, verbose_name='Home Phone', help_text='(required)')
 	dob = models.DateField(default=timezone.now, verbose_name='Date of Birth')
+	yrs_school = models.IntegerField(verbose_name='Years of Schooling Completed', help_text='(required)') # years of schooling completed
 	marital_status = models.IntegerField(
 		choices = MARITAL_CHOICES,
 		default = 0,
 		verbose_name = 'Marital Status'
 	)
+	dependents = models.IntegerField(help_text='(required)')
 	present_addr = models.ForeignKey(Address, related_name='present_addr', null=True, blank=True, verbose_name='Present Address')
 	own_rent = models.IntegerField(
 		choices = OWN_RENT_CHOICES,
@@ -301,7 +515,7 @@ class BorrowerInfo (models.Model):
 	)
 	living_yrs = models.IntegerField(verbose_name='Years Owned/Rented at Present Address', help_text='(required)') # years owned/rented at property referenced in present_addr
 	mail_addr = models.CharField(max_length=256, verbose_name='Mailing Address', help_text='(required)')
-	principal_office_addr = models.CharField(max_length=256, null=True, blank=True, verbose_name='Principal Office Address')
+	principal_office_addr = models.CharField(max_length=256, null=True, blank=True, verbose_name='Pricipal Office Address')
 	organizations_state = models.IntegerField(
 		choices = STATE_CHOICES,
 		default = 0,
@@ -309,18 +523,21 @@ class BorrowerInfo (models.Model):
 	)
 	
 	# below are fields to be filled out if own_rent < 2
-	former_addr = models.ForeignKey(Address, related_name='former_addr', null=True, blank=True, verbose_name='Former Address (if less than 2 years)')
+	former_addr = models.ForeignKey(Address, related_name='former_addr', null=True, blank=True, verbose_name='Former Address')
 	former_own_rent = models.IntegerField(
 		choices = OWN_RENT_CHOICES_NULL,
 		default = 2,
 		verbose_name = 'Did you Own or Rent?'
 	)
-	former_lived_yrs = models.IntegerField(null=True, blank=True, verbose_name='Years at Former Address') # years owned/rented at property referenced \
+	former_lived_yrs = models.IntegerField(null=True, blank=True, verbose_name='Years Owned/Rented at Former Address') # years owned/rented at property referenced \
 													# in former_addr
 								
 	business = models.ForeignKey(BusinessInfo, null=True, blank=True)
 	#expenses = models.ForeignKey(ExpenseInfo, null=True, blank=True)
+	assets_liabilities = models.ForeignKey(ALSummary, null=True, blank=True, verbose_name='Assets & Liabilities Summary')
 	declarations = models.ForeignKey(Declaration, null=True, blank=True)
+	filing_dates = models.DateField(default=timezone.now, verbose_name='Filing Dates')
+	filing_locations = models.CharField(max_length=256, null=True, blank=True, verbose_name='Filing Locations') # will probably want this to be a foreign key, possibly Address(?)
 	
 	def __str__(self):
 		return self.borrower_lname + ', ' + self.borrower_fname + ': ' + str(self.business)
@@ -407,6 +624,7 @@ class ApplicationSummary(models.Model):
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)
 	acknowledge = models.ForeignKey(AcknowledgeAgree)
+	transaction_details = models.ForeignKey(TransactionDetails)
 	status = models.IntegerField(
 		choices = STATUS_CHOICES,
 		default = 0,
@@ -487,26 +705,22 @@ class LoanSummary(models.Model):
 		return str(self.loan_terms)
 		
 class CreditRequest(models.Model):
-	LOAN_TYPE_CHOICES = (
-		(0, 'Fixed'),
-		(1, 'ARM'),
-	)
-	PURPOSE_CHOICES = (
-		(0, 'Rate and Term'),
-		(1, 'Cash Out'),
+	CREDIT_REQUEST_CHOICES = (
+		(0, 'Applicant Only'),
+		(1, 'Joint with Co-Applicant(s)'),
 	)
 	borrower = models.ForeignKey(BorrowerInfo, null=True, blank=True)
 	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Amount Requested', help_text='(required)')
 	term_requested = models.CharField(max_length=256, verbose_name='Term Requested', help_text='(required)') # unsure of what this is going to be
-	loan_type = models.IntegerField(
-		choices = LOAN_TYPE_CHOICES,
-		default = 0,
-	)
-	request_purpose = models.IntegerField(
-		choices = PURPOSE_CHOICES,
-		default = 0,
-	)
+	loan_type = models.CharField(max_length=256, verbose_name='Loan Type', help_text='(required)') # will probably turn into a CHOICES field later
+	market_survey = models.CharField(max_length=256, null=True, blank=True, verbose_name='Market Survey') # unsure of what this is going to be
+	request_purpose = models.TextField(null=True, blank=True, verbose_name='Purpose of Request')
 	application = models.ForeignKey(ApplicationSummary, null=True, blank=True)
+	credit_request = models.IntegerField(
+		choices = CREDIT_REQUEST_CHOICES,
+		default = 0,
+		verbose_name = 'Credit Request'
+	)
 	submission_date = models.DateField(default=timezone.now, verbose_name='Date of Submission')
 	
 	def __str__(self):

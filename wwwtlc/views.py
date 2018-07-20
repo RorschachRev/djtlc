@@ -208,40 +208,26 @@ def workflow_request(request, app_id):
 		credit_request = CreditRequest.objects.get(application=app_id)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 		
-def certify(request, app_id=0):
+def certify(request, app_id='0'):
 	tier1 = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
 	tier2 = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
 	
-	'''if app_id[:3] != 0 and app_id[:3] == 't1_':
-		app = ApplicationSummary.objects.get(pk=app_id)
+	if app_id[:3] != 0 and app_id[:3] == 't1_':
+		#app = ApplicationSummary.objects.get(pk=app_id[3:])
+		app = ApplicationSummary.objects.filter(application=app_id[3:])
+		return render(request, 'dashboard/sources.html', {'app': app})
 		
-		# a, 0 = AddressForm
-		# b, 1 = BusinessForm
-		# c, 2 = ConstructionInfoForm
-		# d, 3 = RefinanceInfoForm
-		# e, 4 = PropertyInfoForm
-		# f, 5 = BorrowerInfoForm
-		# g, 6 = CreditRequestForm
-		# h, 7 = DeclarationForm
-		# i, 8 = TransactionDetailsForm
-		# j, 9 = AcknowledgeAgreeForm
+	elif app_id[:3] != 0 and app_id[:3] == 't1e':
+		app = ApplicationSummary.objects.get(application=app_id[3:])
 		
-		a_inst = app.property.address
-		b_inst = app.borrower.business
-		c_inst = app.property.construction_loan
-		d_inst = app.property.refinance_loan
-		#e_inst = 
-		
-		if requet.method == 'POST':
-			form = AddSourceForm(request.POST, instance=app)
+		if request.method == 'POST':
+			form = ApplicationSummaryForm(request.POST, instance=app)
 			if form.is_valid():
-				obj = form.save(commit=False)
-				obj.application = app
-				obj.save()
+				form.save()
 				return HttpResponseRedirect('/certify')
 		else:
-			form = AddSourceForm(instance=app)
-			return render(request, 'dashboard/add_source.html', {'form': form})'''
+			form = ApplicationSummaryForm(instance=app)
+			return render(request, 'dashboard/edit_summary.html', {'form': form})
 			
 	return render(request, 'dashboard/certify.html', {'tier1': tier1, 'tier2': tier2})
 	
@@ -291,27 +277,20 @@ def manage_loan(request):
 '''##################################################
 # Form Views
 ##################################################'''
-# Django FormWizard view for Tier 1
-# (BizInfo -> ConstrInfo -> RefineInfo -> PropInfo -> BorrowerInfo -> CreditReq -> Decl -> Transaction -> Agree)
+# Django FormWizard view for Basic Application
 
-class TierOneWizard(NamedUrlSessionWizardView):
-	
-	'''if self.request.method == 'POST':
-		print(str(self.request.POST))'''
-	
+class BasicWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
 		# a, 1 = Address
 		# b, 2 = BusinessInfo
 		# c, 3 = ConstructionInfo
-		# d, 4 = RefinanceInfo
-		# e, 5 = PropertyInfo
-		# f, 6 = BorrowerInfo
-		# g, 7 = CreditRequest
-		# h, 8 = Declaration
-		# i, 9 = TransactionDetails
-		# j, 10 = AcknowledgeAgree
+		# e, 4 = PropertyInfo
+		# f, 5 = BorrowerInfo
+		# g, 6 = CreditRequest
+		# h, 7 = Declaration
+		# i, 8 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -330,29 +309,23 @@ class TierOneWizard(NamedUrlSessionWizardView):
 		g_valid = self.get_form(step='7', data=g_data).is_valid()
 		h_data = self.storage.get_step_data('8')
 		h_valid = self.get_form(step='8', data=h_data).is_valid()
-		i_data = self.storage.get_step_data('9')
-		i_valid = self.get_form(step='9', data=i_data).is_valid()
-		j_data = self.storage.get_step_data('10')
-		j_valid = self.get_form(step='10', data=j_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid
 			and d_valid and e_valid and f_valid
-			and g_valid and h_valid and i_valid
-			and j_valid
+			and g_valid and h_valid
 		):
 			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
 			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save(commit=False)
-			f = self.get_form(step='6', data=f_data).save(commit=False)
-			g = self.get_form(step='7', data=g_data).save(commit=False)
-			h = self.get_form(step='8', data=h_data).save()
-			i = self.get_form(step='9', data=i_data).save()
-			j = self.get_form(step='10', data=j_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
+			e = self.get_form(step='5', data=e_data).save()
+			f = self.get_form(step='6', data=f_data).save()
+			g = self.get_form(step='7', data=g_data).save()
+			h = self.get_form(step='8', data=h_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
 			
-			# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
+			# will need to change drastically
+			'''# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
 			e.address = a
 			e.construction_loan = c
 			e.refinance_loan = d
@@ -371,7 +344,6 @@ class TierOneWizard(NamedUrlSessionWizardView):
 				borrower = f, 
 				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
 				acknowledge = j,
-				transaction_details = i,
 				tier = 0,
 			)
 			
@@ -384,9 +356,8 @@ class TierOneWizard(NamedUrlSessionWizardView):
 			
 			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
 			# currently unsure of how to separate the two, however. Will need more work
-			'''
-			j.borrower = f
-			j.coborrower = f
+			i.borrower = f
+			i.coborrower = f
 			j.save()
 			'''
 			
@@ -400,33 +371,18 @@ class TierOneWizard(NamedUrlSessionWizardView):
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 		
-class TierTwoWizard(NamedUrlSessionWizardView):
+class StandardWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
 		# a, 1 = Address
 		# b, 2 = BusinessInfo
 		# c, 3 = ConstructionInfo
-		# d, 4 = RefinanceInfo
-		# e, 5 = PropertyInfo
-		# f, 6 = EmploymentIncomeInfo
-		# g, 7 = BankAccount
-		# h, 8 = Bond
-		# i, 9 = Stock
-		# j, 10 = Vehicle
-		# k, 11 = Asset Summary
-		# l, 12 = Debt
-		# m, 13 = ManagedProperty
-		# n, 14 = Alimony
-		# o, 15 = ChildSupport
-		# p, 16 = SeperateMaintenance
-		# q, 17 = LiabilitySummary
-		# r, 18 = ALSummary
-		# s, 19 = BorrowerInformation
-		# t, 20 = CreditRequest
-		# u, 21 = Declaration
-		# v, 22 = TransactionDetails
-		# w, 23 = AcknowledgeAgree
+		# d, 4 = PropertyInfo
+		# e, 5 = EmploymentIncomeInfo
+		# f, 6 = BankAccount
+		# g, 7 = Asset Summary
+		# h, 8 = ManagedProperty
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -445,72 +401,23 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 		g_valid = self.get_form(step='7', data=g_data).is_valid()
 		h_data = self.storage.get_step_data('8')
 		h_valid = self.get_form(step='8', data=h_data).is_valid()
-		i_data = self.storage.get_step_data('9')
-		i_valid = self.get_form(step='9', data=i_data).is_valid()
-		j_data = self.storage.get_step_data('10')
-		j_valid = self.get_form(step='10', data=j_data).is_valid()
-		k_data = self.storage.get_step_data('11')
-		k_valid = self.get_form(step='11', data=k_data).is_valid()
-		l_data = self.storage.get_step_data('12')
-		l_valid = self.get_form(step='12', data=l_data).is_valid()
-		m_data = self.storage.get_step_data('13')
-		m_valid = self.get_form(step='13', data=m_data).is_valid()
-		n_data = self.storage.get_step_data('14')
-		n_valid = self.get_form(step='14', data=n_data).is_valid()
-		o_data = self.storage.get_step_data('15')
-		o_valid = self.get_form(step='15', data=o_data).is_valid()
-		p_data = self.storage.get_step_data('16')
-		p_valid = self.get_form(step='16', data=p_data).is_valid()
-		q_data = self.storage.get_step_data('17')
-		q_valid = self.get_form(step='17', data=q_data).is_valid()
-		r_data = self.storage.get_step_data('18')
-		r_valid = self.get_form(step='18', data=r_data).is_valid()
-		s_data = self.storage.get_step_data('19')
-		s_valid = self.get_form(step='19', data=s_data).is_valid()
-		t_data = self.storage.get_step_data('20')
-		t_valid = self.get_form(step='20', data=t_data).is_valid()
-		u_data = self.storage.get_step_data('21')
-		u_valid = self.get_form(step='21', data=u_data).is_valid()
-		v_data = self.storage.get_step_data('22')
-		v_valid = self.get_form(step='22', data=v_data).is_valid()
-		w_data = self.storage.get_step_data('23')
-		w_valid = self.get_form(step='23', data=w_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid 
 			and d_valid and e_valid and f_valid
-			and g_valid and h_valid and i_valid
-			and j_valid and k_valid and l_valid
-			and m_valid and n_valid and o_valid
-			and p_valid and q_valid and r_valid
-			and s_valid and t_valid and u_valid
-			and v_valid and w_valid
+			and g_valid and h_valid
 		):
 			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
 			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save(commit=False)
+			e = self.get_form(step='5', data=e_data).save()
 			f = self.get_form(step='6', data=f_data).save()
 			g = self.get_form(step='7', data=g_data).save()
 			h = self.get_form(step='8', data=h_data).save()
-			i = self.get_form(step='9', data=i_data).save()
-			j = self.get_form(step='10', data=j_data).save()
-			k = self.get_form(step='11', data=k_data).save(commit=False)
-			l = self.get_form(step='12', data=l_data).save()
-			m = self.get_form(step='13', data=m_data).save()
-			n = self.get_form(step='14', data=n_data).save()
-			o = self.get_form(step='15', data=o_data).save()
-			p = self.get_form(step='16', data=p_data).save()
-			q = self.get_form(step='17', data=q_data).save(commit=False)
-			r = self.get_form(step='18', data=r_data).save(commit=False)
-			s = self.get_form(step='19', data=s_data).save(commit=False)
-			t = self.get_form(step='20', data=t_data).save(commit=False)
-			u = self.get_form(step='21', data=u_data).save()
-			v = self.get_form(step='22', data=v_data).save()
-			w = self.get_form(step='23', data=w_data).save()
 			
-			# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
+			# will need to change drastically
+			'''# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
 			e.address = a
 			e.construction_loan = c
 			e.refinance_loan = d
@@ -567,7 +474,6 @@ class TierTwoWizard(NamedUrlSessionWizardView):
 			
 			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
 			# currently unsure of how to separate the two, however. Will need more work
-			'''
 			w.borrower = f
 			w.coborrower = f
 			w.save()

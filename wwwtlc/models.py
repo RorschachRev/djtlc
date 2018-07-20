@@ -123,52 +123,106 @@ Super disgusting hack and slash models to meet requirements of new loanapply for
 specified in email recieved on 7/17.
 '''
 class ContactRequest(models.Model):
-	first_name = models.CharField(max_length=255)
-	last_name = models.CharField(max_length=255)
-	phone = models.CharField(max_length=255)
-	email_address = models.CharField(max_length=255)
+	first_name = models.CharField(max_length=255, verbose_name='First Name')
+	last_name = models.CharField(max_length=255, verbose_name='Last Name')
+	phone = models.CharField(max_length=255, verbose_name='Phone Number')
+	email_address = models.CharField(max_length=255, verbose_name='Email')
 	
 class PropertyInfoRequest(models.Model):
-	property_type = models.CharField(max_length=255)
-	property_use = models.CharField(max_length=255)
-	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12)
-	lease_rate = models.DecimalField(decimal_places=4, max_digits=12)
-	rent = models.DecimalField(decimal_places=4, max_digits=12)
-	property_address = models.CharField(max_length=255)
-	property_age = models.IntegerField()
+	TYPE_CHOICES = (
+		(0, 'Type 1'),
+		(1, 'Type 2'),
+		(2, 'Type 3'),
+	)
+	USE_CHOICES = (
+		(0, 'Use 1'),
+		(1, 'Use 2'),
+		(2, 'Use 3'),
+	)
+	property_type = models.IntegerField(
+		choices = TYPE_CHOICES,
+		default = 0,
+		verbose_name='Property Type'
+	)
+	property_use = models.IntegerField(
+		choices = USE_CHOICES,
+		default = 0,
+		verbose_name='Property Use'
+	)
+	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Occupancy Rate')
+	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Lease Rate')
+	rent = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Rent')
+	property_address = models.CharField(max_length=255, verbose_name='Property Address')
+	property_age = models.IntegerField(verbose_name='Property Age')
 	
 class CurrentMortgage(models.Model):
-	date_loan_originated = models.DateField()
-	current_loan_type = models.CharField(max_length=255)
-	original_amount = models.DecimalField(decimal_places=4, max_digits=12)
-	current_balance = models.DecimalField(decimal_places=4, max_digits=12)
-	current_term = models.CharField(max_length=255)
-	current_intrate = models.DecimalField(decimal_places=2, max_digits=4)
-	late_payments = models.BooleanField(default=False)
+	date_loan_originated = models.DateField(verbose_name='Date Loan Originated')
+	current_loan_type = models.CharField(max_length=255, verbose_name='Current Loan Type')
+	original_amount = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Original Amount')
+	current_balance = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Balance')
+	current_term = models.CharField(max_length=255, verbose_name='Current Term')
+	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Current Interest Rate')
+	late_payments = models.BooleanField(default=False, verbose_name='Any Late Payments?')
 	
 class MortgageDesired(models.Model):
-	amount_desired = models.DecimalField(decimal_places=4, max_digits=12)
-	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12)
-	loan_currency = models.CharField(max_length=3, default='USD')
-	loan_type_desired = models.CharField(max_length=255)
-	payment_desired = models.DecimalField(decimal_places=4, max_digits=12)
-	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4)
-	time_frame = models.CharField(max_length=255)
-	term_desired = models.CharField(max_length=255)
+	TYPE_CHOICES = (
+		(0, 'Type 1'),
+		(1, 'Type 2'),
+		(2, 'Type 3'),
+	)
+	TIMEFRAME_CHOICES = (
+		(0, 'TimeFrame 1'),
+		(1, 'TimeFrame 2'),
+		(2, 'TimeFrame 3'),
+	)
+	TERM_CHOICES = (
+		(0, 'Term 1'),
+		(1, 'Term 2'),
+		(2, 'Term 3'),
+	)
+	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
+	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Cash Back Desired')
+	loan_currency = models.CharField(max_length=3, default='USD', verbose_name='Loan Currency')
+	loan_type_desired = models.IntegerField(
+		choices = TYPE_CHOICES,
+		default = 0,
+		verbose_name='Desired Loan Type'
+	)
+	payment_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Desired Payment')
+	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Desired Interest Rate')
+	time_frame = models.IntegerField(
+		choices = TIMEFRAME_CHOICES,
+		default = 0,
+		verbose_name='Desired Time Frame'
+	)
+	term_desired = models.IntegerField(
+		choices = TERM_CHOICES,
+		default = 0,
+		verbose_name='Desired Term'
+	)
 	
 class BorrowerInfoRequest(models.Model):
 	B_TYPE_CHOICES = (
 		(0, 'Personal'),
 		(1, 'Business'),
 	)
-	language = models.CharField(max_length=3)
+	FICO_CHOICES = (
+		(0, 'FICO Choice 1'),
+		(1, 'FICO Choice 2'),
+	)
+	language = models.CharField(max_length=3, null=True, blank=True)# hidden field, for now
 	type = models.IntegerField(
 		default = 0,
 		choices = B_TYPE_CHOICES,
+		verbose_name='Type'
 	)
-	annual_income = models.DecimalField(decimal_places=4, max_digits=12)
-	net_worth = models.DecimalField(decimal_places=4, max_digits=12)
-	fico = models.CharField(max_length=255)
+	annual_income = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Annual Income')
+	net_worth = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Net Worth')
+	fico = models.IntegerField(
+		choices = FICO_CHOICES,
+		default = 0,
+		verbose_name='FICO'
+	)
 	
 class NewRequestSummary(models.Model):
 	STATUS_CHOICES = (
@@ -185,7 +239,7 @@ class NewRequestSummary(models.Model):
 	user = models.ForeignKey(User)
 	contact = models.ForeignKey(ContactRequest)
 	property = models.ForeignKey(PropertyInfoRequest)
-	curr_mortgage = models.ForeignKey(CurrentMortgage)
-	desired_mortgage = models.ForeignKey(MortgageDesired)
+	curr_mortgage = models.ForeignKey(CurrentMortgage, verbose_name='Current Mortgage')
+	desired_mortgage = models.ForeignKey(MortgageDesired, verbose_name='Desired Mortgage')
 	borrower = models.ForeignKey(BorrowerInfoRequest)
 	submitted = models.DateTimeField(default=timezone.now)
