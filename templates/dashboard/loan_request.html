@@ -31,7 +31,7 @@
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
-				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>{{ app.contact.name_last }}, {{ app.contact.name_first }}</td>
 				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
 				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
 				<td>{{ app.contact.phone }}</td>
@@ -67,7 +67,7 @@
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
-				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>{{ app.contact.name_last }}, {{ app.contact.name_first }}</td>
 				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
 				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
 				<td>{{ app.contact.phone }}</td>
@@ -105,7 +105,7 @@
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
-				<td>{{ app.contact.last_name }}, {{ app.contact.first_name }}</td>
+				<td>{{ app.contact.name_last }}, {{ app.contact.name_first }}</td>
 				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
 				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
 				<td>{{ app.contact.phone }}</td>

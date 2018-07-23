@@ -1,7 +1,9 @@
 from django.db import models
-from wwwtlc.models import Address, Contract, Person, Borrower, Partner, Verified, Wallet
 from django.utils import timezone
 from django.contrib.auth.models import User
+
+from wwwtlc.models_loan_apply import Address
+from wwwtlc.models_meta import Contract, Person, Partner, Borrower, Wallet
 
 # Create your models here.
 

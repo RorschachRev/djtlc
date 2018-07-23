@@ -4,12 +4,12 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import TemplateView
+
 from wwwtlc import views
 from wwwtlc.forms import *
-from wwwtlc import views_form
-from wwwtlc.views import BasicWizard, StandardWizard, LoanWizard
+from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, LoanWizard
+
 from loan import views as views_loan
-from loan.views import LoanApplyWizard
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 
 # below is the forms for the NamedUrlSessionsView of the formtools app
@@ -193,6 +193,7 @@ urlpatterns = [
         r'^loan_apply$', 
         LoanApplyWizard.as_view(
             [
+                AddressForm,
                 ContactRequestForm,
                 PropertyInfoRequestForm,
                 CurrentMortgageForm,

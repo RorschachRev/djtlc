@@ -1,6 +1,28 @@
 from django import forms
-from wwwtlc.models import *
-from wwwtlc.models_loan_app import *
+
+# some of the following models may need to be removed
+# will handle later
+from wwwtlc.models_bse import (
+AcknowledgeAgree, ApplicationSummary, AssetSummary,
+BankAccount, BankAccount, BorrowerInfo, BusinessInfo,
+ConstructionInfo, CreditRequest, Declaration, EmploymentIncome,
+ManagedProperty, PropertyInfo
+)
+
+from wwwtlc.models_meta import (
+Bank, Bank_Account, Borrower, Contract, Credit_Report,
+Partner, Person, Verified, Wallet
+)
+
+from wwwtlc.models_officer import (
+LenderInfo, LoanPaymentHistory, LoanSummary, 
+LoanTerms, NewLoan
+)
+
+from wwwtlc.models_loan_apply import (
+Address, ContactRequest, PropertyInfoRequest, CurrentMortgage,
+MortgageDesired, BorrowerInfoRequest, NewRequestSummary
+)
 		
 # Below are forms for the new models - correlates to models_loan_app.py
 
@@ -118,26 +140,31 @@ form specified in the email recieved on 7/17
 '''
 
 class ContactRequestForm(forms.ModelForm):
+	step_name = 'Contact:'
 	class Meta:
 		model = ContactRequest
 		fields = '__all__'
 		
 class PropertyInfoRequestForm(forms.ModelForm):
+	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfoRequest
-		fields = '__all__'
+		exclude = ['property_address']
 		
 class CurrentMortgageForm(forms.ModelForm):
+	step_name = 'Current Mortgage:'
 	class Meta:
 		model = CurrentMortgage
 		fields = '__all__'
 		
 class MortgageDesiredForm(forms.ModelForm):
+	step_name = 'Mortgage Desired'
 	class Meta:
 		model = MortgageDesired
 		fields = '__all__'
 		
 class BorrowerInfoRequestForm(forms.ModelForm):
+	step_name = 'Borrower Information'
 	class Meta:
 		model = BorrowerInfoRequest 
 		fields = '__all__'

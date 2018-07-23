@@ -6,9 +6,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
-from .models_loan_app import ApplicationSummary, NewLoan
+from wwwtlc.models_officer import ApplicationSummary, NewLoan
 
-from wwwtlc.models import Person, Wallet
+from wwwtlc.models_meta import Person, Wallet
+from wwwtlc.models_loan_apply import NewRequestSummary
 from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
 
@@ -277,8 +278,76 @@ def manage_loan(request):
 '''##################################################
 # Form Views
 ##################################################'''
+# Form for Loan Apply
+class LoanApplyWizard(SessionWizardView):
+	def done(self, form_list, **kwargs):
+		summary = NewRequestSummary
+		
+		# a, 0 = AddressForm
+		# b, 1 = ContactRequestForm
+		# c, 2 = PropertyInfoRequestForm
+		# d, 3 = CurrentMortgageForm
+		# e, 4 = MortgageDesiredForm
+		# f, 5 = BorrowerInfoRequestForm
+		
+		# This block of code binds data from form to form itself, and validates the data
+		a_data = self.storage.get_step_data('0')
+		a_valid = self.get_form(step='0', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('1')
+		b_valid = self.get_form(step='1', data=b_data).is_valid()
+		c_data = self.storage.get_step_data('2')
+		c_valid = self.get_form(step='2', data=c_data).is_valid()
+		d_data = self.storage.get_step_data('3')
+		d_valid = self.get_form(step='3', data=d_data).is_valid()
+		e_data = self.storage.get_step_data('4')
+		e_valid = self.get_form(step='4', data=e_data).is_valid()
+		f_data = self.storage.get_step_data('5')
+		f_valid = self.get_form(step='5', data=f_data).is_valid()
+		
+		# This block of code sets the foreign keys of each table to the entries entered in the previous form step, if the data is valid
+		if (
+			a_valid and b_valid and c_valid and
+			d_valid and e_valid and f_valid
+		):
+			a = self.get_form(step='0', data=a_data).save()
+			b = self.get_form(step='1', data=b_data).save()
+			c = self.get_form(step='2', data=c_data).save(commit=False)
+			d = self.get_form(step='3', data=d_data).save()
+			e = self.get_form(step='4', data=e_data).save()
+			f = self.get_form(step='5', data=f_data).save()
+			
+			c.property_address = a
+			c.save()
+			
+			summary = summary(
+				user = self.request.user,
+				contact = b,
+				property = c,
+				curr_mortgage = d,
+				desired_mortgage = e,
+				borrower = f,
+			)
+			
+			summary.save()
+			
+			# sends email when data is submitted and validated
+			send_mail(
+				# subject line - returns LoanData __str__ method
+				'New Loan Request',
+				
+				# message
+				'A new loan request has been submitted and can be found in the officer dashboard.', 
+				
+				# 'from' email address
+				'no_reply@thelendingcoin.com',
+				
+				# recipient email address
+				['finance@thelendingcoin.com', 'lender@thelendingcoin.com']
+			)
+			
+		return render(self.request, 'pages/loan_apply_done.html', {'name': b.name_first + ' ' + b.name_last} )
+		
 # Django FormWizard view for Basic Application
-
 class BasicWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -371,6 +440,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 		
+# Form for Standard application
 class StandardWizard(NamedUrlSessionWizardView):
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -527,3 +597,18 @@ class LoanWizard(SessionWizardView):
 			d.save()
 			
 		return HttpResponseRedirect('/loan_payments')
+		
+# from old views_form.py
+# unsure if these are necessary
+'''
+from django import forms
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404
+from django.core.mail import send_mail
+
+def account(request):
+	return render(request, 'pages/account.html')
+	
+def wallet(request):
+	return render(request, 'pages/wallet.html')	
+'''

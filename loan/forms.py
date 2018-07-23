@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
-from wwwtlc.models import *
+from wwwtlc.models_meta import *
+from wwwtlc.models_loan_apply import *
 
 # deleted from forms :
 # 	loan_data = contact_person, loan_address

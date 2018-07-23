@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .models import Person, Address, Verified, Wallet
-from .models_loan_app import *
+from .models_meta import Person, Address, Verified, Wallet
+from .models_loan_apply import *
+from .models_bse import *
+from .models_officer import *
 
 # Register your models here.
 admin.site.register(Person)
