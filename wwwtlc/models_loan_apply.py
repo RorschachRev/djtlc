@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 class Address(models.Model):
+	user = models.ForeignKey(User)
 	street1 = models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
 	street2 = models.CharField(max_length=254, blank=True, verbose_name="Street 2", help_text="(optional)")
 	street3 = models.CharField(max_length=254, blank=True, verbose_name="Street 3", help_text="(optional)")
@@ -51,7 +52,7 @@ class PropertyInfoRequest(models.Model):
 	property_age = models.IntegerField(verbose_name='Property Age')
 	
 class CurrentMortgage(models.Model):
-	date_loan_originated = models.DateField(verbose_name='Date Loan Originated')
+	date_loan_originated = models.DateField(verbose_name='Date Loan Originated', help_text='(mm/dd/yy)')
 	current_loan_type = models.CharField(max_length=255, verbose_name='Current Loan Type')
 	original_amount = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Original Amount')
 	current_balance = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Balance')

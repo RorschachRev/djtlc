@@ -309,12 +309,15 @@ class LoanApplyWizard(SessionWizardView):
 			a_valid and b_valid and c_valid and
 			d_valid and e_valid and f_valid
 		):
-			a = self.get_form(step='0', data=a_data).save()
+			a = self.get_form(step='0', data=a_data).save(commit=False)
 			b = self.get_form(step='1', data=b_data).save()
 			c = self.get_form(step='2', data=c_data).save(commit=False)
 			d = self.get_form(step='3', data=d_data).save()
 			e = self.get_form(step='4', data=e_data).save()
 			f = self.get_form(step='5', data=f_data).save()
+			
+			a.user = self.request.user
+			a.save()
 			
 			c.property_address = a
 			c.save()

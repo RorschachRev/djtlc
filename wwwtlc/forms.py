@@ -42,7 +42,7 @@ class AddressForm(forms.ModelForm):
 	step_name = 'Property Address:'
 	class Meta:
 		model = Address
-		fields = '__all__'
+		exclude = ['user']
 		
 class AppStatusForm(forms.ModelForm):
 	class Meta:
