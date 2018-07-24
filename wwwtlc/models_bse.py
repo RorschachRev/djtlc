@@ -251,16 +251,7 @@ class ApplicationSummary(models.Model):
 		(1, 'Standard'),
 		#(2, 'Extended'),
 	)
-	SOURCE_CHOICES = (
-		(0, 'User'),
-		(1, 'Credit 1'),
-		(2, 'Credit 2'),
-		(3, 'Gov\'t'),
-	)
-	source = models.IntegerField(
-		choices = SOURCE_CHOICES,
-		default = 0,
-	)
+	source = models.ForeignKey(User, related_name='recent_editor')
 	user = models.ForeignKey(User)
 	application = models.ForeignKey('self', null=True, blank=True)
 	property = models.ForeignKey(PropertyInfo)

@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
@@ -48,7 +49,18 @@ def signup(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
 		if form.is_valid():
-			form.save()
+			obj = form.save(commit=False)
+			x = User.objects.values('id')
+			z = []
+			for y in x:
+				for k, v in y.items():
+					z.append(v)
+			max_id = max(z)
+			if max_id > 1024:
+				obj.id = max_id + 1
+			else:
+				obj.id = max_id + 1 + 1024
+			obj.save()
 			username = form.cleaned_data.get('username')
 			raw_password = form.cleaned_data.get('password1')
 			user = authenticate(username=username, password=raw_password)
