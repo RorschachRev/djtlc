@@ -59,7 +59,7 @@ def signup(request):
 			if max_id > 1024:
 				obj.id = max_id + 1
 			else:
-				obj.id = max_id + 1 + 1024
+				obj.id = 1025
 			obj.save()
 			username = form.cleaned_data.get('username')
 			raw_password = form.cleaned_data.get('password1')
