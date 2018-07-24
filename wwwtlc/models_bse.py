@@ -25,9 +25,6 @@ class BusinessInfo(models.Model):
 	expense_other_description = models.TextField(null=True, blank=True, verbose_name='Other Expense(s)')
 	expense_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Expense Total')
 	expense_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Expense Total', help_text='(required)')
-	
-	def __str__(self):
-		return self.bus_name + ', $' + str(self.net_revenue)
 		
 class ConstructionInfo(models.Model):
 	year_acquired = models.DateField(default=timezone.now, null=True, blank=True, verbose_name='Year Acquired')
@@ -37,9 +34,6 @@ class ConstructionInfo(models.Model):
 	improve_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cost of Improvements', help_text='b.') # b.
 	total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, help_text='a. + b.') # (a + b)
 	
-	def __str__(self):
-		return str(self.total)
-		
 class PropertyInfo (models.Model):
 	address = models.ForeignKey(Address, null=True, blank=True)
 	no_units = models.IntegerField(verbose_name='Number of Units', help_text='(required)') # number of units
@@ -48,9 +42,6 @@ class PropertyInfo (models.Model):
 	construction_loan = models.ForeignKey(ConstructionInfo, null=True, blank=True, verbose_name='Construction Loan')
 	title_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Names on Title') #will probably want a many-to-many relation - unsure if should be linked to BorrowerInfo or not
 	
-	def __str__(self):
-		return str(self.address) + ', ' + self.legal_description
-
 class Declaration(models.Model):
 	# on pdf, it states: "If 'Yes' to any questions a-i, use continuation sheet for explanation"	\
 	# I put a textbox in this model to satisfy this requirement
@@ -71,10 +62,6 @@ class Declaration(models.Model):
 	
 	explanation = models.TextField(null=True, blank=True, verbose_name='Explanation')
 			
-	def __str__(self):
-		return 'Borrower\'s Declarations'
-
-
 # Models Basic Only
 class BorrowerInfo (models.Model):
 	APPLICATION_CHOICES = (
@@ -233,9 +220,6 @@ class BorrowerInfo (models.Model):
 								
 	business = models.ForeignKey(BusinessInfo, null=True, blank=True)
 	declarations = models.ForeignKey(Declaration, null=True, blank=True)
-	
-	def __str__(self):
-		return self.borrower_lname + ', ' + self.borrower_fname + ': ' + str(self.business)
 		
 class AcknowledgeAgree(models.Model):
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower_agree', null=True, blank=True)
@@ -243,12 +227,6 @@ class AcknowledgeAgree(models.Model):
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower_agree', null=True, blank=True, verbose_name='Co-Borrower')
 	coborrower_agree = models.BooleanField(default=False, verbose_name='Co-Borrower\'s Acknowledgement')
 	date = models.DateField(default=timezone.now)
-	
-	def __str__(self):
-		if self.coborrower != None and self.coborrower != '':
-			return 'Borrower: ' + str(self.borrower) + ' | Co-Borrower: ' + str(self.coborrower)
-		else:
-			return 'Borrower: ' + str(self.borrower)
 			
 class ApplicationSummary(models.Model):
 	STATUS_CHOICES = (
@@ -269,8 +247,9 @@ class ApplicationSummary(models.Model):
 		(14, 'Declared on Blockchain'),
 	)
 	TIER_CHOICES = (
-		(0, 'Tier 1'),
-		(1, 'Tier 2'),
+		(0, 'Basic'),
+		(1, 'Standard'),
+		#(2, 'Extended'),
 	)
 	SOURCE_CHOICES = (
 		(0, 'User'),
@@ -301,9 +280,6 @@ class ApplicationSummary(models.Model):
 	approval_date = models.DateTimeField(null=True, blank=True)
 	certification_date = models.DateTimeField(null=True, blank=True)
 	blockchain_declared_date = models.DateTimeField(null=True, blank=True)
-	
-	def __str__(self):
-		return str(self.id) + ', submitted: ' + str(self.submission_date)
 		
 class CreditRequest(models.Model):
 	LOAN_TYPE_CHOICES = (
@@ -328,9 +304,6 @@ class CreditRequest(models.Model):
 	application = models.ForeignKey(ApplicationSummary, null=True, blank=True)
 	submission_date = models.DateField(default=timezone.now, verbose_name='Date of Submission')
 	
-	def __str__(self):
-		return str(self.borrower) + ', $' + str(self.amt_requested) + ', ' + str(self.submission_date)
-	
 # Models Standard Only
 class EmploymentIncome(models.Model): # for Tier 2, when personal income is needed for the application
 	name = models.CharField(max_length=256, help_text='(required)', verbose_name='Name of Employer')
@@ -347,18 +320,12 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 	# if yrs_worked < 2 || if working in more than one position, 	\
 	# the following fields will need to be created / filled out:		\
 	other_emp_info = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Other Employment Information', help_text='If employed for less than two years or if employed currently in more than one position') # recursive relationship
-	
-	def __str__(self):
-		return '{}, {}: ${}'.format(self.name, self.title, self.income)
 		
 class BankAccount(models.Model):
 	name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Name of Bank, S&L, or Credit Union')
 	address = models.CharField(max_length=256, null=True, blank=True)
 	acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
 	amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Cash or Market Value')
-	
-	def __str__(self):
-		return str(self.acct_no) + ', $' + str(self.amount)
 		
 class AssetSummary(models.Model):
 	holding_deposit = models.CharField(max_length=256, null=True, blank=True, verbose_name='Holding Deposit') # unsure what this field is supposed 	\
@@ -387,9 +354,6 @@ class AssetSummary(models.Model):
 	other_amt_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Other Assets Total', help_text='(required)')
 	
 	assets_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Assets Total', help_text='(required)')
-	
-	def __str__(self):
-		return str(self.assets_total)
 		
 class ManagedProperty(models.Model):
 	real_estate_schedule = models.CharField(max_length=256, null=True, blank=True, verbose_name='Schedule of Real Estate') # may want to be a CHOICES field
@@ -402,6 +366,3 @@ class ManagedProperty(models.Model):
 	mortgage_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Mortgage Payments')
 	misc_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Miscellaneous Payments', help_text='(Insurance, Maintenance, Taxes, etc.)') # might want to require this
 	net_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Rental Income') # might want to require this
-	
-	def __str__(self):
-		return str(self.property_address) + ', $' + str(self.net_rental_income)

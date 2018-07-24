@@ -6,8 +6,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
-from wwwtlc.models_officer import ApplicationSummary, NewLoan
-
+from wwwtlc.models_officer import NewLoan
+from wwwtlc.models_bse import ApplicationSummary
 from wwwtlc.models_meta import Person, Wallet
 from wwwtlc.models_loan_apply import NewRequestSummary
 from wwwtlc.ethereum import BC
@@ -68,10 +68,10 @@ def test(request):
 def loan(request):
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
-	req_tier1 = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
-	req_tier2 = NewRequestSummary.objects.filter(user=request.user, status=4).order_by('-submitted')
+	req_basic = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
+	req_standard = NewRequestSummary.objects.filter(user=request.user, status=4).order_by('-submitted')
 	applied_loans = NewRequestSummary.objects.filter(status__in=[0, 1, 2], user=request.user).order_by('-status', '-submitted')
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_tier1': req_tier1, 'req_tier2': req_tier2})
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_basic': req_basic, 'req_standard': req_standard})
 	
 class loaninfo():
 	"""
@@ -143,13 +143,13 @@ def change_reqstatus(request, app_id):
 	
 	
 def workflow(request):
-	req_tier1 = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
-	req_tier2 = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
-	tier1 = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
-	tier2 = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
-	cert_tier1 = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
-	cert_tier2 = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
-	return render(request, 'dashboard/workflow.html', {'tier1': tier1, 'tier2': tier2, 'req_tier1': req_tier1, 'req_tier2': req_tier2, 'cert_tier1': cert_tier1, 'cert_tier2': cert_tier2})
+	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
+	req_standard = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
+	basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
+	standard = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
+	cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
+	cert_standard = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
+	return render(request, 'dashboard/workflow.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard})
 	
 # This function handles all possible requests on the '/workflow' page
 # handling for this comes from passing data via url into the view,
@@ -206,12 +206,13 @@ def workflow_request(request, app_id):
 			return render(request, 'dashboard/workflow_update.html', {'app': app, 'form': form})
 	else:
 		loan_request = ApplicationSummary.objects.get(pk=app_id)
-		credit_request = CreditRequest.objects.get(application=app_id)
+		credit_request = CreditRequest.objects.get(application=loan_request)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 		
+# Incomplete, will need work later		
 def certify(request, app_id='0'):
-	tier1 = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
-	tier2 = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
+	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
+	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
 	
 	if app_id[:3] != 0 and app_id[:3] == 't1_':
 		#app = ApplicationSummary.objects.get(pk=app_id[3:])
@@ -230,7 +231,7 @@ def certify(request, app_id='0'):
 			form = ApplicationSummaryForm(instance=app)
 			return render(request, 'dashboard/edit_summary.html', {'form': form})
 			
-	return render(request, 'dashboard/certify.html', {'tier1': tier1, 'tier2': tier2})
+	return render(request, 'dashboard/certify.html', {'basic': basic, 'standard': standard})
 	
 # PAYMENTS / ACCOUNTING
 ###################
@@ -352,17 +353,25 @@ class LoanApplyWizard(SessionWizardView):
 		
 # Django FormWizard view for Basic Application
 class BasicWizard(NamedUrlSessionWizardView):
+	# Attempt at prepopulating data, will return to this later
+	#~ def __init__(self, form_list, template_name, url_name, initial_dict, done_step_name, instance_dict, condition_dict):
+		#~ print(dir(self.request.GET))
+		#~ print(str(form_list))
+		#~ print(str(initial_dict))
+		#~ print(str(instance_dict))
+		#~ pass
+	
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
 		# a, 1 = Address
 		# b, 2 = BusinessInfo
 		# c, 3 = ConstructionInfo
-		# e, 4 = PropertyInfo
-		# f, 5 = BorrowerInfo
-		# g, 6 = CreditRequest
-		# h, 7 = Declaration
-		# i, 8 = AcknowledgeAgree
+		# d, 4 = PropertyInfo
+		# e, 5 = BorrowerInfo
+		# f, 6 = CreditRequest
+		# g, 7 = Declaration
+		# h, 8 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -383,55 +392,48 @@ class BasicWizard(NamedUrlSessionWizardView):
 		h_valid = self.get_form(step='8', data=h_data).is_valid()
 		
 		if (
-			a_valid and b_valid and c_valid
-			and d_valid and e_valid and f_valid
-			and g_valid and h_valid
+			a_valid and b_valid and c_valid and 
+			d_valid and e_valid and f_valid and 
+			g_valid and h_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
-			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save()
-			f = self.get_form(step='6', data=f_data).save()
+			d = self.get_form(step='4', data=d_data).save(commit=False)
+			e = self.get_form(step='5', data=e_data).save(commit=False)
+			f = self.get_form(step='6', data=f_data).save(commit=False)
 			g = self.get_form(step='7', data=g_data).save()
 			h = self.get_form(step='8', data=h_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
 			
-			# will need to change drastically
-			'''# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
-			e.address = a
-			e.construction_loan = c
-			e.refinance_loan = d
+			# Saves Foreign Keys for 'AddressForm'
+			a.user = self.request.user
+			a.save()
+			
+			# Saves Foreign Keys for 'PropertyInfoForm'
+			d.address = a
+			d.construction_loan = c
+			d.save()
+			
+			# Saves Foreign Keys for 'BorrowerInfoForm'
+			e.user = self.request.user
+			e.business = b
+			e.declarations = g
 			e.save()
 			
-			# Sets User, BusinessInfo, and Declarations to BorrowerInfo
-			f.user = self.request.user
-			f.business = b
-			f.declarations = h
-			f.save()
-			
-			# Populates and saves the ApplicationSummary table
-			app_sum = aps(
+			# Creates 'ApplicationSummary' off of step data
+			summary = aps(
 				user = self.request.user,
-				property = e,
-				borrower = f, 
-				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
-				acknowledge = j,
+				property = d,
+				borrower = e,
+				acknowledge = h,
 				tier = 0,
 			)
+			summary.save()
 			
-			app_sum.save()
-			
-			# Sets Borrower and Application to CreditRequest
-			g.borrower = f
-			g.application = app_sum
-			g.save()
-			
-			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
-			# currently unsure of how to separate the two, however. Will need more work
-			i.borrower = f
-			i.coborrower = f
-			j.save()
-			'''
+			# Saves Foreign Keys for 'CreditRequestForm'
+			f.borrower = e
+			f.application = summary
+			f.save()
 			
 			# Sends email when data is submitted to DB
 			send_mail(
@@ -456,6 +458,10 @@ class StandardWizard(NamedUrlSessionWizardView):
 		# f, 6 = BankAccount
 		# g, 7 = Asset Summary
 		# h, 8 = ManagedProperty
+		# i, 9 = CreditRequest
+		# j, 10 = Declarations
+		# k, 11 = BorrowerInfo
+		# l, 12 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -474,83 +480,73 @@ class StandardWizard(NamedUrlSessionWizardView):
 		g_valid = self.get_form(step='7', data=g_data).is_valid()
 		h_data = self.storage.get_step_data('8')
 		h_valid = self.get_form(step='8', data=h_data).is_valid()
+		i_data = self.storage.get_step_data('9')
+		i_valid = self.get_form(step='9', data=i_data).is_valid()
+		j_data = self.storage.get_step_data('10')
+		j_valid = self.get_form(step='10', data=j_data).is_valid()
+		k_data = self.storage.get_step_data('11')
+		k_valid = self.get_form(step='11', data=k_data).is_valid()
+		l_data = self.storage.get_step_data('12')
+		l_valid = self.get_form(step='12', data=l_data).is_valid()
 		
 		if (
-			a_valid and b_valid and c_valid 
-			and d_valid and e_valid and f_valid
-			and g_valid and h_valid
+			a_valid and b_valid and c_valid and
+			d_valid and e_valid and f_valid and 
+			g_valid and h_valid and i_valid and
+			j_valid and k_valid and l_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
 			b = self.get_form(step='2', data=b_data).save()
 			c = self.get_form(step='3', data=c_data).save()
-			d = self.get_form(step='4', data=d_data).save()
+			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save()
 			f = self.get_form(step='6', data=f_data).save()
-			g = self.get_form(step='7', data=g_data).save()
-			h = self.get_form(step='8', data=h_data).save()
+			g = self.get_form(step='7', data=g_data).save(commit=False)
+			h = self.get_form(step='8', data=h_data).save(commit=False)
+			i = self.get_form(step='9', data=i_data).save(commit=False)
+			j = self.get_form(step='10', data=j_data).save()
+			k = self.get_form(step='11', data=k_data).save(commit=False)
+			l = self.get_form(step='12', data=l_data).save()
 			
-			# will need to change drastically
-			'''# Sets Address, ConstructionInfo, and RefinanceInfo to PropertyInfo
-			e.address = a
-			e.construction_loan = c
-			e.refinance_loan = d
-			e.save()
+			# Saves Foreign Key for 'AddressForm'
+			a.user = self.request.user
+			a.save()
 			
-			# Sets Account1, Stock1, Bond1, Vehicle1, and EmploymentIncome to AssetSummary
-			# will eventually look into how to get the form to submit multiple entries for
-			# Accounts, Stocks, Bonds, and Vehicles (as well as EmploymentIncome *possibly*)
-			# This will need edited later
-			k.acct1 = g
-			k.stock1 = i
-			k.bond1 = h
-			k.vehicle1 = j
-			k.employment_income = f
-			k.save()
+			# Saves Foreign Keys for 'PropertyInfoForm'
+			d.address = a
+			d.construction_loan = c
+			d.save()
 			
-			# Sets Debt1, Alimony1, ChildSupport1, and SeparateMaint1 to LiabilitySummary
-			# will eventually look into how to get the form to submit multiple entries for
-			# Debt, Alimony, ChildSupport, and SeparateMaint
-			# This will need edited later
-			q.debt1 = l
-			q.alimony1 = n
-			q.child_supp1 = o
-			q.separate_maint1 = p
-			q.save()
+			# Saves Foreign Keys for 'AssetSummaryForm'
+			g.acct1 = f
+			g.employment_income = e
+			g.save()
 			
-			# Sets AssetSummary and LiabilitySummary to ALSummary
-			r.assets = k
-			r.liabilities = q
-			r.save()
+			# Saves Foreign Key for 'ManagedPropertyForm'
+			h.property_address = a
+			h.save()
 			
-			# Sets User, BusinessInfo, and Declarations to BorrowerInfo
-			s.user = self.request.user
-			s.business = b
-			s.declarations = u
-			s.save()
+			# Saves Foreign Keys for 'BorrowerInfoForm'
+			j.user = self.request.user
+			j.business = b
+			j.declarations = i
+			j.save()
 			
-			# Populates and saves the ApplicationSummary table
-			app_sum = aps(
+			# Creates 'ApplicationSummary' off of step data
+			# Will not work, need data for borrower
+			summary = aps(
 				user = self.request.user,
-				property = e,
-				borrower = s, 
-				# coborrower = ??? <- coborrower is a FK onto borrowerinfo, will need to figure this out eventually
-				acknowledge = w,
-				tier = 1
+				property = d,
+				borrower = k,
+				acknowledge = l,
+				tier = 1,
 			)
+			summary.save()
 			
-			app_sum.save()
-			
-			# Sets Borrower and Application to CreditRequest
-			t.borrower = s
-			t.application = app_sum
-			t.save()
-			
-			# Will set Borrower and Coborrower fields automatically to AcknowledgeAgree
-			# currently unsure of how to separate the two, however. Will need more work
-			w.borrower = f
-			w.coborrower = f
-			w.save()
-			'''
+			# Saves Foreign Keys to 'CreditRequestForm'
+			i.borrower = k
+			i.application = summary
+			i.save()
 			
 			# Sends email when data is submitted to DB
 			send_mail(

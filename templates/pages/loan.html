@@ -36,8 +36,8 @@
 		<br>
 	{% endif %}
 	
-	{% if req_tier1 %}
-		<h2>Requests Approved for Tier 1 :</h2>
+	{% if req_basic %}
+		<h2>Requests Approved for Basic Application :</h2>
 		<h3>(Application Unsubmitted)</h3>
 		<table>
 			<tr>
@@ -53,7 +53,7 @@
 				<th>Status</th>
 			</tr>
 			<tr>
-			{% for app in req_tier1 %}
+			{% for app in req_basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
@@ -64,14 +64,14 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td><a href="/basic_app">Apply Here</a></td>
+				<td><a href="/basic_app/{{ app.id }}">Apply Here</a></td>
 			</tr>
 			{% endfor %}
 		</table>
 	{% endif %}
 	
-	{% if req_tier2 %}
-		<h2>Requests Approved for Tier 2 :</h2>
+	{% if req_standard %}
+		<h2>Requests Approved for Standard Application :</h2>
 		<h3>(Application Unsubmitted)</h3>
 		<table>
 			<tr>
@@ -87,7 +87,7 @@
 				<th>Status</th>
 			</tr>
 			<tr>
-			{% for app in req_tier2 %}
+			{% for app in req_standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
@@ -98,7 +98,7 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td><a href="/standard_app">Apply Here</a></td>
+				<td><a href="/standard_app/{{ app.id }}">Apply Here</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -141,7 +141,7 @@
 			</tr>
 			{% endfor %}
 		</table>
-	{% elif applied_loans == False and req_tier1 == False and req_tier2 == False %}
+	{% elif not applied_loans and not req_basic and not req_standard %}
 		<h2>Loans Applied For :</h2>
 		<p>You have not submitted any loan applications.</p>
 		</p><a href='/loan_apply'>Click Here</a> to apply</p>

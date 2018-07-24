@@ -1,9 +1,9 @@
  {% extends '../base.html' %}
  
  {% block content %}
-	<h2>Requests Approved for Tier 1:</h2>
+	<h2>Requests Approved for Basic Application:</h2>
 	<h3>(Application Unsubmitted)</h3>
-	{% if req_tier1 %}
+	{% if req_basic %}
 		<table>
 			<tr>
 				<th>User</th>
@@ -18,7 +18,7 @@
 				<th>Status</th>
 			</tr>
 			<tr>
-			{% for app in req_tier1 %}
+			{% for app in req_basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
@@ -34,13 +34,13 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		<p>There are no Requests that have been approved for Tier 1</p>
+		<p>There are no Requests that have been approved for Basic Application</p>
 	{% endif %}
 	<br>
 	<br>
-	<h2>Requests Approved for Tier 2:</h2>
+	<h2>Requests Approved for Standard Application:</h2>
 	<h3>(Application Unsubmitted)</h3>
-	{% if req_tier2 %}
+	{% if req_standard %}
 		<table>
 			<tr>
 				<th>User</th>
@@ -55,7 +55,7 @@
 				<th>Status</th>
 			</tr>
 			<tr>
-			{% for app in req_tier2 %}
+			{% for app in req_standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.property_address }}</td>
@@ -71,12 +71,12 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		<p>There are no Requests approved for Tier 2</p>
+		<p>There are no Requests approved for Standard Application</p>
 	{% endif %}
 	<br>
 	<br>
- 	<h2>Tier 1 Applications:</h2>
-	{% if tier1 %}
+ 	<h2>Basic Applications:</h2>
+	{% if basic %}
 		<table>
 			<tr>
 				<th>User</th>
@@ -86,11 +86,11 @@
 				<th>Date Last Modified</th>
 			</tr>
 			<tr>
-			{% for app in tier1 %}
+			{% for app in basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
-				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>
@@ -100,12 +100,12 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		<p>There are no Tier 1 Applications</p>
+		<p>There are no Basic Applications</p>
 	{% endif %}
 	<br>
 	<br>
-	<h2>Tier 2 Applications:</h2>
-	{% if tier2 %}
+	<h2>Standard Applications:</h2>
+	{% if standard %}
 		<table>
 			<tr>
 				<th>User</th>
@@ -115,11 +115,11 @@
 				<th>Date Last Modified</th>
 			</tr>
 			<tr>
-			{% for app in tier2 %}
+			{% for app in standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
-				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>
@@ -129,13 +129,13 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		<p>There are no Tier 2 Applications</p>
+		<p>There are no Standard Applications</p>
 	{% endif %}
 	
-	{% if cert_tier1 %}
+	{% if cert_basic %}
 	<br>
 	<br>
-	<h2>Certified Tier 1 Applications:</h2>
+	<h2>Certified Basic Applications:</h2>
 		<table>
 			<tr>
 				<th>User</th>
@@ -145,11 +145,11 @@
 				<th>Date Last Modified</th>
 			</tr>
 			<tr>
-			{% for app in cert_tier1 %}
+			{% for app in cert_basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
-				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>
@@ -160,10 +160,10 @@
 		</table>
 	{% endif %}
 	
-	{% if cert_tier2 %}
+	{% if cert_standard %}
 	<br>
 	<br>
-	<h2>Certified Tier 2 Applications:</h2>
+	<h2>Certified Standard Applications:</h2>
 		<table>
 			<tr>
 				<th>User</th>
@@ -173,11 +173,11 @@
 				<th>Date Last Modified</th>
 			</tr>
 			<tr>
-			{% for app in cert_tier2 %}
+			{% for app in cert_standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
-				<td>{{ app.borrower.borrower_lname }}, {{ app.borrower.borrower_fname }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>

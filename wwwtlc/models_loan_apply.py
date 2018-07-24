@@ -125,8 +125,9 @@ class NewRequestSummary(models.Model):
 		(0, 'Sleep'),
 		(1, 'Active'),
 		(2, 'Priority'),
-		(3, 'Tier 1'),
-		(4, 'Tier 2'),
+		(3, 'Basic'),
+		(4, 'Standard'),
+		#(5, 'Extended'),
 	)
 	status = models.IntegerField(
 		default = 1,

@@ -34,9 +34,12 @@ standard_app_forms = (
 	(6, BankAccountForm),
 	(7, AssetSummaryForm),
 	(8, ManagedPropertyForm),
+	(9, CreditRequestForm),
+	(10, DeclarationForm),
+	(11, BorrowerInfoForm),
+	(12, AcknowledgeAgreeForm),
 )
-
-basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')
+basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')#, initial={'form_id': value})
 
 standard_wizard = StandardWizard.as_view(standard_app_forms, url_name='standard_app_step', template_name='pages/standard_app.html')
 
@@ -210,8 +213,19 @@ urlpatterns = [
         name='loan_apply_done'
 ),
 # urls for StandardWizard form
+# Possible url for passing data to prepopulate forms, will return to this later
+    #~ url(
+        #~ r'^basic_app/(?P<value>[0-9]+)/(?P<step>.+)/$',
+        #~ basic_wizard,
+        #~ name='basic_app_step'
+#~ ),
+    #~ url(
+        #~ r'^basic_app/(?P<value>[0-9]+)/$', 
+        #~ basic_wizard,
+        #~ name='basic_app_context'
+#~ ),
     url(
-        r'^basic_app/(?P<step>.+)/$', 
+        r'^basic_app/(?P<step>.+)/$',
         basic_wizard,
         name='basic_app_step'
 ),

@@ -58,7 +58,7 @@ class AssetSummaryForm(forms.ModelForm):
 	step_name = 'Asset Summary:'
 	class Meta:
 		model = AssetSummary
-		fields = ['life_ins_value', 'face_amount', 'subtotal_liquid', 'vested_interest', 'net_worth', 'other_description', 'other_amt_total', 'assets_total']
+		fields = ['life_ins_value', 'stock_value', 'bond_value', 'face_amount', 'subtotal_liquid', 'vested_interest', 'net_worth', 'other_description', 'other_amt_total', 'assets_total']
 		
 class BankAccountForm(forms.ModelForm):
 	step_name = 'Bank Account(s):'
