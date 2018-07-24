@@ -1,0 +1,41 @@
+# same
+user = models.ForeignKey(User)
+payments_left = models.IntegerField(help_text="Months until loan is paid") #loan payments remaining
+loan_intrate_current = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Current interest rate")
+loan_wallet = models.OneToOneField(Wallet)
+
+# similar
+borrower_id = models.ForeignKey(Borrower, related_name='borrower', blank=True, null=True, verbose_name="Borrower ID")	#NoSQL
+	borrower = models.ForeignKey(BorrowerInfo, related_name='loan_borrower')
+	
+loan_payment_due = models.DecimalField(decimal_places=4, max_digits=12, help_text="Approved monthly payment")
+	payment_due = models.DecimalField(decimal_places=4, max_digits=12)
+	
+loan_payment_due_date = models.DateField(default=timezone.now) #datetime	
+	payment_due_date = models.IntegerField()
+
+loan_balance = models.DecimalField(decimal_places=18, max_digits=65, help_text="Remaining balance left on loan") # (BC is 79)
+	principal_balance = models.DecimalField(decimal_places=18, max_digits=65)
+
+loan_principal_paid = models.DecimalField(decimal_places=4, max_digits=15)
+	principal_paid = models.DecimalField(decimal_places=4, max_digits=12)
+
+TLC_balance =models.DecimalField(decimal_places=18, max_digits=65, help_text="TLC owned by TLC from loan payment") # (BC is 79)
+	TLC_balance = models.DecimalField(decimal_places=18, max_digits=65)
+
+loan_interest_paid = models.DecimalField(decimal_places=4, max_digits=15)
+	interest_paid = models.DecimalField(decimal_places=4, max_digits=12)
+
+# not included in NewLoan, but can be found in NewLoan.loan_terms.foobar
+#similar
+loan_intrate_start = models.DecimalField(decimal_places=2, max_digits=4, verbose_name="Starting interest rate")
+	int_rate = models.DecimalField(max_digits=4, decimal_places=2, verbose_name='Interest Rate', help_text='(required)')
+
+loan_approve_date = models.DateField(default=timezone.now)
+	approval_date = models.DateField(help_text='mm/dd/yy')
+
+loan_principal = models.DecimalField(decimal_places=4, max_digits=15)
+	loan_amount = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Loan Amount', help_text='(required)')
+
+# not included
+loan_data = models.OneToOneField(Loan_Data, related_name='loan_data')

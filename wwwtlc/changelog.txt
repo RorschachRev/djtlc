@@ -1,3 +1,59 @@
+7.24.18 - Alex
+
+Loan Processing should work now. The workflow should be something like:
+Basic/Standard Application -> 
+'Submit a Loan' -> 
+Loan Payments (accounting) -> 
+Loan Payments (blockchain)
+
+Also, a note on the 'Submit a Loan' form. It will create a NewLoan object. This is going to be the new model for the old loan.models.Loan. It contains mostly the same data, except for some fields that have been relocated to the LoanTerms model. All the notes on the differences between the two will be documented under the loan-vs-newloan.txt file. All of the indented fields are the NewLoan equivalent of the old Loan fields
+
+There has been a lot of model restructuring in wwwtlc, to lighten up the inital load of finding things, I'll leave a map here:
+
+models_loan_apply.py:
+	ContactRequest
+	PropertyInfoRequest
+	CurrentMortgage
+	MortgageDesired
+	BorrowerInfoRequest
+	NewRequestSummary
+	
+models_bse.py: (bse = basic, standard, extended)
+	BusinessInfo
+	ConstructionInfo
+	PropertyInfo
+	BorrowerInfo
+	CreditRequest
+	ApplicationSummary
+	Declaration
+	AcknowledgeAgree
+	EmploymentIncome
+	BankAccount
+	AssetSummary
+	ManagedProperty
+	
+models_meta.py: (unsure if this is an accurate name
+	#NO SQL
+	Contract
+	Credit_Report
+	Bank
+	Bank_Account
+	Borrower
+	Partner
+	# Structured Data
+	Address
+	Verified
+	Person
+	Wallet
+	
+models_officer.py: 
+	LenderInfo
+	LoanTerms
+	NewLoan
+	LoanSummary
+	LoanPaymentHistory
+	LoanBlockHistory - incomplete
+	
 7.4.18 - Alex - second commit
 
 The navigation/form session issue seems resolved. I had to change the way that the form navigation interacted with the forms. Now, however, you can navigate freely through each step and access information that you've already submitted. The only caveat currently is that you must hit the 'submit' button on every step for it to save the session information for that form.

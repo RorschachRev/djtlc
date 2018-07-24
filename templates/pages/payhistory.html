@@ -5,12 +5,57 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <h2>Payment History</h2>
-	<table>
-		<tr><th>Date</th><th>Loan</th><th>Balance</th><th>Amount</th><th>Blockchain</th></tr>
-		<tr><td>DATE</td><td>{{ loan.wallet_addr }} </td><td>{% money_localize blockdata.loanbal 'USD' %} </td><td>TLCPAID</td><td><a href="https://ropsten.etherscan.io/tx/0x8c4681725167ea7c1d95ce3afdc5b5459d499ec255b46fc5b349d4e820353434">Tx 0x8c4681...</a>
-		<tr><td>DATE</td><td>{{ loan.wallet_addr }} </td><td>{% money_localize blockdata.loanbal 'USD' %} </td><td>TLCPAID</td><td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a>
-</td></tr>
-	</table>
+<h2>Payment History</h2>
+<h3>(from blockchain)</h3>
+<table>
+	<tr>
+		<th>Date</th>
+		<th>Loan</th>
+		<th>Balance</th>
+		<th>Amount</th>
+		<th>Blockchain</th>
+	</tr>
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0x8c4681725167ea7c1d95ce3afdc5b5459d499ec255b46fc5b349d4e820353434">Tx 0x8c4681...</a></td>
+	</tr>
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a></td>
+	</tr>
+</table>
 
+<h2>Payment History</h2>
+<h3>(from accounting)</h3>
+{% if payments %}
+	<table>
+		<tr>
+			<th>Wallet</th>
+			<th>Loan ID</th>
+			<th>Payment Total</th>
+			<th>Principal Paid</th>
+			<th>Interest Paid</th>
+			<th>Date Paid</th>
+		</tr>
+		{% for payment in payments %}
+		<tr>
+			<td>{{ payment.wallet }}</td>
+			<td>{{ payment.loan.id }}</td>
+			<td>${{ payment.pmt_total | floatformat:2}}</td>
+			<td>${{ payment.principal_pmt | floatformat:2 }}</td>
+			<td>${{ payment.interest_pmt | floatformat:2}}</td>
+			<td>{{ payment.pmt_date }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% else %}
+		<p>There are no payments</p>
+		<br>
+	{% endif %}
 {% endblock %}

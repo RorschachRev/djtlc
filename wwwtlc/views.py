@@ -83,8 +83,10 @@ class loaninfo():
 def payhistory(request):
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
-	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100	
-	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata })
+	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
+
+	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date')
+	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata, 'payments': payments })
 	
 def wallet(request):
 	if request.method == 'POST':
@@ -273,7 +275,8 @@ def submit_loan(request):
 	return render(request, 'dashboard/submit_loan.html', {'form': form})
 	
 def manage_loan(request):
-	return render(request, 'dashboard/manage_loan.html', {})
+	loan_iterable = NewLoan.objects.all()
+	return render(request, 'dashboard/manage_loan.html', {'loan_iterable': loan_iterable})
 	
 	
 '''##################################################
