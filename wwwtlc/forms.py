@@ -167,7 +167,7 @@ class BorrowerInfoRequestForm(forms.ModelForm):
 	step_name = 'Borrower Information'
 	class Meta:
 		model = BorrowerInfoRequest 
-		fields = '__all__'
+		exclude = ['language']
 		
 # Form for 'Submit a Loan'
 class BorrowerInfoLoanForm(forms.ModelForm):

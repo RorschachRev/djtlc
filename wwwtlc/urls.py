@@ -89,6 +89,11 @@ urlpatterns = [
         name='loan'
 ),
     url(
+        r'^loan/(?P<loan_id>[0-9]+)/$',
+        views.loan_details,
+        name='loan_details'
+),
+    url(
         r'^wallet$', 
         views.wallet, 
         name='wallet'

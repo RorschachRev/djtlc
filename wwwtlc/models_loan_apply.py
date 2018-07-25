@@ -52,19 +52,25 @@ class PropertyInfoRequest(models.Model):
 	property_age = models.IntegerField(verbose_name='Property Age')
 	
 class CurrentMortgage(models.Model):
-	date_loan_originated = models.DateField(verbose_name='Date Loan Originated', help_text='(mm/dd/yy)')
-	current_loan_type = models.CharField(max_length=255, verbose_name='Current Loan Type')
+	TYPE_CHOICES = (
+		(0, 'Fixed'),
+		(1, 'ARM'),
+	)
+	date_loan_originated = models.DateField(verbose_name='Date Loan Originated', help_text='(mm/dd/yyyy)')
+	current_loan_type = models.IntegerField(
+		choices = TYPE_CHOICES,
+		default = 0,
+	)
 	original_amount = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Original Amount')
 	current_balance = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Balance')
-	current_term = models.CharField(max_length=255, verbose_name='Current Term')
+	current_term = models.CharField(max_length=255, verbose_name='Current Term', help_text='(months remaining)')
 	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Current Interest Rate')
 	late_payments = models.BooleanField(default=False, verbose_name='Any Late Payments?')
 	
 class MortgageDesired(models.Model):
 	TYPE_CHOICES = (
-		(0, 'Type 1'),
-		(1, 'Type 2'),
-		(2, 'Type 3'),
+		(0, 'Fixed'),
+		(1, 'ARM'),
 	)
 	TIMEFRAME_CHOICES = (
 		(0, 'TimeFrame 1'),
@@ -99,14 +105,14 @@ class MortgageDesired(models.Model):
 	
 class BorrowerInfoRequest(models.Model):
 	B_TYPE_CHOICES = (
-		(0, 'Personal'),
-		(1, 'Business'),
+		(0, 'Business'),
+		(1, 'Personal'),
 	)
 	FICO_CHOICES = (
 		(0, 'FICO Choice 1'),
 		(1, 'FICO Choice 2'),
 	)
-	language = models.CharField(max_length=3, null=True, blank=True)# hidden field, for now
+	language = models.CharField(default='en-us', max_length=8, null=True, blank=True)# hidden field, for now
 	type = models.IntegerField(
 		default = 0,
 		choices = B_TYPE_CHOICES,
