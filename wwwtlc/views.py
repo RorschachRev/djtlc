@@ -7,12 +7,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 
 import decimal as D
-from wwwtlc.models_officer import NewLoan
-from wwwtlc.models_bse import ApplicationSummary
-from wwwtlc.models_meta import Person, Wallet
-from wwwtlc.models_loan_apply import NewRequestSummary
-from wwwtlc.ethereum import BC
 from wwwtlc.forms import *
+from wwwtlc.ethereum import BC
+from wwwtlc.models_officer import NewLoan
+from wwwtlc.models_meta import Person, Wallet
+from wwwtlc.models_bse import ApplicationSummary
+from wwwtlc.models_loan_apply import NewRequestSummary
 
 from loan.models import Loan_Data, Loan_Request#, Loan
 from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
@@ -112,12 +112,13 @@ def wallet(request):
 	form=WalletForm()
 	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
 	
-# this function selects a specific loan associated with the user and displays just that one	
-def pay(request, loan_id):
+# this function selects a specific loan associated with the user and displays just that one,
+# may not work as intended anymore. 
+def pay(request, loan_id, principal_paid=0):
 	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
 	blockdata=BC()
 	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-	loaninfo.payment=NewLoan.objects.get(pk=loan_id).payment_due
+	loaninfo.payment=principal_paid
 	blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 	loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
 	return render(request, 'pages/pay.html', {'loan': loaninfo, 'blockdata':blockdata} )
@@ -263,7 +264,10 @@ def make_payment(request, loan_id):
 			obj.wallet = loan.loan_wallet
 			obj.loan = loan
 			obj.save()
-			return HttpResponseRedirect('/loan_payments')
+			
+			submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
+			return submit
+			#return HttpResponseRedirect('/loan_payments')
 	else:
 		form = PaymentForm()
 	return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
@@ -369,11 +373,8 @@ class LoanApplyWizard(SessionWizardView):
 # Django FormWizard view for Basic Application
 class BasicWizard(NamedUrlSessionWizardView):
 	# Attempt at prepopulating data, will return to this later
-	#~ def __init__(self, form_list, template_name, url_name, initial_dict, done_step_name, instance_dict, condition_dict):
-		#~ print(dir(self.request.GET))
-		#~ print(str(form_list))
-		#~ print(str(initial_dict))
-		#~ print(str(instance_dict))
+	#~ def __init__(self, *args, **kwargs):
+		
 		#~ pass
 	
 	def done(self, form_list, **kwargs):

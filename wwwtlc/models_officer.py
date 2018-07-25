@@ -120,7 +120,14 @@ class LoanSummary(models.Model):
 class LoanPaymentHistory(models.Model):
 	wallet = models.ForeignKey(Wallet)
 	loan = models.ForeignKey(NewLoan)
-	pmt_total = models.DecimalField(decimal_places=4, max_digits=12)
-	principal_pmt = models.DecimalField(decimal_places=4, max_digits=12)
-	interest_pmt = models.DecimalField(decimal_places=4, max_digits=12)
-	pmt_date = models.DateTimeField(default=timezone.now)
+	pmt_total = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Payment Recieved')
+	interest_pmt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Interest Paid')
+	principal_pmt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Principal Paid')
+	pmt_date = models.DateTimeField(default=timezone.now, verbose_name='Date Recieved')
+	
+# Unsure if this is needed/what it will hold
+#~ class BlockPaymentHistory(models.Model):
+	#~ wallet ?
+	#~ loan ?
+	#~ principal ?
+	#~ date ?
