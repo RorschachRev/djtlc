@@ -265,6 +265,11 @@ def make_payment(request, loan_id):
 			obj.loan = loan
 			obj.save()
 			
+			loan.interest_paid += obj.interest_pmt
+			loan.principal_paid += obj.principal_pmt
+			loan.principal_balance -= obj.principal_pmt
+			loan.payments_left -= 1
+			loan.save()
 			submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
 			return submit
 			#return HttpResponseRedirect('/loan_payments')
@@ -293,6 +298,10 @@ def submit_loan(request):
 def manage_loan(request):
 	loan_iterable = NewLoan.objects.all()
 	return render(request, 'dashboard/manage_loan.html', {'loan_iterable': loan_iterable})
+
+def loan_details(request, loan_id):
+	loan = NewLoan.objects.get(pk=loan_id)
+	return render(request, 'dashboard/loan_details.html', {'loan': loan})
 	
 	
 '''##################################################
@@ -439,6 +448,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			# Creates 'ApplicationSummary' off of step data
 			summary = aps(
 				user = self.request.user,
+				source_id = self.request.user.id,
 				property = d,
 				borrower = e,
 				acknowledge = h,

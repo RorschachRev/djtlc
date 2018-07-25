@@ -184,6 +184,11 @@ urlpatterns = [
         name='manage_loan'
 ),
     url(
+        r'^manage_loan/(?P<loan_id>[0-9]+)$',
+        views.loan_details,
+        name='loan_details'
+),
+    url(
         r'^loan_accounting/$',
         views.loan_accounting,
         name='loan_accounting'

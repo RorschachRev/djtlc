@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Loan ID: #{{ loan.id }}</h1>
+<h3>User: {{ loan.user }}</h3>
+<h3>Wallet: 0x{{ loan.loan_wallet }}</h3>
+
+<p><strong>Borrower : </strong>{{ loan.borrower }}</p>
+{% if loan.coborrower %}
+<p><strong>Coborrower : </strong>{{ loan.coborrower }}</p>
+{% endif %}
+<h2><u>Current Data</u></h2>
+<p><strong>Principal Paid : </strong>{{ loan.principal_paid }}</p>
+<p><strong>Principal Balance : </strong>{{ loan.principal_balance }}</p>
+<p><strong>Interest Rate : </strong>{{ loan.loan_intrate_current }}</p>
+<p><strong>Interest Paid : </strong>{{ loan.interest_paid }}</p>
+<p><strong>Payments Left : </strong>{{ loan.payments_left }}</p>
+<p><strong>Payment Due : </strong>{{ loan.payment_due }}</p>
+<p><strong>Payment Due Date : </strong>{{ loan.payment_due_date }}</p>
+{% endblock content %}
