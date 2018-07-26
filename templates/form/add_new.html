@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<title>Add {{ form.step_name }}</title>
+		<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+		<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+		<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+	</head>
+	<body>
+		<h1>Add {{ form.step_name }}</h1>
+		<form method="POST" action="/add/{{ field }}">
+			<table>
+				{% csrf_token %}
+				{{ form }}
+			</table>
+			<p><input type="submit" /> | <a href="javascript:window.close()">Cancel</a></p>
+		</form>
+	</body>
+</html>

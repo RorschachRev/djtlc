@@ -200,8 +200,8 @@ class BorrowerInfo (models.Model):
 		verbose_name = 'Do you Own or Rent?'
 	)
 	living_yrs = models.IntegerField(verbose_name='Years Owned/Rented at Present Address', help_text='(required)') # years owned/rented at property referenced in present_addr
-	mail_addr = models.CharField(max_length=256, verbose_name='Mailing Address', help_text='(required)')
-	principal_office_addr = models.CharField(max_length=256, null=True, blank=True, verbose_name='Principal Office Address')
+	mail_addr = models.ForeignKey(Address, related_name='mail_address', verbose_name='Mailing Address', help_text='(required)')
+	principal_office_addr = models.ForeignKey(Address, related_name='principal_office_addres', null=True, blank=True, verbose_name='Principal Office Address')
 	organizations_state = models.IntegerField(
 		choices = STATE_CHOICES,
 		default = 0,
@@ -314,7 +314,7 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 		
 class BankAccount(models.Model):
 	name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Name of Bank, S&L, or Credit Union')
-	address = models.CharField(max_length=256, null=True, blank=True)
+	address = models.ForeignKey(Address, null=True, blank=True)
 	acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
 	amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Cash or Market Value')
 		

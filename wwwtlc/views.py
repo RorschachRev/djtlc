@@ -1,10 +1,11 @@
 from django import forms
 from django.conf import settings
+from django.utils.html import escape
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
 
 import decimal as D
 from wwwtlc.forms import *
@@ -272,7 +273,6 @@ def make_payment(request, loan_id):
 			loan.save()
 			submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
 			return submit
-			#return HttpResponseRedirect('/loan_payments')
 	else:
 		form = PaymentForm()
 	return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
@@ -307,6 +307,23 @@ def loan_details(request, loan_id):
 '''##################################################
 # Form Views
 ##################################################'''
+# View that redirects '+' to add_new template
+def add_new(request, field_name):
+	if request.method == 'POST':
+		form = AddressForm(request.POST)
+		if form.is_valid():
+			obj = form.save(commit=False)
+			obj.user = request.user
+			obj.save()
+			return add_new_done(request)
+
+	else:
+		form = AddressForm()
+	return render(request, 'form/add_new.html', {'form': form, 'field': field_name})
+	
+def add_new_done(request):
+	return render(request, 'form/add_new_done.html', {})
+	
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
 	# Function to send the form some initial values
@@ -318,8 +335,6 @@ class LoanApplyWizard(SessionWizardView):
 	
 	def done(self, form_list, **kwargs):
 		summary = NewRequestSummary
-		
-		# a, 0 = AddressForm - Removed for '+' button
 		
 		# a, 0 = ContactRequestForm
 		# b, 1 = PropertyInfoRequestForm
@@ -352,11 +367,11 @@ class LoanApplyWizard(SessionWizardView):
 			
 			summary = summary(
 				user = self.request.user,
-				contact = b,
-				property = c,
-				curr_mortgage = d,
-				desired_mortgage = e,
-				borrower = f,
+				contact = a,
+				property = b,
+				curr_mortgage = c,
+				desired_mortgage = d,
+				borrower = e,
 			)
 			
 			summary.save()
@@ -376,26 +391,27 @@ class LoanApplyWizard(SessionWizardView):
 				['finance@thelendingcoin.com', 'lender@thelendingcoin.com']
 			)
 			
-		return render(self.request, 'pages/loan_apply_done.html', {'name': b.name_first + ' ' + b.name_last} )
+		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
 		
 # Django FormWizard view for Basic Application
 class BasicWizard(NamedUrlSessionWizardView):
-	# Attempt at prepopulating data, will return to this later
-	#~ def __init__(self, *args, **kwargs):
-		
-		#~ pass
+	# Function to send the form some initial values
+	def get_form_initial(self, step):
+		user = self.request.user
+		if step == '3' or step == '4':
+			self.initial_dict = {'user': user}
+		return self.initial_dict
 	
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
-		# a, 1 = Address
-		# b, 2 = BusinessInfo
-		# c, 3 = ConstructionInfo
-		# d, 4 = PropertyInfo
-		# e, 5 = BorrowerInfo
-		# f, 6 = CreditRequest
-		# g, 7 = Declaration
-		# h, 8 = AcknowledgeAgree
+		# a, 1 = BusinessInfo
+		# b, 2 = ConstructionInfo
+		# c, 3 = PropertyInfo
+		# d, 4 = BorrowerInfo
+		# e, 5 = CreditRequest
+		# f, 6 = Declaration
+		# g, 7 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -412,13 +428,11 @@ class BasicWizard(NamedUrlSessionWizardView):
 		f_valid = self.get_form(step='6', data=f_data).is_valid()
 		g_data = self.storage.get_step_data('7')
 		g_valid = self.get_form(step='7', data=g_data).is_valid()
-		h_data = self.storage.get_step_data('8')
-		h_valid = self.get_form(step='8', data=h_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid and 
 			d_valid and e_valid and f_valid and 
-			g_valid and h_valid
+			g_valid
 		):
 			a = self.get_form(step='1', data=a_data).save(commit=False)
 			b = self.get_form(step='2', data=b_data).save()
@@ -426,37 +440,31 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save(commit=False)
 			f = self.get_form(step='6', data=f_data).save(commit=False)
-			g = self.get_form(step='7', data=g_data).save()
-			h = self.get_form(step='8', data=h_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
-			
-			# Saves Foreign Keys for 'AddressForm'
-			a.user = self.request.user
-			a.save()
+			g = self.get_form(step='7', data=g_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
-			d.address = a
-			d.construction_loan = c
-			d.save()
+			c.construction_loan = b
+			c.save()
 			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
-			e.user = self.request.user
-			e.business = b
-			e.declarations = g
-			e.save()
+			d.user = self.request.user
+			d.business = a
+			d.declarations = f
+			d.save()
 			
 			# Creates 'ApplicationSummary' off of step data
 			summary = aps(
 				user = self.request.user,
 				source_id = self.request.user.id,
-				property = d,
-				borrower = e,
-				acknowledge = h,
+				property = c,
+				borrower = d,
+				acknowledge = g,
 				tier = 0,
 			)
 			summary.save()
 			
 			# Saves Foreign Keys for 'CreditRequestForm'
-			f.borrower = e
+			f.borrower = d
 			f.application = summary
 			f.save()
 			
@@ -472,21 +480,27 @@ class BasicWizard(NamedUrlSessionWizardView):
 		
 # Form for Standard application
 class StandardWizard(NamedUrlSessionWizardView):
+	# Function to send the form some initial values
+	def get_form_initial(self, step):
+		user = self.request.user
+		if step == '3' or step == '4' or step == '10':
+			self.initial_dict = {'user': user}
+		return self.initial_dict
+		
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
 		
-		# a, 1 = Address
-		# b, 2 = BusinessInfo
-		# c, 3 = ConstructionInfo
-		# d, 4 = PropertyInfo
-		# e, 5 = EmploymentIncomeInfo
-		# f, 6 = BankAccount
-		# g, 7 = Asset Summary
-		# h, 8 = ManagedProperty
-		# i, 9 = CreditRequest
-		# j, 10 = Declarations
-		# k, 11 = BorrowerInfo
-		# l, 12 = AcknowledgeAgree
+		# a, 1 = BusinessInfo
+		# b, 2 = ConstructionInfo
+		# c, 3 = PropertyInfo
+		# d, 4 = EmploymentIncomeInfo
+		# e, 5 = BankAccount
+		# f, 6 = Asset Summary
+		# g, 7 = ManagedProperty
+		# h, 8 = CreditRequest
+		# i, 9 = Declarations
+		# j, 10 = BorrowerInfo
+		# k, 11 = AcknowledgeAgree
 		
 		# This block of code retrieves data and binds it to the form fields, then validates each step
 		a_data = self.storage.get_step_data('1')
@@ -511,49 +525,37 @@ class StandardWizard(NamedUrlSessionWizardView):
 		j_valid = self.get_form(step='10', data=j_data).is_valid()
 		k_data = self.storage.get_step_data('11')
 		k_valid = self.get_form(step='11', data=k_data).is_valid()
-		l_data = self.storage.get_step_data('12')
-		l_valid = self.get_form(step='12', data=l_data).is_valid()
 		
 		if (
 			a_valid and b_valid and c_valid and
 			d_valid and e_valid and f_valid and 
 			g_valid and h_valid and i_valid and
-			j_valid and k_valid and l_valid
+			j_valid and k_valid
 		):
-			a = self.get_form(step='1', data=a_data).save(commit=False)
+			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
-			c = self.get_form(step='3', data=c_data).save()
-			d = self.get_form(step='4', data=d_data).save(commit=False)
+			c = self.get_form(step='3', data=c_data).save(commit=False)
+			d = self.get_form(step='4', data=d_data).save()
 			e = self.get_form(step='5', data=e_data).save()
-			f = self.get_form(step='6', data=f_data).save()
-			g = self.get_form(step='7', data=g_data).save(commit=False)
+			f = self.get_form(step='6', data=f_data).save(commit=False)
+			g = self.get_form(step='7', data=g_data).save()
 			h = self.get_form(step='8', data=h_data).save(commit=False)
-			i = self.get_form(step='9', data=i_data).save(commit=False)
-			j = self.get_form(step='10', data=j_data).save()
-			k = self.get_form(step='11', data=k_data).save(commit=False)
-			l = self.get_form(step='12', data=l_data).save()
-			
-			# Saves Foreign Key for 'AddressForm'
-			a.user = self.request.user
-			a.save()
+			i = self.get_form(step='9', data=i_data).save()
+			j = self.get_form(step='10', data=j_data).save(commit=False)
+			k = self.get_form(step='11', data=k_data).save()
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
-			d.address = a
-			d.construction_loan = c
-			d.save()
+			c.construction_loan = b
+			c.save()
 			
 			# Saves Foreign Keys for 'AssetSummaryForm'
-			g.acct1 = f
-			g.employment_income = e
-			g.save()
-			
-			# Saves Foreign Key for 'ManagedPropertyForm'
-			h.property_address = a
+			h.acct1 = e
+			h.employment_income = d
 			h.save()
 			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			j.user = self.request.user
-			j.business = b
+			j.business = a
 			j.declarations = i
 			j.save()
 			
@@ -561,15 +563,15 @@ class StandardWizard(NamedUrlSessionWizardView):
 			# Will not work, need data for borrower
 			summary = aps(
 				user = self.request.user,
-				property = d,
-				borrower = k,
-				acknowledge = l,
+				property = c,
+				borrower = j,
+				acknowledge = i,
 				tier = 1,
 			)
 			summary.save()
 			
 			# Saves Foreign Keys to 'CreditRequestForm'
-			i.borrower = k
+			i.borrower = j
 			i.application = summary
 			i.save()
 			

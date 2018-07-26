@@ -1,28 +1,8 @@
 {% extends 'pages/home.html' %}
 {% load i18n %}
-<script type="text/javascript" src="/admin/jsi18n/"></script>
-<script type="text/javascript" src="/static/admin/js/core.js"></script>
-<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
-<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
-<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
-<script type="text/javascript" src="/static/admin/js/actions.js"></script>
-<script type="text/javascript" src="/static/admin/js/urlify.js"></script>
-<script type="text/javascript" src="/static/admin/js/prepopulate.js"></script>
-<script type="text/javascript" src="/static/admin/js/vendor/xregexp/xregexp.js"></script>
-<script type="text/javascript"
-            id="django-admin-form-add-constants"
-            src="/static/admin/js/change_form.js"
-            >
-    </script>
-
-
-
-
-<script type="text/javascript"
-        id="django-admin-prepopulated-fields-constants"
-        src="/static/admin/js/prepopulate_init.js"
-        data-prepopulated-fields="[]">
-</script>
+	<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+	<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
 {% block head %}
 {{ wizard.form.media }}
 {% endblock %}
@@ -45,7 +25,10 @@
 <input type="submit" value="{% trans 'Submit' %}"/>
 </form>
 <script>
-$("#id_1-property_address").parent().append('<a class="related-widget-wrapper-link add-related" id="add_id_loan_address" href="/admin/wwwtlc/address/add/?_to_field=id&amp;_popup=1" title="Add another address"><img src="/static/admin/img/icon-addlink.svg" alt="Add"></a>');
+// OG jQuery to add '+' button beside the property address field
+//~ $("#id_1-property_address").parent().append('<a class="related-widget-wrapper-link add-related" id="add_id_loan_address" href="/admin/wwwtlc/address/add/?_to_field=id&amp;_popup=1" title="Add another address"><img src="/static/admin/img/icon-addlink.svg" alt="Add"></a>');
+
+//~ $("#id_1-property_address").parent().append('  <a class="add-another" id="add_id_{{ field }}" href="/add/{{ field }}" title="Add another address" onclick="return showAddAnotherPopup(this);"><img src="/static/admin/img/icon-addlink.svg" alt="Add"></a>');
 </script>
 {% endblock %}
 

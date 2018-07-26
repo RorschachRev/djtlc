@@ -1,4 +1,5 @@
 from django import forms
+from wwwtlc.add_new import SelectWithPop, MultipleSelectWithPop
 
 # some of the following models may need to be removed
 # will handle later
@@ -64,12 +65,32 @@ class BankAccountForm(forms.ModelForm):
 	class Meta:
 		model = BankAccount
 		fields = '__all__'
+		widgets = {
+			'address' : SelectWithPop
+		}	
 
 class BorrowerInfoForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
 		exclude = ['user', 'business', 'assets_liabilities', 'declarations']
+		widgets = {
+			'present_addr' : SelectWithPop,
+			'mail_addr' : SelectWithPop,
+			'former_addr' : SelectWithPop,
+			'principal_office_addr' : SelectWithPop
+		}
+		
+	def __init__(self, *args, **kwargs):
+		y = kwargs['initial'].values()
+		user = next(iter(y))
+		super(BorrowerInfoForm, self).__init__(*args, **kwargs)
+		self.fields['present_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+		self.fields['present_addr'].empty_label = None
+		self.fields['mail_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+		self.fields['mail_addr'].empty_label = None
+		self.fields['former_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+		self.fields['principal_office_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
 		
 class BusinessInfoForm(forms.ModelForm):
 	step_name = 'Business Information:'
@@ -99,7 +120,10 @@ class EmploymentIncomeForm(forms.ModelForm):
 	step_name = 'Employment Income Information:'
 	class Meta:
 		model = EmploymentIncome
-		fields = '__all__'	
+		fields = '__all__'
+		widgets = {
+			'address' : SelectWithPop
+		}		
 
 class LoanForm(forms.ModelForm):
 	step_name = 'Loan:'
@@ -118,6 +142,9 @@ class ManagedPropertyForm(forms.ModelForm):
 	class Meta:
 		model = ManagedProperty
 		fields = '__all__'
+		widgets = {
+			'property_address' : SelectWithPop
+		}		
 		
 class PaymentForm(forms.ModelForm):
 	class Meta:
@@ -128,7 +155,18 @@ class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfo
-		exclude = ['construction_loan', 'refinance_loan']
+		exclude = ['construction_loan', 'refinance_loan', 'legal_description']
+		widgets = {
+			'address' : SelectWithPop
+		}
+		
+	# Only shows users Addresses assigned to them when filling out the form	
+	def __init__(self, *args, **kwargs):
+		y = kwargs['initial'].values()
+		user = next(iter(y))
+		super(PropertyInfoForm, self).__init__(*args, **kwargs)
+		self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
+		self.fields['address'].empty_label = None
 
 class WalletForm(forms.ModelForm):
 	step_name = 'Loan Wallet:'
@@ -152,15 +190,17 @@ class PropertyInfoRequestForm(forms.ModelForm):
 	class Meta:
 		model = PropertyInfoRequest
 		fields = '__all__'
+		widgets = {
+			'property_address' : SelectWithPop
+		}
 		
 	# Only shows users Addresses assigned to them when filling out the form	
 	def __init__(self, *args, **kwargs):
 		y = kwargs['initial'].values()
-		for x in y:
-			print('****' + str(x))
-		user = x
+		user = next(iter(y))
 		super(PropertyInfoRequestForm, self).__init__(*args, **kwargs)
-		self.fields['property_address'].queryset = Address.objects.filter(user=user)
+		self.fields['property_address'].queryset = Address.objects.filter(user=user).order_by('-id')
+		self.fields['property_address'].empty_label = None
 		
 class CurrentMortgageForm(forms.ModelForm):
 	step_name = 'Current Mortgage:'

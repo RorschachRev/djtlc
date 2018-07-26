@@ -15,29 +15,27 @@ from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 # below is the forms for the NamedUrlSessionsView of the formtools app
 # https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
 basic_app_forms = (
-	(1, AddressForm),
-	(2, BusinessInfoForm),
-	(3, ConstructionInfoForm),
-	(4, PropertyInfoForm),
-	(5, BorrowerInfoForm),
-	(6, CreditRequestForm),
-	(7, DeclarationForm),
-	(8, AcknowledgeAgreeForm),
+	(1, BusinessInfoForm),
+	(2, ConstructionInfoForm),
+	(3, PropertyInfoForm),
+	(4, BorrowerInfoForm),
+	(5, CreditRequestForm),
+	(6, DeclarationForm),
+	(7, AcknowledgeAgreeForm),
 )
 
 standard_app_forms = (
-	(1, AddressForm),
-	(2, BusinessInfoForm),
-	(3, ConstructionInfoForm),
-	(4, PropertyInfoForm),
-	(5, EmploymentIncomeForm),
-	(6, BankAccountForm),
-	(7, AssetSummaryForm),
-	(8, ManagedPropertyForm),
-	(9, CreditRequestForm),
-	(10, DeclarationForm),
-	(11, BorrowerInfoForm),
-	(12, AcknowledgeAgreeForm),
+	(1, BusinessInfoForm),
+	(2, ConstructionInfoForm),
+	(3, PropertyInfoForm),
+	(4, EmploymentIncomeForm),
+	(5, BankAccountForm),
+	(6, AssetSummaryForm),
+	(7, ManagedPropertyForm),
+	(8, CreditRequestForm),
+	(9, DeclarationForm),
+	(10, BorrowerInfoForm),
+	(11, AcknowledgeAgreeForm),
 )
 basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')#, initial={'form_id': value})
 
@@ -200,6 +198,18 @@ urlpatterns = [
 ),
 
 # Form URLs
+
+# URL to implement '+' button for Address Field
+    url(
+        r'^add/(?P<field_name>.+)$',
+        views.add_new,
+        name='add_new'
+), 
+    url(
+        r'^add_new_done/$',
+         views.add_new_done,
+        name='add_new_done'
+),
 
 # url for LoanApply Wizard Form
     url(
