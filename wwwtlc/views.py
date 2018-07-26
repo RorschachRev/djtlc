@@ -434,12 +434,12 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d_valid and e_valid and f_valid and 
 			g_valid
 		):
-			a = self.get_form(step='1', data=a_data).save(commit=False)
+			a = self.get_form(step='1', data=a_data).save()
 			b = self.get_form(step='2', data=b_data).save()
-			c = self.get_form(step='3', data=c_data).save()
+			c = self.get_form(step='3', data=c_data).save(commit=False)
 			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save(commit=False)
-			f = self.get_form(step='6', data=f_data).save(commit=False)
+			f = self.get_form(step='6', data=f_data).save()
 			g = self.get_form(step='7', data=g_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
@@ -464,9 +464,9 @@ class BasicWizard(NamedUrlSessionWizardView):
 			summary.save()
 			
 			# Saves Foreign Keys for 'CreditRequestForm'
-			f.borrower = d
-			f.application = summary
-			f.save()
+			e.borrower = d
+			e.application = summary
+			e.save()
 			
 			# Sends email when data is submitted to DB
 			send_mail(
@@ -549,9 +549,9 @@ class StandardWizard(NamedUrlSessionWizardView):
 			c.save()
 			
 			# Saves Foreign Keys for 'AssetSummaryForm'
-			h.acct1 = e
-			h.employment_income = d
-			h.save()
+			f.acct1 = e
+			f.employment_income = d
+			f.save()
 			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			j.user = self.request.user
@@ -563,17 +563,18 @@ class StandardWizard(NamedUrlSessionWizardView):
 			# Will not work, need data for borrower
 			summary = aps(
 				user = self.request.user,
+				source_id = self.request.user.id,
 				property = c,
 				borrower = j,
-				acknowledge = i,
+				acknowledge = k,
 				tier = 1,
 			)
 			summary.save()
 			
 			# Saves Foreign Keys to 'CreditRequestForm'
-			i.borrower = j
-			i.application = summary
-			i.save()
+			h.borrower = j
+			h.application = summary
+			h.save()
 			
 			# Sends email when data is submitted to DB
 			send_mail(
