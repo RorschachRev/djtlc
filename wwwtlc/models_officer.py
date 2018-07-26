@@ -69,7 +69,7 @@ class LoanTerms (models.Model):
 		default = 0,
 		verbose_name = 'Amortization Type',
 	)
-	approval_date = models.DateField(help_text='mm/dd/yy')
+	approval_date = models.DateField(default=timezone.now, help_text='mm/dd/yyyy')
 	
 	def __str__(self):
 		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: ' + str(self.loan_amount)

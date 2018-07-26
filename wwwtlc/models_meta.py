@@ -90,7 +90,7 @@ class Person(models.Model):
 		
 class Wallet(models.Model):
 	wallet = models.ForeignKey(User)
-	address=models.CharField(max_length=127)
+	address=models.CharField(max_length=127, verbose_name='Blockchain Address')
 	blockchain=models.CharField(max_length=4)
 	buy_TLC_approval=models.NullBooleanField()
 	#date_added

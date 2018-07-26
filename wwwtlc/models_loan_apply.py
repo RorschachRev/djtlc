@@ -26,24 +26,15 @@ class ContactRequest(models.Model):
 	
 class PropertyInfoRequest(models.Model):
 	TYPE_CHOICES = (
-		(0, 'Type 1'),
-		(1, 'Type 2'),
-		(2, 'Type 3'),
-	)
-	USE_CHOICES = (
-		(0, 'Use 1'),
-		(1, 'Use 2'),
-		(2, 'Use 3'),
+		(0, 'Commercial'),
+		(1, 'Industrial'),
+		(2, 'Residential'),
+		(3, 'Mixed'),
 	)
 	property_type = models.IntegerField(
 		choices = TYPE_CHOICES,
 		default = 0,
 		verbose_name='Property Type'
-	)
-	property_use = models.IntegerField(
-		choices = USE_CHOICES,
-		default = 0,
-		verbose_name='Property Use'
 	)
 	property_address = models.ForeignKey(Address)
 	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Occupancy Rate')
@@ -73,14 +64,15 @@ class MortgageDesired(models.Model):
 		(1, 'ARM'),
 	)
 	TIMEFRAME_CHOICES = (
-		(0, 'TimeFrame 1'),
-		(1, 'TimeFrame 2'),
-		(2, 'TimeFrame 3'),
+		(0, 'Immediately'),
+		(1, 'Within a Month'),
+		(2, 'Within 6 Months'),
 	)
 	TERM_CHOICES = (
-		(0, 'Term 1'),
-		(1, 'Term 2'),
-		(2, 'Term 3'),
+		(0, '20 Year'),
+		(1, '15 Year'),
+		(2, '10 Year'),
+		(3, 'Less than 10 Years'),
 	)
 	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
 	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Cash Back Desired')
@@ -109,8 +101,11 @@ class BorrowerInfoRequest(models.Model):
 		(1, 'Personal'),
 	)
 	FICO_CHOICES = (
-		(0, 'FICO Choice 1'),
-		(1, 'FICO Choice 2'),
+		(0, '720+'),
+		(1, '690-719'),
+		(2, '660-679'),
+		(3, '630-659'),
+		(4, 'Unknown'),
 	)
 	language = models.CharField(default='en-us', max_length=8, null=True, blank=True)# hidden field, for now
 	type = models.IntegerField(
@@ -123,7 +118,8 @@ class BorrowerInfoRequest(models.Model):
 	fico = models.IntegerField(
 		choices = FICO_CHOICES,
 		default = 0,
-		verbose_name='FICO'
+		verbose_name='FICO',
+		help_text='(approximate FICO)'
 	)
 	
 class NewRequestSummary(models.Model):

@@ -309,15 +309,23 @@ def loan_details(request, loan_id):
 ##################################################'''
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
+	# Function to send the form some initial values
+	def get_form_initial(self, step):
+		user = self.request.user
+		if step == '1':
+			self.initial_dict = {'user': user}
+		return self.initial_dict
+	
 	def done(self, form_list, **kwargs):
 		summary = NewRequestSummary
 		
-		# a, 0 = AddressForm
-		# b, 1 = ContactRequestForm
-		# c, 2 = PropertyInfoRequestForm
-		# d, 3 = CurrentMortgageForm
-		# e, 4 = MortgageDesiredForm
-		# f, 5 = BorrowerInfoRequestForm
+		# a, 0 = AddressForm - Removed for '+' button
+		
+		# a, 0 = ContactRequestForm
+		# b, 1 = PropertyInfoRequestForm
+		# c, 2 = CurrentMortgageForm
+		# d, 3 = MortgageDesiredForm
+		# e, 4 = BorrowerInfoRequestForm
 		
 		# This block of code binds data from form to form itself, and validates the data
 		a_data = self.storage.get_step_data('0')
@@ -330,26 +338,17 @@ class LoanApplyWizard(SessionWizardView):
 		d_valid = self.get_form(step='3', data=d_data).is_valid()
 		e_data = self.storage.get_step_data('4')
 		e_valid = self.get_form(step='4', data=e_data).is_valid()
-		f_data = self.storage.get_step_data('5')
-		f_valid = self.get_form(step='5', data=f_data).is_valid()
 		
 		# This block of code sets the foreign keys of each table to the entries entered in the previous form step, if the data is valid
 		if (
 			a_valid and b_valid and c_valid and
-			d_valid and e_valid and f_valid
+			d_valid and e_valid
 		):
-			a = self.get_form(step='0', data=a_data).save(commit=False)
+			a = self.get_form(step='0', data=a_data).save()
 			b = self.get_form(step='1', data=b_data).save()
-			c = self.get_form(step='2', data=c_data).save(commit=False)
+			c = self.get_form(step='2', data=c_data).save()
 			d = self.get_form(step='3', data=d_data).save()
 			e = self.get_form(step='4', data=e_data).save()
-			f = self.get_form(step='5', data=f_data).save()
-			
-			a.user = self.request.user
-			a.save()
-			
-			c.property_address = a
-			c.save()
 			
 			summary = summary(
 				user = self.request.user,

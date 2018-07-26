@@ -8,6 +8,7 @@
 {% block content %}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
 <form action="" method="post">{% csrf_token %}
+<h2>{{ wizard.form.step_name }}</h2>
 <table>
 {{ wizard.management_form }}
 {% if wizard.form.forms %}

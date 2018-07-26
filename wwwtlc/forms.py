@@ -28,7 +28,6 @@ MortgageDesired, BorrowerInfoRequest, NewRequestSummary
 
 # models not listed in the forms, due to only needing to be accessed by staff:
 #	- LenderInfo
-#	- Loan Terms
 #	- LoanWorkflow
 #	- LoanSummary
 
@@ -103,11 +102,13 @@ class EmploymentIncomeForm(forms.ModelForm):
 		fields = '__all__'	
 
 class LoanForm(forms.ModelForm):
+	step_name = 'Loan:'
 	class Meta:
 		model = NewLoan
 		exclude = ['user', 'borrower', 'coborrower', 'loan_terms', 'loan_wallet']
 		
 class LoanTermsForm(forms.ModelForm):
+	step_name = 'Loan Terms:'
 	class Meta:
 		model = LoanTerms
 		fields = '__all__'
@@ -127,9 +128,10 @@ class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfo
-		exclude = ['address', 'construction_loan', 'refinance_loan']
+		exclude = ['construction_loan', 'refinance_loan']
 
 class WalletForm(forms.ModelForm):
+	step_name = 'Loan Wallet:'
 	class Meta:
 		model = Wallet
 		exclude = ['wallet']
@@ -149,7 +151,16 @@ class PropertyInfoRequestForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfoRequest
-		exclude = ['property_address']
+		fields = '__all__'
+		
+	# Only shows users Addresses assigned to them when filling out the form	
+	def __init__(self, *args, **kwargs):
+		y = kwargs['initial'].values()
+		for x in y:
+			print('****' + str(x))
+		user = x
+		super(PropertyInfoRequestForm, self).__init__(*args, **kwargs)
+		self.fields['property_address'].queryset = Address.objects.filter(user=user)
 		
 class CurrentMortgageForm(forms.ModelForm):
 	step_name = 'Current Mortgage:'
@@ -158,19 +169,20 @@ class CurrentMortgageForm(forms.ModelForm):
 		fields = '__all__'
 		
 class MortgageDesiredForm(forms.ModelForm):
-	step_name = 'Mortgage Desired'
+	step_name = 'Mortgage Desired:'
 	class Meta:
 		model = MortgageDesired
 		fields = '__all__'
 		
 class BorrowerInfoRequestForm(forms.ModelForm):
-	step_name = 'Borrower Information'
+	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfoRequest 
 		exclude = ['language']
 		
 # Form for 'Submit a Loan'
 class BorrowerInfoLoanForm(forms.ModelForm):
+	step_name = 'Loan Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
 		exclude = ['business', 'assets_liabilities', 'declarations']
