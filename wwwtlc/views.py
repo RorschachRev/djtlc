@@ -1,6 +1,8 @@
 from django import forms
 from django.conf import settings
+from django.core import serializers
 from django.utils.html import escape
+from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
@@ -308,6 +310,7 @@ def loan_details(request, loan_id):
 # Form Views
 ##################################################'''
 # View that redirects '+' to add_new template
+# handles the popup form
 def add_new(request, field_name):
 	if request.method == 'POST':
 		form = AddressForm(request.POST)
@@ -321,8 +324,17 @@ def add_new(request, field_name):
 		form = AddressForm()
 	return render(request, 'form/add_new.html', {'form': form, 'field': field_name})
 	
+# view that serializes the new Address queryset	
+def update_address_query(request):
+	new_query = serializers.serialize('json', Address.objects.filter(user=request.user))
+	return new_query
+	
+# view that handles the closing of the popup window, as well as
+# sending the json-formatted queryset that holds the new Address added from the form
+# to the parent page that opened the popup
 def add_new_done(request):
-	return render(request, 'form/add_new_done.html', {})
+	address_query = update_address_query(request)
+	return render(request, 'form/add_new_done.html', {'address_query': address_query})
 	
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):

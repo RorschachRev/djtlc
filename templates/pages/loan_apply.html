@@ -25,10 +25,20 @@
 <input type="submit" value="{% trans 'Submit' %}"/>
 </form>
 <script>
-// OG jQuery to add '+' button beside the property address field
-//~ $("#id_1-property_address").parent().append('<a class="related-widget-wrapper-link add-related" id="add_id_loan_address" href="/admin/wwwtlc/address/add/?_to_field=id&amp;_popup=1" title="Add another address"><img src="/static/admin/img/icon-addlink.svg" alt="Add"></a>');
-
-//~ $("#id_1-property_address").parent().append('  <a class="add-another" id="add_id_{{ field }}" href="/add/{{ field }}" title="Add another address" onclick="return showAddAnotherPopup(this);"><img src="/static/admin/img/icon-addlink.svg" alt="Add"></a>');
+	// This function is called by add_new_done.html/sendVariable()
+	// new_query holds the '{{ address_query }}' sent to that template by the wwwtlc.views.add_new_done view
+		function updateAddress(new_query) {
+			$.ajax({
+				'method': 'GET', 
+				'url': '.', 
+				'data': {},  // pass here any data to the server. You can omit it.
+				success: function(dataReturned) {
+					console.log($('#id_1-property_address'));
+					// This function will run when server returns data
+					
+			}
+		});
+	    };
 </script>
 {% endblock %}
 
