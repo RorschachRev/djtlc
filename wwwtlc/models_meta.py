@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from wwwtlc.models_bse import BorrowerInfo
+from wwwtlc.models_bse import BorrowerInfo, ApplicationSummary
 from wwwtlc.models_loan_apply import Address
 
 #Extend User to include Wallet FK_ID
@@ -35,6 +35,14 @@ class Partner(models.Model):
 	refkey=models.IntegerField()
 	def __str__(self):
 		return str(self.refkey)
+
+class Documents(models.Model):
+	application = models.ForeignKey(ApplicationSummary)
+	credit_report = models.ForeignKey(Credit_Report)
+	bank = models.ForeignKey(Bank)
+	bank_account = models.ForeignKey(Bank_Account)
+	borrower = models.ForeignKey(Borrower)
+	partner = models.ForeignKey(Partner)
 
 
 #Structured Data

@@ -316,6 +316,7 @@ def handle_pop_add(request, addForm, field):
 			try:
 				newObject = form.save(commit=False)
 				newObject.user = request.user
+				newObject.source = request.user
 				newObject.save()
 			except (forms.ValidationError):
 				newObject = None
@@ -367,14 +368,30 @@ class LoanApplyWizard(SessionWizardView):
 			a_valid and b_valid and c_valid and
 			d_valid and e_valid
 		):
-			a = self.get_form(step='0', data=a_data).save()
-			b = self.get_form(step='1', data=b_data).save()
-			c = self.get_form(step='2', data=c_data).save()
-			d = self.get_form(step='3', data=d_data).save()
-			e = self.get_form(step='4', data=e_data).save()
+			a = self.get_form(step='0', data=a_data).save(commit=False)
+			b = self.get_form(step='1', data=b_data).save(commit=False)
+			c = self.get_form(step='2', data=c_data).save(commit=False)
+			d = self.get_form(step='3', data=d_data).save(commit=False)
+			e = self.get_form(step='4', data=e_data).save(commit=False)
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
+			
+			c.source = self.request.user
+			c.save()
+			
+			d.source = self.request.user
+			d.save()
+			
+			e.source = self.request.user
+			e.save()
 			
 			summary = summary(
 				user = self.request.user,
+				source = self.request.user,
 				contact = a,
 				property = b,
 				curr_mortgage = c,
@@ -442,28 +459,42 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d_valid and e_valid and f_valid and 
 			g_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
-			b = self.get_form(step='2', data=b_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
+			b = self.get_form(step='2', data=b_data).save(commit=False)
 			c = self.get_form(step='3', data=c_data).save(commit=False)
 			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save(commit=False)
-			f = self.get_form(step='6', data=f_data).save()
-			g = self.get_form(step='7', data=g_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
+			f = self.get_form(step='6', data=f_data).save(commit=False)
+			g = self.get_form(step='7', data=g_data).save(commit=False) # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
+			c.source = self.request.user
 			c.construction_loan = b
 			c.save()
 			
+			f.source = self.request.user
+			f.save()
+			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			d.user = self.request.user
+			d.source = self.request.user
 			d.business = a
 			d.declarations = f
 			d.save()
 			
+			g.source = self.request.user
+			g.save()
+			
 			# Creates 'ApplicationSummary' off of step data
 			summary = aps(
 				user = self.request.user,
-				source_id = self.request.user.id,
+				source = self.request.user,
 				property = c,
 				borrower = d,
 				acknowledge = g,
@@ -472,6 +503,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			summary.save()
 			
 			# Saves Foreign Keys for 'CreditRequestForm'
+			e.source = self.request.user
 			e.borrower = d
 			e.application = summary
 			e.save()
@@ -540,38 +572,62 @@ class StandardWizard(NamedUrlSessionWizardView):
 			g_valid and h_valid and i_valid and
 			j_valid and k_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
-			b = self.get_form(step='2', data=b_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
+			b = self.get_form(step='2', data=b_data).save(commit=False)
 			c = self.get_form(step='3', data=c_data).save(commit=False)
-			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save()
+			d = self.get_form(step='4', data=d_data).save(commit=False)
+			e = self.get_form(step='5', data=e_data).save(commit=False)
 			f = self.get_form(step='6', data=f_data).save(commit=False)
-			g = self.get_form(step='7', data=g_data).save()
+			g = self.get_form(step='7', data=g_data).save(commit=False)
 			h = self.get_form(step='8', data=h_data).save(commit=False)
-			i = self.get_form(step='9', data=i_data).save()
+			i = self.get_form(step='9', data=i_data).save(commit=False)
 			j = self.get_form(step='10', data=j_data).save(commit=False)
-			k = self.get_form(step='11', data=k_data).save()
+			k = self.get_form(step='11', data=k_data).save(commit=False)
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
+			c.source = self.request.user
 			c.construction_loan = b
 			c.save()
 			
+			d.source = self.request.user
+			d.save()
+			
+			e.source = self.request.user
+			e.save()
+			
 			# Saves Foreign Keys for 'AssetSummaryForm'
+			f.source = self.request.user
 			f.acct1 = e
 			f.employment_income = d
 			f.save()
 			
+			g.source = self.request.user
+			g.save()
+			
+			i.source = self.request.user
+			i.save()
+			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			j.user = self.request.user
+			j.source = self.request.user
 			j.business = a
 			j.declarations = i
 			j.save()
+			
+			k.source = self.request.user
+			k.save()
 			
 			# Creates 'ApplicationSummary' off of step data
 			# Will not work, need data for borrower
 			summary = aps(
 				user = self.request.user,
-				source_id = self.request.user.id,
+				source = self.request.user,
 				property = c,
 				borrower = j,
 				acknowledge = k,
@@ -580,6 +636,7 @@ class StandardWizard(NamedUrlSessionWizardView):
 			summary.save()
 			
 			# Saves Foreign Keys to 'CreditRequestForm'
+			h.source = self.request.user
 			h.borrower = j
 			h.application = summary
 			h.save()

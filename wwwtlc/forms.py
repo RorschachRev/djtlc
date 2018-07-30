@@ -36,13 +36,13 @@ class AcknowledgeAgreeForm(forms.ModelForm):
 	step_name = 'Acknowledgement & Agreement:'
 	class Meta:
 		model = AcknowledgeAgree
-		fields = '__all__'
+		exclude = ['source']
 		
 class AddressForm(forms.ModelForm):
 	step_name = 'Property Address:'
 	class Meta:
 		model = Address
-		exclude = ['user']
+		exclude = ['user', 'source']
 		
 class AppStatusForm(forms.ModelForm):
 	class Meta:
@@ -64,7 +64,7 @@ class BankAccountForm(forms.ModelForm):
 	step_name = 'Bank Account(s):'
 	class Meta:
 		model = BankAccount
-		fields = '__all__'
+		exclude = ['source']
 		widgets = {
 			'address' : SelectWithPop
 		}	
@@ -73,7 +73,7 @@ class BorrowerInfoForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
-		exclude = ['user', 'business', 'assets_liabilities', 'declarations']
+		exclude = ['user', 'source', 'business', 'assets_liabilities', 'declarations']
 		widgets = {
 			'present_addr' : SelectWithPop,
 			'mail_addr' : SelectWithPop,
@@ -96,31 +96,31 @@ class BusinessInfoForm(forms.ModelForm):
 	step_name = 'Business Information:'
 	class Meta:
 		model = BusinessInfo
-		fields = '__all__'	
+		exclude = ['source']
 
 class ConstructionInfoForm(forms.ModelForm):
 	step_name = 'Construction Information (if applicable):'
 	class Meta:
 		model = ConstructionInfo
-		fields = '__all__'
+		exclude = ['source']
 		
 class CreditRequestForm(forms.ModelForm):
 	step_name = 'Credit Request:'
 	class Meta:
 		model = CreditRequest
-		exclude = ['borrower', 'application']
+		exclude = ['source', 'borrower', 'application']
 		
 class DeclarationForm(forms.ModelForm):
 	step_name = 'Declarations:'
 	class Meta:
 		model = Declaration
-		fields = '__all__'	
+		exclude = ['source']
 
 class EmploymentIncomeForm(forms.ModelForm):
 	step_name = 'Employment Income Information:'
 	class Meta:
 		model = EmploymentIncome
-		fields = '__all__'
+		exclude = ['source']
 		widgets = {
 			'address' : SelectWithPop
 		}		
@@ -141,7 +141,7 @@ class ManagedPropertyForm(forms.ModelForm):
 	step_name = 'Managed Properties:'
 	class Meta:
 		model = ManagedProperty
-		fields = '__all__'
+		exclude = ['source']
 		widgets = {
 			'property_address' : SelectWithPop
 		}		
@@ -155,7 +155,7 @@ class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfo
-		exclude = ['construction_loan', 'refinance_loan', 'legal_description']
+		exclude = ['source', 'construction_loan', 'refinance_loan', 'legal_description']
 		widgets = {
 			'address' : SelectWithPop
 		}
@@ -183,13 +183,13 @@ class ContactRequestForm(forms.ModelForm):
 	step_name = 'Contact:'
 	class Meta:
 		model = ContactRequest
-		fields = '__all__'
+		exclude = ['source']
 		
 class PropertyInfoRequestForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfoRequest
-		fields = '__all__'
+		exclude = ['source']
 		widgets = {
 			'property_address' : SelectWithPop
 		}
@@ -206,33 +206,23 @@ class CurrentMortgageForm(forms.ModelForm):
 	step_name = 'Current Mortgage:'
 	class Meta:
 		model = CurrentMortgage
-		fields = '__all__'
+		exclude = ['source']
 		
 class MortgageDesiredForm(forms.ModelForm):
 	step_name = 'Mortgage Desired:'
 	class Meta:
 		model = MortgageDesired
-		fields = '__all__'
+		exclude = ['source']
 		
 class BorrowerInfoRequestForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
 		model = BorrowerInfoRequest 
-		exclude = ['language']
+		exclude = ['source', 'language']
 		
 # Form for 'Submit a Loan'
 class BorrowerInfoLoanForm(forms.ModelForm):
 	step_name = 'Loan Borrower Information:'
 	class Meta:
 		model = BorrowerInfo
-		exclude = ['business', 'assets_liabilities', 'declarations']
-		
-'''class AccountForm(forms.ModelForm):
-	class Meta:
-		model = Account
-		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'taxid', 'language', 'address']'''
-		
-'''class ExpenseInfoForm(forms.ModelForm):
-	class Meta:
-		model = ExpenseInfo
-		fields = '__all__'	'''
+		exclude = ['source', 'business', 'assets_liabilities', 'declarations']

@@ -9,6 +9,7 @@ from wwwtlc.models_loan_apply import Address
 
 # Models included in BOTH Basic and Standard applications
 class BusinessInfo(models.Model):
+	source = models.ForeignKey(User)
 	bus_name = models.CharField(max_length=256, verbose_name='Business Name', help_text='(required)')
 	bus_description = models.TextField(verbose_name='Business Description', help_text='(required)')
 	income = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Income', help_text='(required)')
@@ -27,6 +28,7 @@ class BusinessInfo(models.Model):
 	expense_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Expense Total', help_text='(required)')
 		
 class ConstructionInfo(models.Model):
+	source = models.ForeignKey(User)
 	year_acquired = models.DateField(default=timezone.now, null=True, blank=True, verbose_name='Year Acquired')
 	original_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Original Cost')
 	amt_existing_liens = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Existing Liens Amount')
@@ -35,14 +37,16 @@ class ConstructionInfo(models.Model):
 	total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, help_text='a. + b.') # (a + b)
 	
 class PropertyInfo (models.Model):
+	source = models.ForeignKey(User)
 	address = models.ForeignKey(Address, null=True, blank=True)
 	no_units = models.IntegerField(verbose_name='Number of Units', help_text='(required)') # number of units
 	legal_description = models.CharField(max_length=256, null=True, blank=True, verbose_name='Legal Description')
 	year_built = models.IntegerField(verbose_name='Year Built', help_text='(required)')
 	construction_loan = models.ForeignKey(ConstructionInfo, null=True, blank=True, verbose_name='Construction Loan')
-	title_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Names on Title') #will probably want a many-to-many relation - unsure if should be linked to BorrowerInfo or not
+	title_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Names on Title')
 	
 class Declaration(models.Model):
+	source = models.ForeignKey(User)
 	# on pdf, it states: "If 'Yes' to any questions a-i, use continuation sheet for explanation"	\
 	# I put a textbox in this model to satisfy this requirement
 	outstanding_judgements = models.BooleanField(default=False, verbose_name='Are there any outstanding judgements against you?', help_text='a.') # a.
@@ -157,7 +161,8 @@ class BorrowerInfo (models.Model):
 		(48, 'WI'),
 		(49, 'WY'),
 	)
-	user = models.ForeignKey(User)	
+	user = models.ForeignKey(User)
+	source = models.ForeignKey(User, related_name='borrower_info_source')	
 	application_type = models.IntegerField(
 		choices = APPLICATION_CHOICES,
 		default = 0,
@@ -186,7 +191,6 @@ class BorrowerInfo (models.Model):
 	authorized = models.BooleanField()
 	ssn = models.IntegerField(verbose_name='Social Security Number', help_text='(required)')
 	tin_no = models.IntegerField(verbose_name='TIN Number', null=True, blank=True)
-	#home_phone = models.CharField(max_length=256, verbose_name='Home Phone', help_text='(required)')
 	dob = models.DateField(default=timezone.now, verbose_name='Date of Birth')
 	marital_status = models.IntegerField(
 		choices = MARITAL_CHOICES,
@@ -199,7 +203,7 @@ class BorrowerInfo (models.Model):
 		default = 0,
 		verbose_name = 'Do you Own or Rent?'
 	)
-	living_yrs = models.IntegerField(verbose_name='Years Owned/Rented at Present Address', help_text='(required)') # years owned/rented at property referenced in present_addr
+	living_yrs = models.IntegerField(verbose_name='Years at Present Address', help_text='(required)')
 	mail_addr = models.ForeignKey(Address, related_name='mail_address', verbose_name='Mailing Address', help_text='(required)')
 	principal_office_addr = models.ForeignKey(Address, related_name='principal_office_addres', null=True, blank=True, verbose_name='Principal Office Address')
 	organizations_state = models.IntegerField(
@@ -222,6 +226,7 @@ class BorrowerInfo (models.Model):
 	declarations = models.ForeignKey(Declaration, null=True, blank=True)
 		
 class AcknowledgeAgree(models.Model):
+	source = models.ForeignKey(User)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower_agree', null=True, blank=True)
 	borrower_agree = models.BooleanField(default=False, verbose_name='Borrower\'s Acknowledgement')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower_agree', null=True, blank=True, verbose_name='Co-Borrower')
@@ -251,7 +256,7 @@ class ApplicationSummary(models.Model):
 		(1, 'Standard'),
 		#(2, 'Extended'),
 	)
-	source = models.ForeignKey(User, related_name='recent_editor')
+	source = models.ForeignKey(User, related_name='application_summary_source')
 	user = models.ForeignKey(User)
 	application = models.ForeignKey('self', null=True, blank=True)
 	property = models.ForeignKey(PropertyInfo)
@@ -281,6 +286,7 @@ class CreditRequest(models.Model):
 		(0, 'Rate and Term'),
 		(1, 'Cash Out'),
 	)
+	source = models.ForeignKey(User)
 	borrower = models.ForeignKey(BorrowerInfo, null=True, blank=True)
 	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Amount Requested', help_text='(required)')
 	term_requested = models.CharField(max_length=256, verbose_name='Term Requested', help_text='(required)') # unsure of what this is going to be
@@ -297,6 +303,7 @@ class CreditRequest(models.Model):
 	
 # Models Standard Only
 class EmploymentIncome(models.Model): # for Tier 2, when personal income is needed for the application
+	source = models.ForeignKey(User)
 	name = models.CharField(max_length=256, help_text='(required)', verbose_name='Name of Employer')
 	address = models.ForeignKey(Address, null=True, blank=True)
 	self_employed = models.BooleanField(default=False, verbose_name='Self Employed')
@@ -313,12 +320,14 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 	other_emp_info = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Other Employment Information', help_text='If employed for less than two years or if employed currently in more than one position') # recursive relationship
 		
 class BankAccount(models.Model):
+	source = models.ForeignKey(User)
 	name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Name of Bank, S&L, or Credit Union')
 	address = models.ForeignKey(Address, null=True, blank=True)
 	acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
 	amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Cash or Market Value')
 		
 class AssetSummary(models.Model):
+	source = models.ForeignKey(User)
 	holding_deposit = models.CharField(max_length=256, null=True, blank=True, verbose_name='Holding Deposit') # unsure what this field is supposed 	\
 															       # to be. on pdf, it just states:			\
 															       # "Cash deposit toward purchase		\
@@ -347,6 +356,7 @@ class AssetSummary(models.Model):
 	assets_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Assets Total', help_text='(required)')
 		
 class ManagedProperty(models.Model):
+	source = models.ForeignKey(User)
 	real_estate_schedule = models.CharField(max_length=256, null=True, blank=True, verbose_name='Schedule of Real Estate') # may want to be a CHOICES field
 	property_address = models.ForeignKey(Address, null=True, blank=True, verbose_name='Address of Property')
 	property_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Type of Property') # will want to be CHOICES field
