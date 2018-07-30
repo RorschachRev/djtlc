@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response
 
 import decimal as D
 from wwwtlc.forms import *
@@ -309,33 +309,30 @@ def loan_details(request, loan_id):
 '''##################################################
 # Form Views
 ##################################################'''
-# View that redirects '+' to add_new template
-# handles the popup form
-def add_new(request, field_name):
-	if request.method == 'POST':
-		form = AddressForm(request.POST)
+def handle_pop_add(request, addForm, field):
+	if request.method == "POST":
+		form = addForm(request.POST)
 		if form.is_valid():
-			obj = form.save(commit=False)
-			obj.user = request.user
-			obj.save()
-			return add_new_done(request)
-
+			try:
+				newObject = form.save(commit=False)
+				newObject.user = request.user
+				newObject.source = request.user
+				newObject.save()
+			except (forms.ValidationError):
+				newObject = None
+			if newObject:
+				return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+			(escape(newObject._get_pk_val()), escape(newObject)))
 	else:
-		form = AddressForm()
-	return render(request, 'form/add_new.html', {'form': form, 'field': field_name})
+		form = addForm()
+		
+	pageContext = {'form': form, 'field': field}
+	return render(request, "form/add_new.html", pageContext)
 	
-# view that serializes the new Address queryset	
-def update_address_query(request):
-	new_query = serializers.serialize('json', Address.objects.filter(user=request.user))
-	return new_query
-	
-# view that handles the closing of the popup window, as well as
-# sending the json-formatted queryset that holds the new Address added from the form
-# to the parent page that opened the popup
-def add_new_done(request):
-	address_query = update_address_query(request)
-	return render(request, 'form/add_new_done.html', {'address_query': address_query})
-	
+def new_address(request, field_name):
+	new_field=field_name
+	return handle_pop_add(request, AddressForm, new_field)
+
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
 	# Function to send the form some initial values
@@ -371,14 +368,30 @@ class LoanApplyWizard(SessionWizardView):
 			a_valid and b_valid and c_valid and
 			d_valid and e_valid
 		):
-			a = self.get_form(step='0', data=a_data).save()
-			b = self.get_form(step='1', data=b_data).save()
-			c = self.get_form(step='2', data=c_data).save()
-			d = self.get_form(step='3', data=d_data).save()
-			e = self.get_form(step='4', data=e_data).save()
+			a = self.get_form(step='0', data=a_data).save(commit=False)
+			b = self.get_form(step='1', data=b_data).save(commit=False)
+			c = self.get_form(step='2', data=c_data).save(commit=False)
+			d = self.get_form(step='3', data=d_data).save(commit=False)
+			e = self.get_form(step='4', data=e_data).save(commit=False)
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
+			
+			c.source = self.request.user
+			c.save()
+			
+			d.source = self.request.user
+			d.save()
+			
+			e.source = self.request.user
+			e.save()
 			
 			summary = summary(
 				user = self.request.user,
+				source = self.request.user,
 				contact = a,
 				property = b,
 				curr_mortgage = c,
@@ -446,28 +459,42 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d_valid and e_valid and f_valid and 
 			g_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
-			b = self.get_form(step='2', data=b_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
+			b = self.get_form(step='2', data=b_data).save(commit=False)
 			c = self.get_form(step='3', data=c_data).save(commit=False)
 			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save(commit=False)
-			f = self.get_form(step='6', data=f_data).save()
-			g = self.get_form(step='7', data=g_data).save() # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
+			f = self.get_form(step='6', data=f_data).save(commit=False)
+			g = self.get_form(step='7', data=g_data).save(commit=False) # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
+			c.source = self.request.user
 			c.construction_loan = b
 			c.save()
 			
+			f.source = self.request.user
+			f.save()
+			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			d.user = self.request.user
+			d.source = self.request.user
 			d.business = a
 			d.declarations = f
 			d.save()
 			
+			g.source = self.request.user
+			g.save()
+			
 			# Creates 'ApplicationSummary' off of step data
 			summary = aps(
 				user = self.request.user,
-				source_id = self.request.user.id,
+				source = self.request.user,
 				property = c,
 				borrower = d,
 				acknowledge = g,
@@ -476,6 +503,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			summary.save()
 			
 			# Saves Foreign Keys for 'CreditRequestForm'
+			e.source = self.request.user
 			e.borrower = d
 			e.application = summary
 			e.save()
@@ -544,38 +572,62 @@ class StandardWizard(NamedUrlSessionWizardView):
 			g_valid and h_valid and i_valid and
 			j_valid and k_valid
 		):
-			a = self.get_form(step='1', data=a_data).save()
-			b = self.get_form(step='2', data=b_data).save()
+			a = self.get_form(step='1', data=a_data).save(commit=False)
+			b = self.get_form(step='2', data=b_data).save(commit=False)
 			c = self.get_form(step='3', data=c_data).save(commit=False)
-			d = self.get_form(step='4', data=d_data).save()
-			e = self.get_form(step='5', data=e_data).save()
+			d = self.get_form(step='4', data=d_data).save(commit=False)
+			e = self.get_form(step='5', data=e_data).save(commit=False)
 			f = self.get_form(step='6', data=f_data).save(commit=False)
-			g = self.get_form(step='7', data=g_data).save()
+			g = self.get_form(step='7', data=g_data).save(commit=False)
 			h = self.get_form(step='8', data=h_data).save(commit=False)
-			i = self.get_form(step='9', data=i_data).save()
+			i = self.get_form(step='9', data=i_data).save(commit=False)
 			j = self.get_form(step='10', data=j_data).save(commit=False)
-			k = self.get_form(step='11', data=k_data).save()
+			k = self.get_form(step='11', data=k_data).save(commit=False)
+			
+			a.source = self.request.user
+			a.save()
+			
+			b.source = self.request.user
+			b.save()
 			
 			# Saves Foreign Keys for 'PropertyInfoForm'
+			c.source = self.request.user
 			c.construction_loan = b
 			c.save()
 			
+			d.source = self.request.user
+			d.save()
+			
+			e.source = self.request.user
+			e.save()
+			
 			# Saves Foreign Keys for 'AssetSummaryForm'
+			f.source = self.request.user
 			f.acct1 = e
 			f.employment_income = d
 			f.save()
 			
+			g.source = self.request.user
+			g.save()
+			
+			i.source = self.request.user
+			i.save()
+			
 			# Saves Foreign Keys for 'BorrowerInfoForm'
 			j.user = self.request.user
+			j.source = self.request.user
 			j.business = a
 			j.declarations = i
 			j.save()
+			
+			k.source = self.request.user
+			k.save()
 			
 			# Creates 'ApplicationSummary' off of step data
 			# Will not work, need data for borrower
 			summary = aps(
 				user = self.request.user,
-				source_id = self.request.user.id,
+				source = self.request.user,
 				property = c,
 				borrower = j,
 				acknowledge = k,
@@ -584,6 +636,7 @@ class StandardWizard(NamedUrlSessionWizardView):
 			summary.save()
 			
 			# Saves Foreign Keys to 'CreditRequestForm'
+			h.source = self.request.user
 			h.borrower = j
 			h.application = summary
 			h.save()

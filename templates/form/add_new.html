@@ -1,11 +1,18 @@
+{% load static %}
+
 <html>
 	<head>
 		<title>Add {{ form.step_name }}</title>
 		<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
 		<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
 		<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/tlc.css" />
 	</head>
 	<body>
+	<nav class="navbar navbar-default navbar-transparent navbar-fixed-top" class="style-jg8f4ha8" style="position: fixed; margin-left: 0px; z-index: 50; margin-top: 0px; top: 0px; height: 77px; left: 0px;" color-on-scroll="200">
+	<img src="{% static 'img/logo.png' %}">
+	<div class="container">
 		<h1>Add {{ form.step_name }}</h1>
 		<form method="POST" action="/add/{{ field }}">
 			<table>
@@ -14,5 +21,6 @@
 			</table>
 			<p><input type="submit" /> | <a href="javascript:window.close()">Cancel</a></p>
 		</form>
+	</div>
 	</body>
 </html>

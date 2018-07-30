@@ -6,6 +6,7 @@ from django.utils import timezone
 
 class Address(models.Model):
 	user = models.ForeignKey(User)
+	source = models.ForeignKey(User, related_name='address_source')
 	street1 = models.CharField(max_length=254, help_text="The street address of the property needing financed", verbose_name="Street 1")
 	street2 = models.CharField(max_length=254, blank=True, verbose_name="Street 2", help_text="(optional)")
 	street3 = models.CharField(max_length=254, blank=True, verbose_name="Street 3", help_text="(optional)")
@@ -18,6 +19,7 @@ class Address(models.Model):
 		return self.street1
 
 class ContactRequest(models.Model):
+	source = models.ForeignKey(User)
 	name_first = models.CharField(max_length=255, verbose_name='First Name')
 	name_middle = models.CharField(max_length=30, blank=True, null=True, verbose_name='Middle Name', help_text='(optional)')
 	name_last = models.CharField(max_length=255, verbose_name='Last Name')
@@ -36,6 +38,7 @@ class PropertyInfoRequest(models.Model):
 		default = 0,
 		verbose_name='Property Type'
 	)
+	source = models.ForeignKey(User)
 	property_address = models.ForeignKey(Address)
 	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Occupancy Rate')
 	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Lease Rate')
@@ -47,6 +50,7 @@ class CurrentMortgage(models.Model):
 		(0, 'Fixed'),
 		(1, 'ARM'),
 	)
+	source = models.ForeignKey(User)
 	date_loan_originated = models.DateField(verbose_name='Date Loan Originated', help_text='(mm/dd/yyyy)')
 	current_loan_type = models.IntegerField(
 		choices = TYPE_CHOICES,
@@ -74,6 +78,7 @@ class MortgageDesired(models.Model):
 		(2, '10 Year'),
 		(3, 'Less than 10 Years'),
 	)
+	source = models.ForeignKey(User)
 	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
 	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Cash Back Desired')
 	loan_currency = models.CharField(max_length=3, default='USD', verbose_name='Loan Currency')
@@ -107,6 +112,7 @@ class BorrowerInfoRequest(models.Model):
 		(3, '630-659'),
 		(4, 'Unknown'),
 	)
+	source = models.ForeignKey(User)
 	language = models.CharField(default='en-us', max_length=8, null=True, blank=True)# hidden field, for now
 	type = models.IntegerField(
 		default = 0,
@@ -136,6 +142,7 @@ class NewRequestSummary(models.Model):
 		choices = STATUS_CHOICES,
 	)
 	user = models.ForeignKey(User)
+	source = models.ForeignKey(User, related_name='new_request_summary_source')
 	contact = models.ForeignKey(ContactRequest)
 	property = models.ForeignKey(PropertyInfoRequest)
 	curr_mortgage = models.ForeignKey(CurrentMortgage, verbose_name='Current Mortgage')

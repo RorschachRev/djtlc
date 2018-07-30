@@ -9,7 +9,7 @@
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
 <form action="" method="post">{% csrf_token %}
 {% for step in wizard.steps.all %}
-		<a href="../{{ step }}/" class="btn btn-default">{{ step }}</a>
+	<a href="../{{ step }}/" class="btn btn-default">{{ step }}</a>
 {% endfor %}
 <h2>{{ wizard.form.step_name }}</h2>
 <table>
@@ -25,4 +25,12 @@
 </table>
 <input type="submit" value="{% trans 'Submit' %}"/>
 </form>
+
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/change_form.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 {% endblock %}

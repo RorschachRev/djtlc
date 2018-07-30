@@ -5,7 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from wwwtlc.models_meta import Wallet, Person
+from wwwtlc.models_meta import Wallet, Person, Contract
 from wwwtlc.models_bse import ApplicationSummary, BorrowerInfo
 
 class LenderInfo(models.Model):
@@ -77,6 +77,7 @@ class LoanTerms (models.Model):
 # Model that will replace 'loan.models.Loan'		
 class NewLoan(models.Model):
 	user = models.ForeignKey(User)
+	contract = models.ForeignKey(Contract)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='loan_borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='loan_coborrower', null=True, blank=True)
 	loan_terms = models.ForeignKey(LoanTerms) # contains all originally agreed upon numbers
