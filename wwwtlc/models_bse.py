@@ -224,6 +224,9 @@ class BorrowerInfo (models.Model):
 								
 	business = models.ForeignKey(BusinessInfo, null=True, blank=True)
 	declarations = models.ForeignKey(Declaration, null=True, blank=True)
+	
+	def __str__(self):
+		return self.name_last + ', ' + self.name_first
 		
 class AcknowledgeAgree(models.Model):
 	source = models.ForeignKey(User)
