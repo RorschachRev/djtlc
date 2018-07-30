@@ -1,8 +1,6 @@
 {% extends 'pages/home.html' %}
 {% load i18n %}
-	<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
-	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
-	<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+	
 {% block head %}
 {{ wizard.form.media }}
 {% endblock %}
@@ -24,21 +22,13 @@
 </table>
 <input type="submit" value="{% trans 'Submit' %}"/>
 </form>
-<script>
-	// This function is called by add_new_done.html/sendVariable()
-	// new_query holds the '{{ address_query }}' sent to that template by the wwwtlc.views.add_new_done view
-		function updateAddress(new_query) {
-			$.ajax({
-				'method': 'GET', 
-				'url': '.', 
-				'data': {},  // pass here any data to the server. You can omit it.
-				success: function(dataReturned) {
-					console.log($('#id_1-property_address'));
-					// This function will run when server returns data
-					
-			}
-		});
-	    };
-</script>
+
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/change_form.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
+<script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
 {% endblock %}
 

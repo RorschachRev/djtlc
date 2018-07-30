@@ -202,13 +202,8 @@ urlpatterns = [
 # URL to implement '+' button for Address Field
     url(
         r'^add/(?P<field_name>.+)$',
-        views.add_new,
+        views.new_address,#add_new,
         name='add_new'
-), 
-    url(
-        r'^add_new_done/$',
-         views.add_new_done,
-        name='add_new_done'
 ),
 
 # url for LoanApply Wizard Form

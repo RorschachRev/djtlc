@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response
 
 import decimal as D
 from wwwtlc.forms import *
@@ -309,33 +309,29 @@ def loan_details(request, loan_id):
 '''##################################################
 # Form Views
 ##################################################'''
-# View that redirects '+' to add_new template
-# handles the popup form
-def add_new(request, field_name):
-	if request.method == 'POST':
-		form = AddressForm(request.POST)
+def handle_pop_add(request, addForm, field):
+	if request.method == "POST":
+		form = addForm(request.POST)
 		if form.is_valid():
-			obj = form.save(commit=False)
-			obj.user = request.user
-			obj.save()
-			return add_new_done(request)
-
+			try:
+				newObject = form.save(commit=False)
+				newObject.user = request.user
+				newObject.save()
+			except (forms.ValidationError):
+				newObject = None
+			if newObject:
+				return HttpResponse('<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+			(escape(newObject._get_pk_val()), escape(newObject)))
 	else:
-		form = AddressForm()
-	return render(request, 'form/add_new.html', {'form': form, 'field': field_name})
+		form = addForm()
+		
+	pageContext = {'form': form, 'field': field}
+	return render(request, "form/add_new.html", pageContext)
 	
-# view that serializes the new Address queryset	
-def update_address_query(request):
-	new_query = serializers.serialize('json', Address.objects.filter(user=request.user))
-	return new_query
-	
-# view that handles the closing of the popup window, as well as
-# sending the json-formatted queryset that holds the new Address added from the form
-# to the parent page that opened the popup
-def add_new_done(request):
-	address_query = update_address_query(request)
-	return render(request, 'form/add_new_done.html', {'address_query': address_query})
-	
+def new_address(request, field_name):
+	new_field=field_name
+	return handle_pop_add(request, AddressForm, new_field)
+
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
 	# Function to send the form some initial values
