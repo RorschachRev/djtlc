@@ -37,6 +37,10 @@ class AcknowledgeAgreeForm(forms.ModelForm):
 	class Meta:
 		model = AcknowledgeAgree
 		exclude = ['source']
+		widgets = {
+			'borrower' : SelectWithPop,
+			'coborrower' : SelectWithPop,
+		}
 		
 class AddressForm(forms.ModelForm):
 	step_name = 'Property Address:'
@@ -80,17 +84,6 @@ class BorrowerInfoForm(forms.ModelForm):
 			'former_addr' : SelectWithPop,
 			'principal_office_addr' : SelectWithPop
 		}
-		
-	def __init__(self, *args, **kwargs):
-		y = kwargs['initial'].values()
-		user = next(iter(y))
-		super(BorrowerInfoForm, self).__init__(*args, **kwargs)
-		self.fields['present_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
-		self.fields['present_addr'].empty_label = None
-		self.fields['mail_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
-		self.fields['mail_addr'].empty_label = None
-		self.fields['former_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
-		self.fields['principal_office_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
 		
 class BusinessInfoForm(forms.ModelForm):
 	step_name = 'Business Information:'

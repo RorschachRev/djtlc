@@ -1,5 +1,4 @@
 {% load static %}
-
 <html>
 	<head>
 		<title>Add {{ form.step_name }}</title>
@@ -9,10 +8,12 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css" />
 		<link rel="stylesheet" type="text/css" href="/static/css/tlc.css" />
 	</head>
-	<body>
+	<body style="overflow: scroll;">
 	<nav class="navbar navbar-default navbar-transparent navbar-fixed-top" class="style-jg8f4ha8" style="position: fixed; margin-left: 0px; z-index: 50; margin-top: 0px; top: 0px; height: 77px; left: 0px;" color-on-scroll="200">
 	<img src="{% static 'img/logo.png' %}">
-	<div class="container">
+	</nav>
+	
+	<div class="container" style="margin-top:65px;">
 		<h1>Add {{ form.step_name }}</h1>
 		<form method="POST" action="/add/{{ field }}">
 			<table>

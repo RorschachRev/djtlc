@@ -202,7 +202,7 @@ urlpatterns = [
 # URL to implement '+' button for Address Field
     url(
         r'^add/(?P<field_name>.+)$',
-        views.new_address,#add_new,
+        views.new_field,
         name='add_new'
 ),
 

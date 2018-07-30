@@ -329,9 +329,13 @@ def handle_pop_add(request, addForm, field):
 	pageContext = {'form': form, 'field': field}
 	return render(request, "form/add_new.html", pageContext)
 	
-def new_address(request, field_name):
-	new_field=field_name
-	return handle_pop_add(request, AddressForm, new_field)
+def new_field(request, field_name):
+	if 'address' in field_name:
+		new_field=field_name
+		return handle_pop_add(request, AddressForm, new_field)
+	elif 'borrower' in field_name:
+		new_field=field_name
+		return handle_pop_add(request, BorrowerInfoForm, new_field)
 
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
