@@ -85,6 +85,18 @@ class BorrowerInfoForm(forms.ModelForm):
 			'principal_office_addr' : SelectWithPop
 		}
 		
+	def __init__(self, *args, **kwargs):
+		super(BorrowerInfoForm, self).__init__(*args, **kwargs)
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['present_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+			self.fields['present_addr'].empty_label = None
+			self.fields['mail_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+			self.fields['mail_addr'].empty_label = None
+			self.fields['former_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+			self.fields['principal_office_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
+			
 class BusinessInfoForm(forms.ModelForm):
 	step_name = 'Business Information:'
 	class Meta:
@@ -128,7 +140,7 @@ class LoanTermsForm(forms.ModelForm):
 	step_name = 'Loan Terms:'
 	class Meta:
 		model = LoanTerms
-		fields = '__all__'
+		exclude = ['application']
 
 class ManagedPropertyForm(forms.ModelForm):
 	step_name = 'Managed Properties:'

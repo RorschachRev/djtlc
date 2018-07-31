@@ -227,61 +227,30 @@ def workflow_request(request, app_id):
 		credit_request = CreditRequest.objects.get(application=loan_request)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 		
-# Incomplete, will need work later		
-def certify(request, app_id='0'):
-	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
-	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
-	
-	if app_id[:3] != 0 and app_id[:3] == 't1_':
-		#app = ApplicationSummary.objects.get(pk=app_id[3:])
-		app = ApplicationSummary.objects.filter(application=app_id[3:])
-		return render(request, 'dashboard/sources.html', {'app': app})
-		
-	elif app_id[:3] != 0 and app_id[:3] == 't1e':
-		app = ApplicationSummary.objects.get(application=app_id[3:])
-		
-		if request.method == 'POST':
-			form = ApplicationSummaryForm(request.POST, instance=app)
-			if form.is_valid():
-				form.save()
-				return HttpResponseRedirect('/certify')
-		else:
-			form = ApplicationSummaryForm(instance=app)
-			return render(request, 'dashboard/edit_summary.html', {'form': form})
-			
-	return render(request, 'dashboard/certify.html', {'basic': basic, 'standard': standard})
+def manage_loan(request):
+	return render(request, 'dashboard/manage_loan.html', {})
 	
 # PAYMENTS / ACCOUNTING
 ###################
 
-# currently allows for user to select both wallet and loan id, 
-# which will need to change to minimize human error
-# (ie. picking wrong wallet for loan)
-def make_payment(request, loan_id):
-	loan = NewLoan.objects.get(pk=loan_id)
+# Incomplete, will need work later		
+def submit_loan(request, app_id='0'):
+	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
+	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
+	converted = ApplicationSummary.objects.filter(tier=2).order_by('-submission_date')
 	
-	if request.method == 'POST':
-		form = PaymentForm(request.POST)
-		if form.is_valid():
-			obj = form.save(commit=False)
-			obj.wallet = loan.loan_wallet
-			obj.loan = loan
-			obj.save()
-			
-			loan.interest_paid += obj.interest_pmt
-			loan.principal_paid += obj.principal_pmt
-			loan.principal_balance -= obj.principal_pmt
-			loan.payments_left -= 1
-			loan.save()
-			submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
-			return submit
-	else:
-		form = PaymentForm()
-	return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+	if request.method == 'GET':
+		convert_vis = request.GET.get('convert_vis')
+		if convert_vis == '0':
+			convert_vis = False
+		elif convert_vis == '1':
+			convert_vis = True
 	
-def loan_payments(request):
-	loan_iterable = NewLoan.objects.all()
-	return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
+	if app_id[:3] != 0 and app_id[:3] == 'c2l':
+		app = ApplicationSummary.objects.get(pk=app_id[3:])
+		return render(request, 'dashboard/confirm_app_info.html', {'app': app})
+		
+	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
 	
 def payment_history(request):
 	history_iterable = LoanPaymentHistory.objects.all().order_by('-pmt_date')
@@ -293,13 +262,36 @@ def loan_accounting(request):
 def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})
 	
-def submit_loan(request):
-	form = LoanForm
-	return render(request, 'dashboard/submit_loan.html', {'form': form})
+def certify(request):
+	return render(request, 'dashboard/certify.html', {})
 	
-def manage_loan(request):
-	loan_iterable = NewLoan.objects.all()
-	return render(request, 'dashboard/manage_loan.html', {'loan_iterable': loan_iterable})
+def loan_payments(request, loan_id='0'):
+	if loan_id[:3] == 'vd_':
+		loan=NewLoan.objects.get(pk=loan_id[3:])
+		return render(request, 'dashboard/loan_details.html', {'loan': loan})
+	elif not 'vd_' in loan_id and loan_id != '0':
+		loan = NewLoan.objects.get(pk=loan_id)
+		if request.method == 'POST':
+			form = PaymentForm(request.POST)
+			if form.is_valid():
+				obj = form.save(commit=False)
+				obj.wallet = loan.loan_wallet
+				obj.loan = loan
+				obj.save()
+				
+				loan.interest_paid += obj.interest_pmt
+				loan.principal_paid += obj.principal_pmt
+				loan.principal_balance -= obj.principal_pmt
+				loan.payments_left -= 1
+				loan.save()
+				submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
+				return submit
+		else:
+			form = PaymentForm()
+		return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+	else:
+		loan_iterable = NewLoan.objects.all()
+		return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
 
 def loan_details(request, loan_id):
 	loan = NewLoan.objects.get(pk=loan_id)
@@ -330,7 +322,7 @@ def handle_pop_add(request, addForm, field):
 	return render(request, "form/add_new.html", pageContext)
 	
 def new_field(request, field_name):
-	if 'address' in field_name:
+	if 'addr' in field_name:
 		new_field=field_name
 		return handle_pop_add(request, AddressForm, new_field)
 	elif 'borrower' in field_name:
@@ -697,6 +689,61 @@ class LoanWizard(SessionWizardView):
 			d.save()
 			
 		return HttpResponseRedirect('/loan_payments')
+		
+# Form to convert application into a loan
+class ConversionWizard(SessionWizardView):
+	def done(self, form_list, **kwargs):
+		loan = NewLoan
+		
+		# a, 0 = LoanTerms
+		# b, 1 = LoanWallet
+		
+		a_data = self.storage.get_step_data('0')
+		a_valid = self.get_form(step='0', data=a_data).is_valid()
+		b_data = self.storage.get_step_data('1')
+		b_valid = self.get_form(step='1', data=b_data).is_valid()
+		
+		if (
+			a_valid and b_valid
+		):
+			a = self.get_form(step='0', data=a_data).save(commit=False)
+			b = self.get_form(step='1', data=b_data).save(commit=False)
+			
+			app_id = kwargs['app_id']
+			app_id = app_id[3:]
+			
+			a.application = ApplicationSummary.objects.get(pk=app_id)
+			a.save()
+			
+			b.wallet = a.application.user
+			b.save()
+			
+			new_loan = loan(
+				user = a.application.user,
+				contract = Contract.objects.get(pk=1), # hardcoded for testing, will need changed
+				borrower = a.application.borrower,
+				coborrower = a.application.coborrower,
+				loan_terms = a,
+				payment_due = a.loan_amount / a.months_left,
+				payment_due_date = 25, # hardcoded for testing, will need changed later
+									# this will either be done by adding due_date
+									# to loan_terms or figuring out a way to calculate
+									# this number
+				payments_left = a.months_left,
+				principal_balance = a.loan_amount,
+				loan_intrate_current = a.int_rate,
+				principal_paid = 0, # will be 0 on creation of loan
+				interest_paid = 0, # will be 0 on creation of loan
+				loan_wallet = b,
+				TLC_balance = 0, # unsure of what this will be, ask Ian
+			)
+			new_loan.save()
+			
+			a.application.status = 12
+			a.application.tier = 2
+			a.application.save()
+			
+		return HttpResponseRedirect('/submit_loan')
 		
 # from old views_form.py
 # unsure if these are necessary

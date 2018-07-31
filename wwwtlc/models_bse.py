@@ -257,11 +257,11 @@ class ApplicationSummary(models.Model):
 	TIER_CHOICES = (
 		(0, 'Basic'),
 		(1, 'Standard'),
-		#(2, 'Extended'),
+		(2, 'Converted'),
+		#(2, 'Extended'), # will swap places with 'converted' once data recieved
 	)
 	source = models.ForeignKey(User, related_name='application_summary_source')
 	user = models.ForeignKey(User)
-	application = models.ForeignKey('self', null=True, blank=True)
 	property = models.ForeignKey(PropertyInfo)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower', null=True, blank=True)

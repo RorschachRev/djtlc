@@ -17,7 +17,6 @@
 				<th>Date Last Modified</th>
 				<th>Status</th>
 			</tr>
-			<tr>
 			{% for app in req_basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
@@ -54,7 +53,6 @@
 				<th>Date Last Modified</th>
 				<th>Status</th>
 			</tr>
-			<tr>
 			{% for app in req_standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
@@ -83,15 +81,16 @@
 				<th>Property</th>
 				<th>Borrower</th>
 				<th>Status</th>
+				<th>Source</th>
 				<th>Date Last Modified</th>
 			</tr>
-			<tr>
 			{% for app in basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
 				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
@@ -112,15 +111,16 @@
 				<th>Property</th>
 				<th>Borrower</th>
 				<th>Status</th>
+				<th>Source</th>
 				<th>Date Last Modified</th>
 			</tr>
-			<tr>
 			{% for app in standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>
 				<td>{{ app.property.address }}</td>
 				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
 				<td>{{ app.submission_date }}</td>
 				<td><a href="chs_{{ app.id }}">Update Status</a></td>
 				<td><a href="{{ app.id }}">View Details</a></td>
@@ -144,7 +144,6 @@
 				<th>Status</th>
 				<th>Date Last Modified</th>
 			</tr>
-			<tr>
 			{% for app in cert_basic %}
 			<tr>
 				<td>{{ app.user.username }}</td>
@@ -172,7 +171,6 @@
 				<th>Status</th>
 				<th>Date Last Modified</th>
 			</tr>
-			<tr>
 			{% for app in cert_standard %}
 			<tr>
 				<td>{{ app.user.username }}</td>

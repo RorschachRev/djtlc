@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1><u>Confirm Application Information</u></h1>
+
+<p><b>Application ID: </b>{{ app.id }}</p>
+<p><b>User: </b>{{ app.user.username }}</p>
+
+<br>
+<h2><u>Property Information</u>:</h2>
+<p><b>Source: </b>{{ app.property.source }}</p>
+<p><b>Address: </b>{{ app.property.address }}</p>
+<p><b>Number of Units: </b>{{ app.property.no_units }}</p>
+<p><b>Legal Description: </b>{{ app.property.legal_description }}</p>
+<p><b>Year Built: </b>{{ app.property.year_built }}</p>
+<p><b>Construction Loan: </b>{{ app.property.construction_loan }}</p>
+<p><b>Title Names: </b>{{ app.property.title_names }}</p>
+
+<br>
+<h2><u>Borrower Information</u>:</h2>
+<p><b>Source: </b>{{ app.borrower.source }}</p>
+<p><b>Application Type: </b>{{ app.borrower.application_type }}</p>
+<p><b>First Name: </b>{{ app.borrower.name_first }}</p>
+<p><b>Middle Name: </b>{{ app.borrower.name_middle }}</p>
+<p><b>Last Name: </b>{{ app.borrower.name_last }}</p>
+<p><b>Applicant Type: </b>{{ app.borrower.applicant_type }}</p>
+<p><b>Filing Type: </b>{{ app.borrower.filing_type }}</p>
+<p><b>DBA Name: </b>{{ app.borrower.dba_name }}</p>
+<p><b>Borrower Type: </b>{{ app.borrower.borrower_type }}</p>
+<p><b>Title: </b>{{ app.borrower.title }}</p>
+<p><b>Authorization: </b>{{ app.borrower.authorized }}</p>
+<p><b>Social Security Number: </b>{{ app.borrower.ssn }}</p>
+<p><b>TIN Number: </b>{{ app.borrower.tin_no }}</p>
+<p><b>Date of Birth: </b>{{ app.borrower.dob }}</p>
+<p><b>Marital Status: </b>{{ app.borrower.marital_status }}</p>
+<p><b>Present Address: </b>{{ app.borrower.present_addr }}</p>
+<p><b>Years at Present Address: </b>{{ app.borrower.living_yrs }}</p>
+<p><b>Mailing Address: </b>{{ app.borrower.mail_addr }}</p>
+<p><b>Principal Office Address: </b>{{ app.borrower.principal_office_addr }}</p>
+<p><b>Organization's State: </b>{{ app.borrower.organizations_state }}</p>
+<p><b>Former Address: </b>{{ app.borrower.former_addr }}</p>
+<p><b>Years at Former Address: </b>{{ app.borrower.former_lived_yrs }}</p>
+<p><b>Business: </b>{{ app.borrower.business }}</p>
+<p><b>Declarations: </b>{{ app.borrower.declarations }}</p>
+
+<br>
+<h2><u>Acknowledge and Agree</u>:</h2>
+<p><b>Source: </b>{{ app.acknowledge.source }}</p>
+<p><b>Borrower: </b>{{ app.acknowledge.borrower }}</p>
+<p><b>Borrower Agreement: </b>{{ app.acknowledge.borrower_agree }}</p>
+<p><b>Coborrower: </b>{{ app.acknowledge.coborrower }}</p>
+<p><b>Coborrower Agreement: </b>{{ app.acknowledge.coborrower_agree }}</p>
+<p><b>Date: </b>{{ app.acknowledge.date }}</p>
+
+<br>
+<br>
+<h2>Confirm and Convert</h2>
+<a href="c2l{{ app.id }}/convert" class="btn btn-default">Submit</a>
+{% endblock content %}

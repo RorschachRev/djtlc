@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 
 from wwwtlc import views
 from wwwtlc.forms import *
-from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, LoanWizard
+from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, LoanWizard, ConversionWizard
 
 from loan import views as views_loan
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
@@ -143,10 +143,15 @@ urlpatterns = [
         views.loan_payments,
         name='loan_payments'
 ),
-    url(
-        r'loan_payments/(?P<loan_id>\d+)/$',
-        views.make_payment,
+url(
+        r'^loan_payments/(?P<loan_id>[0-9]+)$',
+        views.loan_payments,
         name='make_payment'
+),
+    url(
+        r'^loan_payments/(?P<loan_id>[vd_0-9]+)$',
+        views.loan_payments,
+        name='loan_details'
 ),
     url(
         r'^payment_history/$',
@@ -158,38 +163,36 @@ urlpatterns = [
         views.credit_verify,
         name='credit_verify'
 ),
-    url(
+     url(
         r'^certify/$',
         views.certify,
         name='certify'
 ),
     url(
-        r'^certify/(?P<app_id>[t1_0-9]+)$',
-        views.certify,
-        name='add_data_source'
+        r'^submit_loan/$',
+        views.submit_loan,
+        name='submit_loan'
 ),
     url(
-        r'^submit_loan/$',
-        LoanWizard.as_view(
+        r'^submit_loan/(?P<app_id>[c2l0-9]+)/convert$',
+        ConversionWizard.as_view(
             [
-                BorrowerInfoLoanForm,
                 LoanTermsForm,
                 WalletForm,
-                LoanForm,
             ],
-            template_name='dashboard/submit_loan.html'
+            template_name='dashboard/convert_to_loan.html'
         ),
-        name='submit_loan'
+        name='convert_to_loan'
+),
+    url(
+        r'^submit_loan/(?P<app_id>[c2l0-9]+)$',
+        views.submit_loan,
+        name='confirm_app_info'
 ),
     url(
         r'^manage_loan/$',
         views.manage_loan,
         name='manage_loan'
-),
-    url(
-        r'^manage_loan/(?P<loan_id>[0-9]+)$',
-        views.loan_details,
-        name='loan_details'
 ),
     url(
         r'^loan_accounting/$',

@@ -1,11 +1,11 @@
-{% extends '../base.html' %}
+{% extends 'base.html' %}
 {% load djmoney %}
 {% money_localize money %}
 {% load loan_bal %}
 {% load humanize %}
 
 {% block content %}
-	<h2>List of Loans :</h2>
+<h2>List of Loans :</h2>
 	{% if loan_iterable %}
 		<div>Active Wallet: (from JS) </div>
 		<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
@@ -15,8 +15,8 @@
 				<th>Loan Wallet</th>
 				<th>Loan ID</th>
 				<th>Principal Owed</th>
-				<th>Status</th>
 				<th>Payment Due</th>
+				<th>Date Due</th>
 			</tr>
 			{% for loan in loan_iterable %}
 			<tr>
@@ -26,6 +26,7 @@
 				<td>{% money_localize loan.principal_balance 'USD' %}</td>
 				<td>{% money_localize loan.payment_due 'USD' %} due</td>
 				<td>{{ loan.payment_due_date|ordinal }} of each month</td><!-- will need to change 'now' function later to turnover to the next month when that date is past -->
+				<td><a href="vd_{{ loan.id }}"><button>View Details</button></a></td>
 				<td><a href="{% url 'make_payment' loan.id %}"><button>Make Payment</button></a></td>
 			</tr>
 			{% endfor %}

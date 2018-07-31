@@ -1,25 +1,95 @@
-{% extends 'pages/home.html' %}
-{% load i18n %}
-
-{% block head %}
-{{ wizard.form.media }}
-{% endblock %}
+{% extends '../base.html' %}
 
 {% block content %}
-<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-<form action="" method="post">{% csrf_token %}
-<h2>{{ wizard.form.step_name }}</h2>
-<table>
-{{ wizard.management_form }}
-{% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {{ form }}
-    {% endfor %}
-{% else %}
-    {{ wizard.form }}
-{% endif %}
-</table>
-<input type="submit" value="{% trans 'Submit' %}"/>
-</form>
-{% endblock %}
+<h1>Submitted Applications</h1>
+	{% if converted %}
+		{% if convert_vis == True%}
+			<a href="/submit_loan/?convert_vis=0">Hide Converted Requests</a>
+		{% else %}
+			<a href="/submit_loan/?convert_vis=1">View Converted Requests</a>
+		{% endif %}
+	{% endif %}
+	
+<h2>Basic Applications:</h2>
+	{% if basic %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Last Modified</th>
+				<th>Source</th>
+			</tr>
+			<tr>
+			{% for app in basic %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td>{{ app.source }}</td>
+				<td><a href="c2l{{ app.id }}"><button>Convert to Loan</button></a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Basic Applications</p>
+	{% endif %}
+	<br>
+	<br>
+	<h2>Standard Applications:</h2>
+	{% if standard %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Last Modified</th>
+				<th>Source</th>
+			</tr>
+			<tr>
+			{% for app in standard %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td>{{ app.source }}</td>
+				<td><a href="c2l{{ app.id }}"><button>Convert to Loan</button></a></td>			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Standard Applications</p>
+	{% endif %}
+	{% if convert_vis %}
+		<br>
+		<br>
+		{% if converted %}
+		<h2>Converted Applications:</h2>
+			<table>
+				<tr>
+					<th>User</th>
+					<th>Property</th>
+					<th>Borrower</th>
+					<th>Status</th>
+					<th>Date Last Modified</th>
+					<th>Source</th>
+				</tr>
+				<tr>
+				{% for app in converted %}
+				<tr>
+					<td>{{ app.user.username }}</td>
+					<td>{{ app.property.address }}</td>
+					<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+					<td>{{ app.get_status_display }}</td>
+					<td>{{ app.submission_date }}</td>
+					<td>{{ app.source }}</td>
+				{% endfor %}
+			</table>
+		{% endif %}
+	{% endif %}
+{% endblock content %}
