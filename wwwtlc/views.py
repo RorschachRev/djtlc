@@ -656,7 +656,8 @@ class StandardWizard(NamedUrlSessionWizardView):
 		return render(self.request, 'pages/loan_apply_done.html')
 		
 # Form to Create a Loan
-# will probably remove or at the very least update
+# Is not permanent solution, once conversion method is working,
+# this formwizard will be removed
 class LoanWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
 		# a, 0 = BorrowerInfo
@@ -677,10 +678,13 @@ class LoanWizard(SessionWizardView):
 			a_valid and b_valid and
 			c_valid and d_valid
 		):
-			a = self.get_form(step='0', data=a_data).save()
+			a = self.get_form(step='0', data=a_data).save(commit=False)
 			b = self.get_form(step='1', data=b_data).save()
 			c = self.get_form(step='2', data=c_data).save(commit=False)
 			d = self.get_form(step='3', data=d_data).save(commit=False)
+			
+			a.source = self.request.user
+			a.save()
 			
 			c.wallet = a.user
 			c.save()
