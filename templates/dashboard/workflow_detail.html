@@ -172,4 +172,8 @@
 	<p><strong>Coborrower:</strong>{{ app.acknowledge.coborrower }}</p>
 	<p><strong>Coborrower Agreement:</strong>{{ app.acknowledge.coborrower_agree }}</p>
 	<p><strong>Date:</strong>{{ app.acknowledge.date }}</p>
+	<br />
+	<a href="/pdf_done/{{ app.id }}" class="btn btn-default">Generate PDF</a>
+	<br />
+	
 {% endblock %}

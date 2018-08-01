@@ -200,6 +200,12 @@ url(
         name='loan_accounting'
 ),
 
+	url(
+		r'^pdf_done/(?P<app_id>[0-9]+)$',
+		views.pdfgenerate,
+		name='pdf_done'
+),
+
 # Form URLs
 
 # URL to implement '+' button for Address Field
@@ -273,6 +279,8 @@ url(
         standard_wizard,
         name='standard_app'
 ),
+
+
 # urls for ExtendedWizard - Yet to be created
 #   url(
 #        r'^extended_app/(?P<step>.+)/$',

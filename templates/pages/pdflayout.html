@@ -1,12 +1,14 @@
+{% block content %}
 <html>
 <head>
 <style>
     @page {
         size: a4 portrait;
-		font-size: 12pt;
+		font-size: 11pt;
+		margin: 1.27cm;
 		
         @frame content_frame {          /* Content Frame */
-            left: 10pt; width: 575pt; top: 20pt; height: 795pt;
+            
         }
     }
 	
@@ -228,14 +230,15 @@
 	<div class="boxy">
 		<hr>
 		<h2>Acknowledge / Agree</h2>
-		<p><strong>Borrower:</strong>{{ app.acknowledge.borrower }}</p>
-		<p><strong>Borrower Agreement:</strong>{{ app.acknowledge.borrower_agree }}</p>
-		<p><strong>Coborrower:</strong>{{ app.acknowledge.coborrower }}</p>
-		<p><strong>Coborrower Agreement:</strong>{{ app.acknowledge.coborrower_agree }}</p>
-		<p><strong>Date:</strong>{{ app.acknowledge.date }}</p>
+		<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
+		<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
+		<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
+		<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
+		<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
 		<hr>
 	</div>
 	
 </div>
 </body>
 </html>
+{% endblock %}
