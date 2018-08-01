@@ -103,9 +103,17 @@ class Person(models.Model):
 		return self.name_first + ' ' + self.name_last
 		
 class Wallet(models.Model):
+	BLOCK_CHOICES = (
+		(0, 'eth'),
+		(1, 'ropsten'),
+		(2, 'mainnet'),
+	)
 	wallet = models.ForeignKey(User)
 	address=models.CharField(max_length=127, verbose_name='Blockchain Address')
-	blockchain=models.CharField(max_length=4)
+	blockchain=models.IntegerField(
+		choices = BLOCK_CHOICES,
+		default = 0,
+	)
 	buy_TLC_approval=models.NullBooleanField()
 	#date_added
 	TLC_balance_USD=models.DecimalField(decimal_places=2, max_digits=12, null=True, blank=True)

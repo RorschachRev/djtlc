@@ -7,7 +7,7 @@
 
 {% block content %}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-<form action="" method="post">{% csrf_token %}
+<form action="loan/{{ value }}/basic_app/{{ step }}/" method="post">{% csrf_token %}
 {% for step in wizard.steps.all %}
 	<a href="../{{ step }}/" class="btn btn-default">{{ step }}</a>
 {% endfor %}

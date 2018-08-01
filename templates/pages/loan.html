@@ -65,7 +65,8 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td><a href="/basic_app/{{ app.id }}">Apply Here</a></td>
+				<td><a href="loan/{{ app.id }}/basic_app/1">Apply Here</a></td>
+				<!--<td><a href="{% url 'basic_app' app.id %}">Apply Here</a></td>-->
 			</tr>
 			{% endfor %}
 		</table>
@@ -99,7 +100,7 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td><a href="/standard_app/{{ app.id }}">Apply Here</a></td>
+				<td><a href="loan/{{ app.id }}/standard_app/1">Apply Here</a></td>
 			</tr>
 			{% endfor %}
 		</table>

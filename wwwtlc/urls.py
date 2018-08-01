@@ -229,18 +229,29 @@ url(
         TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
         name='loan_apply_done'
 ),
-# urls for StandardWizard form
-# Possible url for passing data to prepopulate forms, will return to this later
-    #~ url(
-        #~ r'^basic_app/(?P<value>[0-9]+)/(?P<step>.+)/$',
-        #~ basic_wizard,
-        #~ name='basic_app_step'
-#~ ),
-    #~ url(
-        #~ r'^basic_app/(?P<value>[0-9]+)/$', 
-        #~ basic_wizard,
-        #~ name='basic_app_context'
-#~ ),
+# urls for BasicWizard form, as presented to the User
+    url(
+        r'^loan/(?P<value>[0-9]+)/basic_app/(?P<step>[0-9]+)/$',
+        basic_wizard,
+        name='basic_app_step'
+),
+    url(
+        r'^loan/(?P<value>[0-9]+)/basic_app/$',
+        basic_wizard,
+        name='basic_app'
+),
+# urls for StandardWizard form, as presented to the User
+    url(
+        r'^loan/(?P<value>[0-9]+)/standard_app/(?P<step>.+)/$',
+        standard_wizard,
+        name='standard_app_step'
+),
+    url(
+        r'^loan/(?P<value>[0-9]+)/standard_app/$',
+        standard_wizard,
+        name='standard_app'
+),
+# urls for BasicWizard form - for testing, these are the links that show in dashboard navigation
     url(
         r'^basic_app/(?P<step>.+)/$',
         basic_wizard,
@@ -251,7 +262,7 @@ url(
         basic_wizard,
         name='basic_app'
 ),
-# urls for StandardWizard form
+# urls for StandardWizard form - for testing, these are the links that show in dashboard navigation
     url(
         r'^standard_app/(?P<step>.+)/$',
         standard_wizard,

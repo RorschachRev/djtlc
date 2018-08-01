@@ -231,9 +231,8 @@ class BorrowerInfo (models.Model):
 class AcknowledgeAgree(models.Model):
 	source = models.ForeignKey(User)
 	borrower = models.ForeignKey(BorrowerInfo, related_name='borrower_agree', null=True, blank=True)
-	borrower_agree = models.BooleanField(default=False, verbose_name='Borrower\'s Acknowledgement')
 	coborrower = models.ForeignKey(BorrowerInfo, related_name='coborrower_agree', null=True, blank=True, verbose_name='Co-Borrower')
-	coborrower_agree = models.BooleanField(default=False, verbose_name='Co-Borrower\'s Acknowledgement')
+	applicant_agree = models.BooleanField(default=False, verbose_name='Applicant\'s acknowledgement and agreement')
 	date = models.DateField(default=timezone.now)
 			
 class ApplicationSummary(models.Model):

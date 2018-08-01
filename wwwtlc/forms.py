@@ -36,11 +36,11 @@ class AcknowledgeAgreeForm(forms.ModelForm):
 	step_name = 'Acknowledgement & Agreement:'
 	class Meta:
 		model = AcknowledgeAgree
-		exclude = ['source']
-		widgets = {
-			'borrower' : SelectWithPop,
-			'coborrower' : SelectWithPop,
-		}
+		exclude = ['source', 'borrower', 'coborrower']
+		#~ widgets = {
+			#~ 'borrower' : SelectWithPop,
+			#~ 'coborrower' : SelectWithPop,
+		#~ }
 		
 class AddressForm(forms.ModelForm):
 	step_name = 'Property Address:'
@@ -71,8 +71,16 @@ class BankAccountForm(forms.ModelForm):
 		exclude = ['source']
 		widgets = {
 			'address' : SelectWithPop
-		}	
-
+		}
+		
+	# Only shows users Addresses assigned to them when filling out the form
+	def __init__(self, *args, **kwargs):
+		super(BankAccountForm, self).__init__(*args, **kwargs)
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
+			
 class BorrowerInfoForm(forms.ModelForm):
 	step_name = 'Borrower Information:'
 	class Meta:
@@ -85,15 +93,14 @@ class BorrowerInfoForm(forms.ModelForm):
 			'principal_office_addr' : SelectWithPop
 		}
 		
+	# Only shows users Addresses assigned to them when filling out the form			
 	def __init__(self, *args, **kwargs):
 		super(BorrowerInfoForm, self).__init__(*args, **kwargs)
 		if 'initial' in kwargs:
 			y = kwargs['initial'].values()
 			user = next(iter(y))
 			self.fields['present_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
-			self.fields['present_addr'].empty_label = None
 			self.fields['mail_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
-			self.fields['mail_addr'].empty_label = None
 			self.fields['former_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
 			self.fields['principal_office_addr'].queryset = Address.objects.filter(user=user).order_by('-id')
 			
@@ -127,8 +134,18 @@ class EmploymentIncomeForm(forms.ModelForm):
 		model = EmploymentIncome
 		exclude = ['source']
 		widgets = {
-			'address' : SelectWithPop
-		}		
+			'address' : SelectWithPop,
+			'other_emp_info' : SelectWithPop
+		}	
+		
+	# Only shows users Addresses assigned to them when filling out the form	
+	def __init__(self, *args, **kwargs):
+		super(EmploymentIncomeForm, self).__init__(*args, **kwargs)
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
+			self.fields['other_emp_info'].queryset = EmploymentIncome.objects.filter(source=user).order_by('-id')
 
 class LoanForm(forms.ModelForm):
 	step_name = 'Loan:'
@@ -149,7 +166,16 @@ class ManagedPropertyForm(forms.ModelForm):
 		exclude = ['source']
 		widgets = {
 			'property_address' : SelectWithPop
-		}		
+		}	
+		
+	# Only shows users Addresses assigned to them when filling out the form	
+	def __init__(self, *args, **kwargs):
+		super(ManagedPropertyForm, self).__init__(*args, **kwargs)
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['property_address'].queryset = Address.objects.filter(user=user).order_by('-id')
+				
 		
 class PaymentForm(forms.ModelForm):
 	class Meta:
@@ -167,17 +193,17 @@ class PropertyInfoForm(forms.ModelForm):
 		
 	# Only shows users Addresses assigned to them when filling out the form	
 	def __init__(self, *args, **kwargs):
-		y = kwargs['initial'].values()
-		user = next(iter(y))
 		super(PropertyInfoForm, self).__init__(*args, **kwargs)
-		self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
-		self.fields['address'].empty_label = None
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
 
 class WalletForm(forms.ModelForm):
 	step_name = 'Loan Wallet:'
 	class Meta:
 		model = Wallet
-		exclude = ['wallet']
+		exclude = ['wallet', 'buy_TLC_approval', 'TLC_balance_USD', 'TLC_balance_Token']
 		
 ''' 
 Below are super disgusting hack and slash forms for the new loanapply
@@ -201,11 +227,11 @@ class PropertyInfoRequestForm(forms.ModelForm):
 		
 	# Only shows users Addresses assigned to them when filling out the form	
 	def __init__(self, *args, **kwargs):
-		y = kwargs['initial'].values()
-		user = next(iter(y))
 		super(PropertyInfoRequestForm, self).__init__(*args, **kwargs)
-		self.fields['property_address'].queryset = Address.objects.filter(user=user).order_by('-id')
-		self.fields['property_address'].empty_label = None
+		if 'initial' in kwargs:
+			y = kwargs['initial'].values()
+			user = next(iter(y))
+			self.fields['property_address'].queryset = Address.objects.filter(user=user).order_by('-id')
 		
 class CurrentMortgageForm(forms.ModelForm):
 	step_name = 'Current Mortgage:'

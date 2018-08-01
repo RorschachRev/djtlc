@@ -7,13 +7,13 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response, reverse
 
 import decimal as D
 from wwwtlc.forms import *
 from wwwtlc.ethereum import BC
 from wwwtlc.models_officer import NewLoan
-from wwwtlc.models_meta import Person, Wallet
+from wwwtlc.models_meta import Person, Wallet, Contract
 from wwwtlc.models_bse import ApplicationSummary
 from wwwtlc.models_loan_apply import NewRequestSummary
 
@@ -301,6 +301,7 @@ def loan_details(request, loan_id):
 '''##################################################
 # Form Views
 ##################################################'''
+# handle_pop_add and new_field are the views that manage the '+' icon next to FK fields
 def handle_pop_add(request, addForm, field):
 	if request.method == "POST":
 		form = addForm(request.POST)
@@ -322,12 +323,13 @@ def handle_pop_add(request, addForm, field):
 	return render(request, "form/add_new.html", pageContext)
 	
 def new_field(request, field_name):
+	new_field=field_name
 	if 'addr' in field_name:
-		new_field=field_name
 		return handle_pop_add(request, AddressForm, new_field)
 	elif 'borrower' in field_name:
-		new_field=field_name
 		return handle_pop_add(request, BorrowerInfoForm, new_field)
+	elif 'emp' in field_name:
+		return handle_pop_add(request, EmploymentIncomeForm, new_field)
 
 # Form for Loan Apply
 class LoanApplyWizard(SessionWizardView):
@@ -422,6 +424,11 @@ class BasicWizard(NamedUrlSessionWizardView):
 		if step == '3' or step == '4':
 			self.initial_dict = {'user': user}
 		return self.initial_dict
+		
+	def get_step_url(self, step):
+		print(step)
+		self.kwargs['step'] = step
+		return reverse(self.url_name, kwargs={'step': step})
 	
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -484,7 +491,13 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d.declarations = f
 			d.save()
 			
+			# Determines if applicant is borrower or coborrower, 
+			# and sets the BorrowerInfo to the correct field in AcknowledgeAgree
 			g.source = self.request.user
+			if d.borrower_type == 0:
+				g.borrower = d
+			elif d.borrower_type == 1:
+				g.coborrower = d
 			g.save()
 			
 			# Creates 'ApplicationSummary' off of step data
@@ -504,6 +517,12 @@ class BasicWizard(NamedUrlSessionWizardView):
 			e.application = summary
 			e.save()
 			
+			if 'value' in kwargs:
+				request_id = kwargs['value'][3:]
+				request = NewRequestSummary.objects.get(pk=request_id)
+				request.status = 5
+				request.save()
+			
 			# Sends email when data is submitted to DB
 			send_mail(
 				'A new loan has been submitted', # subject line - will change to add more info
@@ -519,7 +538,10 @@ class StandardWizard(NamedUrlSessionWizardView):
 	# Function to send the form some initial values
 	def get_form_initial(self, step):
 		user = self.request.user
-		if step == '3' or step == '4' or step == '10':
+		if (
+			step == '3' or step == '4' or step == '5' or 
+			step == '7' or step == '10'
+		):
 			self.initial_dict = {'user': user}
 		return self.initial_dict
 		
@@ -616,7 +638,13 @@ class StandardWizard(NamedUrlSessionWizardView):
 			j.declarations = i
 			j.save()
 			
+			# Determines if applicant is borrower or coborrower, 
+			# and sets the BorrowerInfo to the correct field in AcknowledgeAgree
 			k.source = self.request.user
+			if j.borrower_type == 0:
+				k.borrower = j
+			elif j.borrower_type == 1:
+				k.coborrower = j
 			k.save()
 			
 			# Creates 'ApplicationSummary' off of step data
@@ -694,6 +722,7 @@ class LoanWizard(SessionWizardView):
 class ConversionWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
 		loan = NewLoan
+		contract = Contract
 		
 		# a, 0 = LoanTerms
 		# b, 1 = LoanWallet
@@ -717,6 +746,15 @@ class ConversionWizard(SessionWizardView):
 			
 			b.wallet = a.application.user
 			b.save()
+			
+			# For testing, assigns a contract to a newly created loan.
+			# This will need changed as we recieve more data on
+			# the contract model.
+			new_contract = contract(
+				source = a.application.user,
+				refkey = 1,
+			)
+			new_contract.save()
 			
 			new_loan = loan(
 				user = a.application.user,

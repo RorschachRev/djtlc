@@ -135,7 +135,8 @@ class NewRequestSummary(models.Model):
 		(2, 'Priority'),
 		(3, 'Basic'),
 		(4, 'Standard'),
-		#(5, 'Extended'),
+		(5, 'Submitted'),
+		#(5, 'Extended'), # would swap places with 'submitted', waiting on information
 	)
 	status = models.IntegerField(
 		default = 1,
