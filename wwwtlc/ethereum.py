@@ -1,8 +1,8 @@
 import requests
 import decimal as D
 
-ETH_MAIN=False
-ROPSTEN_TEST= True 
+ETH_MAIN=True
+ROPSTEN_TEST= False
 
 func_get_loan_bal="0x9ead1b00" # web3.sha3("loanBalanceOf(address)").substring(0,8) - truncated, needed another byte
 func_loan_pay_TLC="0xf3cc89a1"	#web3.sha3("loanPayTLC(address,uint256)").substring(0,8)
@@ -14,8 +14,10 @@ class BC():
 	"""
 	def __init__(self):
 		if ETH_MAIN:
-			self.contract_address="0x8BC87Ae6F6b7946B5ab84e0AC47cb2F76EC4193F"	#ETH Main
-			self.blockchainURL="http://66.232.80.162:48545"      #ETH
+			self.contract_address="0xb638530d07088A424c8A1821Ff8E3c9a57CB434e"	#ETH Main	
+			#~ self.contract_address="0x8BC87Ae6F6b7946B5ab84e0AC47cb2F76EC4193F"	#ETH Main	
+			#~ self.blockchainURL="http://66.232.80.162:48545"      #ETH
+			self.blockchainURL="https://mainnet.infura.io/metamask"      #ETH
 			self.network_id=1
 		if ROPSTEN_TEST:
 			self.contract_address="0x89699241f04e489e5583f57f71cf2e48e9c526ca"	#Ropsten
