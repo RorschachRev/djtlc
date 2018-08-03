@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 <!-- will probably want to add moneyed to this page and others like it -->
 {% block content %}
+<h1>Loan Details:</h1>
 {% if user.is_staff %}
 	<a href="/loan_payments" class="btn btn-default">Back</a>
 {% else %}
 	<a href="/loan" class="btn btn-default">Back</a>
 {% endif %}
 
-<h1>Loan ID: #{{ loan.id }}</h1>
+<h2>Loan ID: #{{ loan.id }}</h2>
 <h3>User: {{ loan.user }}</h3>
 <h3>Wallet: 0x{{ loan.loan_wallet }}</h3>
 

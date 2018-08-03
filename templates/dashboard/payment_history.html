@@ -5,30 +5,6 @@
 {% load humanize %}
 
 {% block content %}
-	<h2>Payments Made :</h2>
-	{% if payments %}
-		<table>
-			<tr>
-				<th>Wallet</th>
-				<th>Loan ID</th>
-				<th>Payment Total</th>
-				<th>Principal Paid</th>
-				<th>Interest Paid</th>
-				<th>Date Paid</th>
-			</tr>
-			{% for payment in payments %}
-			<tr>
-				<td>{{ payment.wallet }}</td>
-				<td>{{ payment.loan.id }}</td>
-				<td>${{ payment.pmt_total | floatformat:2}}</td>
-				<td>${{ payment.principal_pmt | floatformat:2 }}</td>
-				<td>${{ payment.interest_pmt | floatformat:2}}</td>
-				<td>{{ payment.pmt_date }}</td>
-			</tr>
-			{% endfor %}
-		</table>
-	{% else %}
-		<p>There are no payments</p>
-		<br>
-	{% endif %}
+<h1>Pay History:</h1>
+<pre><caption>This will be a table of all payments, as recorded on the blockchain.</caption></pre>
 {% endblock content %}

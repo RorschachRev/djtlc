@@ -72,7 +72,7 @@ class LoanTerms (models.Model):
 	approval_date = models.DateField(default=timezone.now, help_text='mm/dd/yyyy')
 	
 	def __str__(self):
-		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: ' + str(self.loan_amount)
+		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: $' + str("%.2f" % round(self.loan_amount,2))
 		
 # Model that will replace 'loan.models.Loan'		
 class NewLoan(models.Model):
@@ -125,6 +125,9 @@ class LoanPaymentHistory(models.Model):
 	interest_pmt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Interest Paid')
 	principal_pmt = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Principal Paid')
 	pmt_date = models.DateTimeField(default=timezone.now, verbose_name='Date Recieved')
+	
+	def __str__(self):
+		return str(self.loan) + ', $' + str(self.pmt_total)
 	
 # Unsure if this is needed/what it will hold
 #~ class BlockPaymentHistory(models.Model):

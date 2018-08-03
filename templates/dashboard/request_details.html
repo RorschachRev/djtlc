@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Loan Request Details:</h1>
+
+<a href="/loan_requests" class="btn btn-default">Back</a>
+
+{% if app.status == 0 %}
+	<h2>{{ app.property.property_address }} : Slept Loan Request</h2>
+{% else %}
+	<h2>{{ app.property.property_address }} : {{ app.get_status_display }} Loan Request</h2>
+{% endif %}
+<h3><strong>User</strong> : {{ app.user }}</h3> 
+<h3> ({{ app.submitted }})</h3>
+
+<br>
+<br>
+<h2><u>Contact Information:</u></h2>
+<div style="margin-left: 25px;">
+	<p><strong>First Name:</strong> {{ app.contact.name_first }}</p>
+	{% if app.contact.name_middle %}
+		<p><strong>Middle Name:</strong> {{ app.contact.name_middle }}</p>
+	{% endif %}
+	<p><strong>Last Name:</strong> {{ app.contact.name_last }}</p>
+	<p><strong>Phone Number:</strong> {{ app.contact.phone }}</p>
+	<p><strong>Email:</strong> {{ app.contact.email_address }}</p>
+</div>
+
+<br>
+<br>
+<h2><u>Borrower Information:</u></h2>
+<div style="margin-left: 25px;">
+	<p><strong>Language:</strong> {{ app.borrower.language }}</p>
+	<p><strong>Borrower Type:</strong> {{ app.borrower.get_type_display }}</p>
+	<p><strong>Annual Income:</strong> ${{ app.borrower.annual_income|floatformat:2 }}</p>
+	<p><strong>Net Worth:</strong> ${{ app.borrower.net_worth|floatformat:2 }}</p>
+	<p><strong>FICO Score (appx.):</strong> {{ app.borrower.get_fico_display }}</p>
+</div>
+
+<br>
+<br>
+<h2><u>Property Information:</u></h2>
+<div style="margin-left: 25px;">
+	<p><strong>Property Type:</strong> {{ app.property.get_property_type_display }}</p>
+	<p><strong>Address:</strong> {{ app.property.property_address }}</p>
+	<p><strong>Occupancy Rate:</strong> {{ app.property.occupancy_rate }}</p>
+	<p><strong>Lease Rate:</strong> {{ app.property.lease_rate }}</p>
+	<p><strong>Rent:</strong> ${{ app.property.rent|floatformat:2 }}</p>
+	<p><strong>Property Age:</strong> {{ app.property.property_age }} year(s) old.</p>
+</div>
+
+<br>
+<br>
+<h2><u>Current Mortgage:</u></h2>
+<div style="margin-left: 25px;">
+	<p><strong>Date Loan Originated:</strong> {{ app.curr_mortgage.date_loan_originated }}</p>
+	<p><strong>Current Loan Type:</strong> {{ app.curr_mortgage.get_current_loan_type_display }}</p>
+	<p><strong>Original Amount:</strong> ${{ app.curr_mortgage.original_amount|floatformat:2 }}</p>
+	<p><strong>Current Balance:</strong> ${{ app.curr_mortgage.current_balance|floatformat:2 }}</p>
+	<p><strong>Current Term:</strong> {{ app.curr_mortgage.current_term }}</p>
+	<p><strong>Current Interest Rate:</strong> {{ app.curr_mortgage.current_intrate }} %</p>
+	<p><strong>Late Payments:</strong> {{ app.curr_mortgage.late_payments }}</p>
+</div>
+
+<br>
+<br>
+<h2><u>Desired Mortgage:</u></h2>
+<div style="margin-left: 25px;">
+	<p><strong>Amount Desired:</strong> ${{ app.desired_mortgage.amount_desired|floatformat:2 }}</p>
+	<p><strong>Cash Back Desired:</strong> ${{ app.desired_mortgage.cash_back_desired|floatformat:2 }}</p>
+	<p><strong>Loan Currency:</strong> {{ app.desired_mortgage.loan_currency }}</p>
+	<p><strong>Loan Type Desired:</strong> {{ app.desired_mortgage.get_loan_type_desired_display }}</p>
+	<p><strong>Payment Desired:</strong> ${{ app.desired_mortgage.payment_desired|floatformat:2 }} / month</p>
+	<p><strong>Interest Rate Desired:</strong> {{ app.desired_mortgage.intrate_desired }} %</p>
+	<p><strong>Time Frame Desired:</strong> {{ app.desired_mortgage.get_time_frame_display }}</p>
+	<p><strong>Term Desired:</strong> {{ app.desired_mortgage.get_term_desired_display }}</p>
+</div>
+{% endblock content %}

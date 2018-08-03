@@ -37,10 +37,6 @@ class AcknowledgeAgreeForm(forms.ModelForm):
 	class Meta:
 		model = AcknowledgeAgree
 		exclude = ['source', 'borrower', 'coborrower']
-		#~ widgets = {
-			#~ 'borrower' : SelectWithPop,
-			#~ 'coborrower' : SelectWithPop,
-		#~ }
 		
 class AddressForm(forms.ModelForm):
 	step_name = 'Property Address:'
@@ -205,10 +201,9 @@ class WalletForm(forms.ModelForm):
 		model = Wallet
 		exclude = ['wallet', 'buy_TLC_approval', 'TLC_balance_USD', 'TLC_balance_Token']
 		
-''' 
-Below are super disgusting hack and slash forms for the new loanapply
-form specified in the email recieved on 7/17
-'''
+''' ###########################
+Loan Apply Forms
+############################'''
 
 class ContactRequestForm(forms.ModelForm):
 	step_name = 'Contact:'

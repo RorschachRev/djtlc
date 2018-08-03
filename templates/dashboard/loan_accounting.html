@@ -1,5 +1,35 @@
 {% extends '../base.html' %}
 
 {% block content %}
+<h1>Accounting:</h1>
+<pre><caption>This page will contain all payment information as recorded by the server. This will be in the form of a table, 
+with the ability to sort the data. The sort options will by 'by month', and 'by loan'.</caption></pre>
 
+<h2>Payments Made :</h2>
+	{% if payments %}
+		<table>
+		<p>Sort by: <a href="/loan_accounting/?sort=month">Month</a> | <a href="/loan_accounting/?sort=loan">Loan</a></p>
+			<tr>
+				<th>Wallet</th>
+				<th>Loan ID</th>
+				<th>Payment Total</th>
+				<th>Principal Paid</th>
+				<th>Interest Paid</th>
+				<th>Date Paid</th>
+			</tr>
+			{% for payment in payments %}
+			<tr>
+				<td>{{ payment.wallet }}</td>
+				<td>{{ payment.loan.id }}</td>
+				<td>${{ payment.pmt_total | floatformat:2}}</td>
+				<td>${{ payment.principal_pmt | floatformat:2 }}</td>
+				<td>${{ payment.interest_pmt | floatformat:2}}</td>
+				<td>{{ payment.pmt_date }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no payments</p>
+		<br>
+	{% endif %}
 {% endblock content %}

@@ -1,10 +1,11 @@
 {% block content %}
+{% load staticfiles %}
 <html>
 <head>
 <style>
     @page {
         size: a4 portrait;
-		font-size: 11pt;
+		font-size: 10pt;
 		margin: 1.27cm;
 		
         @frame content_frame {          /* Content Frame */
@@ -22,7 +23,7 @@
 	}
 		
 	tr {
-		padding-top: 5pt;
+		padding-top: 3pt;
 	}
 	
 	.boxy {
@@ -35,7 +36,8 @@
 <body>
     <div class="boxy">
 	<hr>
-	<h2>{{ app.property.address }}, {{ app.user }} : {{ app.get_status_display }}</h2>
+	<h2>{{ app.property.address }} : {{ app.get_status_display }}</h2>
+	<h3><strong>User</strong> : {{ app.user }}</h3> 
 	<h3> ({{ app.submission_date }})</h3>
 	<hr>
    </div>
@@ -46,121 +48,59 @@
 		<tbody>
 		<tr>
 		<th><h2>Property Information</h2></th>
-		<th><h2>Construction Loan Information</h2></th>
-		<th><h2>Refinance Information</h2></th>
+		<th><h2>Business Information</h2></th>
+		<th><h2>Credit Request</h2></th>
 		</tr>
 		<tr>
 		<td>
 			<p><strong>Address:</strong> {{ app.property.address }}</p>
 			<p><strong>Number of Units:</strong> {{ app.property.no_units }}</p>
-			<p><strong>Legal Description:</strong> {{ app.property.legal_description }}</p>
 			<p><strong>Year Built:</strong> {{ app.property.year_built }}</p>
-			<p><strong>Construction Loan:</strong> {{ app.property.construction_loan }}</p>
-			<p><strong>Refinance Loan:</strong> {{ app.property.refinance_loan }}</p>
-			<p><strong>Title Names:</strong> {{ app.property.title_names }}</p>
+			{% if app.property.construction_loan.total %}
+				<p><u><strong>{{ app.property.construction_loan }}</strong></u></p>
+				<div style="margin-left: 25px;">
+					<p><strong>Year Acquired:</strong> {{ app.property.construction_loan.year_acquired }}</p>
+					<p><strong>Original Cost:</strong> {{ app.property.construction_loan.original_cost }}</p>
+					<p><strong>Existing Liens Amount:</strong> {{ app.property.construction_loan.amt_existing_liens }}</p>
+					<p><strong>Present Value:</strong> {{ app.property.construction_loan.present_value }}</p>
+					<p><strong>Improvement Costs:</strong> {{ app.property.construction_loan.improve_cost }}</p>
+					<p><strong>Total:</strong> {{ app.property.construction_loan.total }}</p>
+				</div>
+			{% else %}
+				<p><strong>Construction Loan:</strong> N/a</p>
+			{% endif %}
+			<p><strong>Title Name(s):</strong> {{ app.property.title_names }}</p>
 		</td>
+		<!-- business info -->
 		<td>
-			<p><strong>Year Acquired:</strong> {{ app.property.construction_loan.year_acquired }}</p>
-			<p><strong>Original Cost:</strong> {{ app.property.construction_loan.original_cost }}</p>
-			<p><strong>Existing Liens Amount:</strong> {{ app.property.construction_loan.amt_existing_liens }}</p>
-			<p><strong>Present Value:</strong> {{ app.property.construction_loan.present_value }}</p>
-			<p><strong>Improvement Costs:</strong> {{ app.property.construction_loan.improve_cost }}</p>
-			<p><strong>Total:</strong> {{ app.property.construction_loan.total }}</p>
-		</td>
-		<td>
-			<p><strong>Year Acquired:</strong> {{ app.property.refinance_loan.year_acquired }}</p>
-			<p><strong>Original Cost:</strong> {{ app.property.refinance_loan.original_cost }}</p>
-			<p><strong>Existing Liens Amount:</strong> {{ app.property.refinance_loan.amt_existing_liens }}</p>
-			<p><strong>Present Value:</strong> {{ app.property.refinance_loan.present_value }}</p>
-			<p><strong>Improvement Costs:</strong> {{ app.property.refinance_loan.improve_cost }}</p>
-			<p><strong>Total:</strong> {{ app.property.refinance_loan.total }}</p>
-		</td>
-		</tr>
-		</tbody>
-	</table>
-	<br />
-	<br />
-	<table>
-		<tbody>
-		<tr>
-		<th colspan="2"><h2>Business Information</h2></th>
-		<th colspan="2"><h2>Borrower Information</h2></th>
-		</tr>
-		<tr>
-		<td>
-			<p><strong>Business Name:</strong> {{ app.borrower.business.bus_name }}</p>
 			<p><strong>Business Description:</strong> {{ app.borrower.business.bus_description }}</p>
-			<p><strong>Base Employee Income:</strong> ${{ app.borrower.business.base_emp_income }}</p>
-			<p><strong>Rent:</strong> ${{ app.borrower.business.rent }}</p>
-			<p><strong>First Mortgage:</strong> ${{ app.borrower.business.first_mortgage }}</p>
-			<p><strong>Other Financing:</strong> ${{ app.borrower.business.other_financing }}</p>
-			<p><strong>Other Financing Description:</strong> {{ app.borrower.business.other_financing_description }}</p>
-			<p><strong>Hazard Insurance:</strong> ${{ app.borrower.business.hazard_insur }}</p>
-			<p><strong>Real Estate Taxes:</strong> ${{ app.borrower.business.real_estate_taxes }}</p>
-			<p><strong>Mortgage Insurance:</strong> ${{ app.borrower.business.mortgage_insur }}</p>
-			<p><strong>Overtime:</strong> ${{ app.borrower.business.overtime }}</p>
-			<p><strong>Bonuses:</strong> ${{ app.borrower.business.bonuses }}</p>
+			<p><strong>Income:</strong> ${{ app.borrower.business.income|floatformat:2}}</p>
+			<p><strong>Rent:</strong> ${{ app.borrower.business.rent|floatformat:2 }}</p>
+			<p><strong>First Mortgage Amount:</strong> ${{ app.borrower.business.first_mortgage|floatformat:2 }}</p>
+			{% if app.borrower.business.other_mortgage_amt %}
+				<p><strong>Other Mortgage Amount:</strong> ${{ app.borrower.business.other_mortgage|floatformat:2 }}</p>
+				<p><strong>Other Mortgage Description:</strong> {{ app.borrower.business.other_mortgage_description }}</p>
+			{% else %}
+				<p><strong>Other Mortgage:</strong> N/a</p>
+			{% endif %}
+			<p><strong>Hazard Insurance:</strong> ${{ app.borrower.business.hazard_insur|floatformat:2 }}</p>
+			<p><strong>Real Estate Taxes:</strong> ${{ app.borrower.business.real_estate_taxes|floatformat:2 }}</p>
+			<p><strong>Net Rental Income:</strong> ${{ app.borrower.business.net_rental|floatformat:2 }}</p>
+			{% if app.borrower.business.income_other %}
+				<p><strong>Other Income Total:</strong> ${{ app.borrower.business.income_other|floatformat:2 }}</p>
+				<p><strong>Other Income Description:</strong> {{ app.borrower.business.income_other_description }}</p>
+			{% else %}
+				<p><strong>Other Income:</strong> N/a</p>
+			{% endif %}
+			<strong>Income Total:</strong> ${{ app.borrower.business.income_total|floatformat:2 }}</p>
+			{% if app.borrower.business.expense_other_total %}
+				<p><strong>Other Expense Total:</strong> ${{ app.borrower.business.expense_other_total|floatformat:2 }}</p>
+				<p><strong>Other Expense Description:</strong> {{ app.borrower.business.expense_other_description }}</p>
+			{% else %}
+				<p><strong>Other Expenses:</strong> N/a</p>
+			{% endif %}
+			<p><strong>Expense Total</strong> ${{ app.borrower.business.expense_total|floatformat:2 }}</p>
 		</td>
-		<td>
-			<p><strong>Commissions:</strong> ${{ app.borrower.business.commissions }}</p>
-			<p><strong>Dividends:</strong> ${{ app.borrower.business.dividends }}</p>
-			<p><strong>Interest:</strong> ${{ app.borrower.business.interest }}</p>
-			<p><strong>Net Rental Income:</strong> ${{ app.borrower.business.net_rental }}</p>
-			<p><strong>Income Other Total:</strong> ${{ app.borrower.business.income_other }}</p>
-			<p><strong>Income Other Description:</strong> {{ app.borrower.business.income_other_description }}</p>
-			<p><strong>Income Total:</strong> ${{ app.borrower.business.income_total }}</p>
-			<p><strong>Expense Other Total:</strong> ${{ app.borrower.business.expense_other_total }}</p>
-			<p><strong>Expense Other Description:</strong> {{ app.borrower.business.expense_other_description }}</p>
-			<p><strong>Expense Total</strong> ${{ app.borrower.business.expense_total }}</p>
-			<p><strong>Net Revenue</strong> ${{ app.borrower.business.net_revenue }}</p>
-		</td>
-		<td>
-			<p><strong>User:</strong> {{ app.borrower.user }}</p>
-			<p><strong>Application Type:</strong> {{ app.borrower.get_application_type_display }}</p>
-			<p><strong>First Name:</strong> {{ app.borrower.borrower_fname }}</p>
-			<p><strong>Last Name:</strong> {{ app.borrower.borrower_lname }}</p>
-			<p><strong>Applicant Type:</strong> {{ app.borrower.get_applicant_type_display }}</p>
-			<p><strong>Filing Type:</strong> {{ app.borrower.get_filing_type_display }}</p>
-			<p><strong>Assumed Business Name(s):</strong> {{ app.borrower.assumed_business_names }}</p>
-			<p><strong>DBA Name:</strong> {{ app.borrower.dba_name }}</p>
-			<p><strong>Borrower Type:</strong> {{ app.borrower.get_borrower_type_display }}</p>
-			<p><strong>Title:</strong> {{ app.borrower.title }}</p>
-			<p><strong>Authorization:</strong> {{ app.borrower.authorized }}</p>
-			<p><strong>Social Security Number:</strong> {{ app.borrower.ssn }}</p>
-			<p><strong>TIN Number:</strong> {{ app.borrower.tin_no }}</p>
-			<p><strong>Phone Number:</strong> {{ app.borrower.home_phone }}</p>
-			<p><strong>Date of Birth:</strong> {{ app.borrower.dob }}</p>
-			<p><strong>Years of Schooling Completed:</strong> {{ app.borrower.yrs_school }}</p>
-		</td>
-		<td>
-			<p><strong>Marital Status:</strong> {{ app.borrower.get_marital_status_display }}</p>
-			<p><strong>Number of Dependents:</strong> {{ app.borrower.dependents }}</p>
-			<p><strong>Present Address:</strong> {{ app.borrower.present_addr }}</p>
-			<p><strong>Rent/Own:</strong> {{ app.borrower.get_own_rent_display }}</p>
-			<p><strong>Years at Address:</strong> {{ app.borrower.living_yrs }}</p>
-			<p><strong>Mailing Address:</strong> {{ app.borrower.mail_addr }}</p>
-			<p><strong>Pricipal Office Address:</strong> {{ app.borrower.principal_office_addr }}</p>
-			<p><strong>Organization's State:</strong> {{ app.borrower.get_organizations_state_display }}</p>
-			<p><strong>Former Address:</strong> {{ app.borrower.former_addr }}</p>
-			<p><strong>Rent/Own:</strong> {{ app.borrower.get_former_own_rent_display }}</p>
-			<p><strong>Years at Address:</strong> {{ app.borrower.former_yrs_lived }}</p>
-			<p><strong>Assets & Liabilities Summary:</strong> {{ app.borrower.assets_liabilities }}</p>
-			<p><strong>Declarations:</strong> {{ app.borrower.declarations }}</p>
-			<p><strong>Filing Date:</strong> {{ app.borrower.filing_dates }}</p>
-			<p><strong>Filing Location:</strong> {{ app.borrower.filing_locations }}</p>
-		</td>
-		</tr>
-		</tbody>
-	</table>
-	<pdf:nextpage>
-	<table>
-		<tbody>
-		<tr>
-		<th><h2>Credit Request</h2></th>
-		<th><h2>Declarations</h2></th>
-		<th  colspan="2"><h2>Transaction Details</h2></th>
-		</tr>
-		<tr>
 		<td>
 			<p><strong>Borrower:</strong> {{ credit.borrower }}</p>
 			<p><strong>Amount Requested:</strong> {{ credit.amt_requested }}</p>
@@ -171,72 +111,192 @@
 			<p><strong>Credit Request</strong> {{ credit.get_credit_request_display }}</p>
 			<p><strong>Submission Date:</strong> {{ credit.submission_date }}</p>
 		</td>
-		<td>
-			<p><strong>Outstanding Judgements:</strong> {{ app.borrower.declarations.outstanding_judgements }}</p>
-			<p><strong>Bankrupt:</strong> {{ app.borrower.declarations.bankrupt }}</p>
-			<p><strong>Foreclosed:</strong> {{ app.borrower.declarations.forclosed }}</p>
-			<p><strong>Lawsuit:</strong> {{ app.borrower.declarations.lawsuit }}</p>
-			<p><strong>Obligated Forclosure:</strong> {{ app.borrower.declarations.obligated_forclosure }}</p>
-			<p><strong>In Delinquent / Default:</strong> {{ app.borrower.declarations.delinquent_indefault }}</p>
-			<p><strong>Alimony:</strong> {{ app.borrower.declarations.alimony }}</p>
-			<p><strong>Child Support:</strong> {{ app.borrower.declarations.child_support }}</p>
-			<p><strong>Seperate Maintenance:</strong> {{ app.borrower.declarations.seperate_maintenance }}</p>
-			<p><strong>Borrowed Down Payment:</strong> {{ app.borrower.declarations.borrowed_down_payment }}</p>
-			<p><strong>Co-Maker / Endorser:</strong> {{ app.borrower.declarations.co_maker_endorser }}</p>
-			<p><strong>US Citizen:</strong> {{ app.borrower.declarations.us_citizen }}</p>
-			<p><strong>Permanent Resident Alien:</strong> {{ app.borrower.declarations.permanent_res_alien }}</p>
-			<p><strong>Primary Residence:</strong> {{ app.borrower.declarations.primary_residence }}</p>
-			<p><strong>Ownership Interest:</strong> {{ app.borrower.declarations.ownership_interest }}</p>
-			<p><strong>Property Type:</strong> {{ app.borrower.declarations.get_m_property_type_display }}</p>
-			<p><strong>Title Method:</strong> {{ app.borrower.declarations.get_m_title_method_display }}</p>
-			<p><strong>Continuation:</strong> {{ app.borrower.declarations.continuation }}</p>
-		</td>
-		<td>
-			<p><strong>Purchase Price:</strong> {{ app.transaction_details.purchase_price }}</p>
-			<p><strong>Alterations:</strong> {{ app.transaction_details.alterations }}</p>
-			<p><strong>Improvements:</strong> {{ app.transaction_details.improvements }}</p>
-			<p><strong>Repairs:</strong> {{ app.transaction_details.repairs }}</p>
-			<p><strong>Land:</strong> {{ app.transaction_details.land }}</p>
-			<p><strong>Refinance:</strong> {{ app.transaction_details.refinance }}</p>
-			<p><strong>Estimated Prepaid Items:</strong> {{ app.transaction_details.estimated_prepaid_items }}</p>
-			<p><strong>Estimated Closing Costs:</strong> {{ app.transaction_details.estimated_closing_costs }}</p>
-			<p><strong>PMI:</strong> {{ app.transaction_details.pmi }}</p>
-			<p><strong>MIP:</strong> {{ app.transaction_details.mip }}</p>
-			<p><strong>Funding Fee:</strong> {{ app.transaction_details.funding_fee }}</p>
-		</td>
-		<td>
-			<p><strong>Discount:</strong> {{ app.transaction_details.discount }}</p>
-			<p><strong>Total Costs:</strong> {{ app.transaction_details.total_costs }}</p>
-			<p><strong>Subordinate Financing:</strong> {{ app.transaction_details.subordinate_financing }}</p>
-			<p><strong>Closing Costs Paid:</strong> {{ app.transaction_details.closing_cost_paid }}</p>
-			<p><strong>Other Credits Description:</strong> {{ app.transaction_details.other_credits_description }}</p>
-			<p><strong>Other Credits Total:</strong> {{ app.transaction_details.other_credits_total }}</p>
-			<p><strong>Loan Amount Exclude:</strong> {{ app.transaction_details.loan_amount_exclude }}</p>
-			<p><strong>Financed PMI:</strong> {{ app.transaction_details.financed_pmi }}</p>
-			<p><strong>Financed MIP:</strong> {{ app.transaction_details.financed_mip }}</p>
-			<p><strong>Financed Funding Fee:</strong> {{ app.transaction_details.financed_funding_fee }}</p>
-			<p><strong>Loan Amount:</strong> {{ app.transaction_details.loan_amount }}</p>
-			<p><strong>Borrower Cash:</strong> {{ app.transaction_details.borrower_cash }}</p>
-		</td>
 		</tr>
 		</tbody>
 	</table>
 	<br />
 	<br />
-	<br />
-	<br />
-	<br />
-	<br />
-	<div class="boxy">
-		<hr>
-		<h2>Acknowledge / Agree</h2>
-		<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
-		<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
-		<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
-		<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
-		<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
-		<hr>
-	</div>
+	<table>
+		<tbody>
+		<tr>
+		<th colspan="2"><h2>Borrower Information</h2></th>
+		<th><h2>Declarations</h2></th>
+		</tr>
+		<tr>
+		<td>
+			<p><strong>Application Type:</strong> {{ app.borrower.get_application_type_display }}</p>
+			<p><strong>First Name:</strong> {{ app.borrower.name_first }}</p>
+			<p><strong>Last Name:</strong> {{ app.borrower.name_last }}</p>
+			<p><strong>Applicant Type:</strong> {{ app.borrower.get_applicant_type_display }}</p>
+			<p><strong>Filing Type:</strong> {{ app.borrower.get_filing_type_display }}</p>
+			<p><strong>DBA Name:</strong> {{ app.borrower.dba_name }}</p>
+			<p><strong>Borrower Type:</strong> {{ app.borrower.get_borrower_type_display }}</p>
+			<p><strong>Title:</strong> {{ app.borrower.title }}</p>
+			<p><strong>Authorization Status:</strong> {{ app.borrower.authorized }}</p>
+		</td>
+		<td>
+			<p><strong>Social Security Number:</strong> {{ app.borrower.ssn }}</p>
+			<p><strong>TIN Number:</strong> {{ app.borrower.tin_no }}</p>
+			<p><strong>Date of Birth:</strong> {{ app.borrower.dob }}</p>
+			<p><strong>Marital Status:</strong> {{ app.borrower.get_marital_status_display }}</p>
+			<p><u><strong>Present Address:</strong> {{ app.borrower.present_addr }}</u></p>
+				<div style="margin-left: 25px">
+					<p><strong>Rent/Own:</strong> {{ app.borrower.get_own_rent_display }}</p>
+					<p><strong>Years at Address:</strong> {{ app.borrower.living_yrs }}</p>
+				</div>
+			<p><strong>Mailing Address:</strong> {{ app.borrower.mail_addr }}</p>
+			<p><strong>Pricipal Office Address:</strong> {{ app.borrower.principal_office_addr }}</p>
+			<p><strong>Organization's State:</strong> {{ app.borrower.get_organizations_state_display }}</p>
+			{% if app.borrower.former_addr %}
+				<p><u><strong>Former Address:</strong> {{ app.borrower.former_addr }}</u></p>
+				<div style="margin-left: 25px">
+					<p><strong>Rent/Own:</strong> {{ app.borrower.get_former_own_rent_display }}</p>
+					<p><strong>Years at Address:</strong> {{ app.borrower.former_yrs_lived }}</p>
+				</div>
+	{% endif %}
+		</td>
+		<td>
+			<p><strong>Outstanding Judgements:</strong> {{ app.borrower.declarations.outstanding_judgements }}</p>
+			<p><strong>Bankrupt:</strong> {{ app.borrower.declarations.bankrupt }}</p>
+			<p><strong>Foreclosure:</strong> {{ app.borrower.declarations.forclosed }}</p>
+			<p><strong>Lawsuit(s):</strong> {{ app.borrower.declarations.lawsuit }}</p>
+			<p><strong>Obligated Foreclosure:</strong> {{ app.borrower.declarations.obligated_forclosure }}</p>
+			<p><strong>In Delinquent or In Default:</strong> {{ app.borrower.declarations.delinquent_indefault }}</p>
+			<p><strong>Alimony Payments:</strong> {{ app.borrower.declarations.alimony }}</p>
+			<p><strong>Child Support Payments:</strong> {{ app.borrower.declarations.child_support }}</p>
+			<p><strong>Seperate Maintenance Payments:</strong> {{ app.borrower.declarations.seperate_maintenance }}</p>
+			<p><strong>Down Payment Borrowed:</strong> {{ app.borrower.declarations.borrowed_down_payment }}</p>
+			<p><strong>Co-maker or Endorser on a note:</strong> {{ app.borrower.declarations.co_maker_endorser }}</p>
+			<p><strong>U.S. Citizen:</strong> {{ app.borrower.declarations.us_citizen }}</p>
+			<p><strong>Permanent Residence Alien:</strong> {{ app.borrower.declarations.permanent_res_alien }}</p>
+			{% if app.borrower.declarations.explanation %}
+				<p><strong>Explaination:</strong> {{ app.borrower.declarations.explanation }}</p>
+			{% else %}
+				<p><strong>Explaination:</strong> N/a</p>
+			{% endif %}
+		</td>
+		</tr>
+		</tbody>
+	</table>
+	<pdf:nextpage>
+	{% if app.tier == 0 %}
+		<div class="boxy">
+			<hr>
+			<h2>Acknowledge / Agree</h2>
+			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
+			<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
+			<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
+			<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
+			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
+			<hr>
+		</div>
+	{% else %}
+		<div class="boxy">
+			<h2>Asset Summary</h2>
+			<hr>
+		</div>
+		<table>
+			<tbody>
+			<tr>
+				<th><h2>Employment Information</h2></th>
+				<th><h2>Bank Account</h2></th>
+				<th><h2>Managed Property</h2></th>
+			</tr>
+			<tr>
+			<td>
+				<p><strong>Name of Employer:</strong> {{ app.asset_summary.employment_income.name }}</p>
+				<p><strong>Address:</strong> {{ app.asset_summary.employment_income.address }}</p>
+				<p><strong>Self Employment:</strong> {{ app.asset_summary.employment_income.self_employed }}</p>
+				<p><strong>Years Worked at Employer:</strong> {{ app.asset_summary.employment_income.yrs_worked }}</p>
+				<p><strong>Years Worked in Profession:</strong> {{ app.asset_summary.employment_income.yrs_in_profession }}</p>
+				<p><strong>Position:</strong> {{ app.asset_summary.employment_income.position }}</p>
+				<p><strong>Title:</strong> {{ app.asset_summary.employment_income.title }}</p>
+				<p><strong>Business Type:</strong> {{ app.asset_summary.employment_income.business_type }}</p>
+				<p><strong>Business Phone:</strong> {{ app.asset_summary.employment_income.business_phone }}</p>
+				<p><strong>Income:</strong> ${{ app.asset_summary.employment_income.income|floatformat:2 }}</p>
+				{% if app.asset_summary.employment_income.other_emp_info %}
+					<p><u><strong>Other Employment Information:</strong></u></p>
+					<div style="margin-left: 25px;">
+						<p><strong>Name of Employer:</strong> {{ app.asset_summary.employment_income.other_emp_info.name }}</p>
+						<p><strong>Address:</strong> {{ app.asset_summary.employment_income.other_emp_info.address }}</p>
+						<p><strong>Self Employment:</strong> {{ app.asset_summary.employment_income.other_emp_info.self_employed }}</p>
+						<p><strong>Years Worked at Employer:</strong> {{ app.asset_summary.employment_income.other_emp_info.yrs_worked }}</p>
+						<p><strong>Years Worked in Profession:</strong> {{ app.asset_summary.employment_income.other_emp_info.yrs_in_profession }}</p>
+						<p><strong>Position:</strong> {{ app.asset_summary.employment_income.other_emp_info.position }}</p>
+						<p><strong>Title:</strong> {{ app.asset_summary.employment_income.other_emp_info.title }}</p>
+						<p><strong>Business Type:</strong> {{ app.asset_summary.employment_income.other_emp_info.business_type }}</p>
+						<p><strong>Business Phone:</strong> {{ app.asset_summary.employment_income.other_emp_info.business_phone }}</p>
+						<p><strong>Income:</strong> {{ app.asset_summary.employment_income.other_emp_info.income }}</p>
+					</div>
+				{% endif %}
+			</td>
+			<td>
+				<p><strong>Name:</strong> {{ app.asset_summary.acct1.name }}</p>
+				<p><strong>Branch Address:</strong> {{ app.asset_summary.acct1.address }}</p>
+				<p><strong>Account Number:</strong> {{ app.asset_summary.acct1.acct_no }}</p>
+				<p><strong>Amount:</strong> ${{ app.asset_summary.acct1.amount|floatformat:2 }}</p>
+			</td>
+			<td>
+				<p><strong>Schedule of Real Estate:</strong> {{ app.asset_summary.managed_property.real_estate_schedule }}</p>
+				<p><strong>Address of Property:</strong> {{ app.asset_summary.managed_property.property_address }}</p>
+				<p><strong>Type of Property:</strong> {{ app.asset_summary.managed_property.property_type }}</p>
+				<p><strong>Present Market Value:</strong> ${{ app.asset_summary.managed_property.present_market_value|floatformat:2 }}</p>
+				<p><strong>Mortgage Amount:</strong> ${{ app.asset_summary.managed_property.mortgage_amt|floatformat:2 }}</p>
+				<p><strong>Liens Amount:</strong> ${{ app.asset_summary.managed_property.liens_amt|floatformat:2 }}</p>
+				<p><strong>Gross Rental Income:</strong> ${{ app.asset_summary.managed_property.gross_rental_income|floatformat:2 }}</p>
+				<p><strong>Mortgage Payments:</strong> ${{ app.asset_summary.managed_property.mortgage_payments|floatformat:2 }}</p>
+				<p><strong>Miscellaneous Payments:</strong> {{ app.asset_summary.managed_property.misc_payments }}</p>
+				<p><strong>Net Rental Income:</strong> ${{ app.asset_summary.managed_property.net_rental_income|floatformat:2 }}</p>
+			</td>
+			</tr>
+			</tbody>
+		</table>
+		<table>
+			<tbody>
+			<tr>
+				<th><h2>Additional Asset Information</h2></th>
+			</tr>
+			<tr>
+			<td style="text-align: center;">
+				<p><strong>Stock Value:</strong> ${{ app.asset_summary.stock_value|floatformat:2 }}</p>
+				<p><strong>Bond Value:</strong> ${{ app.asset_summary.bond_value|floatformat:2 }}</p>
+				<p><strong>Life Insurance Value:</strong> ${{ app.asset_summary.life_ins_value|floatformat:2 }}</p>
+				<p><strong>Face Amount:</strong> ${{ app.asset_summary.face_amount|floatformat:2 }}</p>
+				<p><strong>Subtotal Liquid Assets:</strong> ${{ app.asset_summary.subtotal_liquid|floatformat:2 }}</p>
+				<p><strong>Vested Interest in Retirement Fund:</strong> ${{ app.asset_summary.vested_interest|floatformat:2 }}</p>
+				<p><strong>Net Worth of Business(es) Owned:</strong> ${{ app.asset_summary.net_worth|floatformat:2 }}</p>
+				{% if app.asset_summary.other_amt_total %}
+					<p><strong>Other Assets (itemized):</strong> {{ app.asset_summary.other_description }}</p>
+					<p><strong>Other Assets Total:</strong> ${{ app.asset_summary.other_amt_total|floatformat:2 }}</p>
+				{% endif %}
+				<p><strong>Assets Total:</strong> ${{ app.asset_summary.assets_total|floatformat:2 }}</p>
+			</td>
+			</tr>
+			</tbody>
+		</table>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<div class="boxy">
+			<hr>
+			<h2>Acknowledge / Agree</h2>
+			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
+			<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
+			<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
+			<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
+			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
+			<hr>
+		</div>
+	{% endif %}
 	
 </div>
 </body>

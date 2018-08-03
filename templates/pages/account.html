@@ -3,12 +3,13 @@
 {% block title %}TLC: Manage Account{% endblock %}
 
 {% block content %}
-			<h2>Edit Account</h2>
-			<form action="" method="post">
-				<table>
-					{% csrf_token %}
-					{{ form }}
-				</table>
-				<input type="submit" value="Submit" />
-			</form>
+<h1>Account:</h1>
+	<h2>Edit Account</h2>
+	<form action="" method="post">
+		<table>
+			{% csrf_token %}
+			{{ form }}
+		</table>
+		<input type="submit" value="Submit" />
+	</form>
 {% endblock %}

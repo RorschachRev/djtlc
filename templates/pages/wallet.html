@@ -3,16 +3,22 @@
 {% block title %}TLC: Wallet Management{% endblock %}
 
 {% block content %}
-		{% for each_wallet in wallet %}
-			<div>{{ each_wallet.address }}</div>
-		{% endfor %}
-			<h2>Wallet Management</h2>
-			<div>
-				<form action="/wallet" method="post">
-					{% csrf_token %}
-					<div>Blockchain: <strong>ETH</strong></div>
-					{{ form }}
-					<input type="submit" value="Submit" />
-				</form>
-			</div>
+<h1>Wallet:</h1>
+<!--<pre><caption>This page will display to the user:
+	- Their wallet address
+	- Their current permissions
+	- Tokens associated with their wallet
+</caption></pre>-->
+	{% for each_wallet in wallet %}
+		<div>{{ each_wallet.address }}</div>
+	{% endfor %}
+		<h2>Wallet Management</h2>
+		<div>
+			<form action="/wallet" method="post">
+				{% csrf_token %}
+				<div>Blockchain: <strong>ETH</strong></div>
+				{{ form }}
+				<input type="submit" value="Submit" />
+			</form>
+		</div>
 {% endblock %}

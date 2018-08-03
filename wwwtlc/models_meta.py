@@ -97,7 +97,7 @@ class Person(models.Model):
 	credit = models.ForeignKey(Credit_Report, blank=True, null=True)
 	bank_info = models.ManyToManyField(Bank, blank=True, verbose_name="Bank Information")
 	bank_acct = models.ManyToManyField(Bank_Account, blank=True, verbose_name="Bank Account")
-	borrower_info = models.OneToOneField(BorrowerInfo)
+	#borrower_info = models.OneToOneField(BorrowerInfo)
 
 	def __str__(self):
 		return self.name_first + ' ' + self.name_last

@@ -1,6 +1,15 @@
  {% extends '../base.html' %}
  
  {% block content %}
+ <h1>Workflow:</h1>
+ <pre><caption>This is the page where staff will be able to view all Loan Requests that have been approved for either the 
+Basic or Standard Application, as well as all of the Basic and Standard Applications that have been submitted. 
+From here, a staff member will be able to view the details of Basic or Standard Applications, change their 
+workflow status, or update the tier if necessary.
+
+Also included in this page is the ability to change a Loan Request to a different status, in case a Request was
+unintentionally 'approved' for a Basic or Standard Application.
+</caption></pre>
 	<h2>Requests Approved for Basic Application:</h2>
 	<h3>(Application Unsubmitted)</h3>
 	{% if req_basic %}

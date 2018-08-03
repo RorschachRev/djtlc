@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
+from django.db.models.functions import Extract
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response, reverse
 
@@ -37,20 +38,30 @@ def home(request):
 		return render(request, 'dashboard/home.html', {})
 	else:
 		return render(request, 'pages/home.html')
-		
-#needs more testing with multiple different users.		
+				
 def account(request):
 	user = request.user
 	try:
 		acct_info = Person.objects.get(user=user)
 		if request.method == 'POST':
-			form = PersonEditForm(request.POST, instance=acct_info)
+			form = PersonForm(request.POST, instance=acct_info)
 			if form.is_valid():
-				form.save()
+				obj = form.save(commit=False)
+				obj.user = user
+				obj.save()
 		else:
-			form = PersonEditForm(instance=acct_info)
+			form = PersonForm(instance=acct_info)
 	except:
 		form = PersonForm()
+		if request.method == 'POST':
+			form = PersonForm(request.POST)
+			if form.is_valid():
+				obj = form.save(commit=False)
+				obj.user = user
+				obj.save()
+		else:
+			form = PersonForm()
+			
 	return render(request, 'pages/account.html', {'form': form})
 	
 def signup(request):
@@ -137,7 +148,7 @@ def pay(request, loan_id, principal_paid=0):
 # REQUESTS / WORKFLOW
 ##################
 
-def loan_requests(request):
+def loan_requests(request, app_id='0'):
 	sleep_requests = NewRequestSummary.objects.filter(status=0).order_by('-submitted')
 	active_requests = NewRequestSummary.objects.filter(status=1).order_by('-submitted')
 	priority_requests = NewRequestSummary.objects.filter(status=2).order_by('-submitted')
@@ -147,7 +158,27 @@ def loan_requests(request):
 			sleep_vis = False
 		elif sleep_vis == '1':
 			sleep_vis = True
-	return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests, 'sleep_vis': sleep_vis})
+			
+	if app_id[:4] == 'sta_':
+		app = NewRequestSummary.objects.get(pk=app_id[4:])
+		try:
+			if request.method == 'POST':
+				form = ChangeReqForm(request.POST, instance=app)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/loan_requests')
+			else:
+				form = ChangeReqForm(instance=app)
+		except:
+			form = ChangeReqForm()
+		return render(request, 'dashboard/change_reqstatus.html', {'app': app, 'form': form})
+		
+	elif app_id[:4] == 'det_':
+		app = NewRequestSummary.objects.get(pk=app_id[4:])
+		return render(request, 'dashboard/request_details.html', {'app': app})
+		
+	else:
+		return render(request, 'dashboard/loan_request.html', {'active': active_requests, 'sleep': sleep_requests, 'priority': priority_requests, 'sleep_vis': sleep_vis})
 	
 def change_reqstatus(request, app_id):
 	app = NewRequestSummary.objects.get(pk=app_id)
@@ -258,11 +289,18 @@ def submit_loan(request, app_id='0'):
 	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
 	
 def payment_history(request):
-	history_iterable = LoanPaymentHistory.objects.all().order_by('-pmt_date')
-	return render(request, 'dashboard/payment_history.html', {'payments': history_iterable})
+	return render(request, 'dashboard/payment_history.html', {})
 	
 def loan_accounting(request):
-	return render(request, 'dashboard/loan_accounting.html', {})
+	if request.method == 'GET':
+		sort = request.GET.get('sort')
+		if sort == 'month':
+			history_iterable = LoanPaymentHistory.objects.annotate(order_month=Extract('pmt_date', 'month')).all().order_by('-order_month', '-pmt_date')
+		elif sort == 'loan':
+			history_iterable = LoanPaymentHistory.objects.all().order_by('loan')
+		else:
+			history_iterable = LoanPaymentHistory.objects.all().order_by('-pmt_date')
+	return render(request, 'dashboard/loan_accounting.html', {'payments': history_iterable})
 	
 def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})
@@ -302,6 +340,55 @@ def loan_details(request, loan_id):
 	loan = NewLoan.objects.get(pk=loan_id)
 	return render(request, 'dashboard/loan_details.html', {'loan': loan})
 	
+'''##################################################
+PDF Generation Views
+##################################################'''
+def link_callback(uri, rel):
+	"""
+	Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+	resources
+	"""
+	# use short variable names
+	sUrl = settings.STATIC_URL      # Typically /static/
+	sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
+	mUrl = settings.MEDIA_URL       # Typically /static/media/
+	mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
+
+	# convert URIs to absolute system paths
+	if uri.startswith(mUrl):
+		path = os.path.join(mRoot, uri.replace(mUrl, ""))
+	elif uri.startswith(sUrl):
+		path = os.path.join(sRoot, uri.replace(sUrl, ""))
+	else:
+		return uri  # handle absolute uri (ie: http://some.tld/foo.png)
+
+	# make sure that file exists
+	if not os.path.isfile(path):
+		raise Exception(
+			'media URI must start with %s or %s' % (sUrl, mUrl)
+			)
+	return path
+
+def pdfgenerate(request, app_id):
+	app = ApplicationSummary.objects.get(pk=app_id)
+	credit = CreditRequest.objects.get(application=app)
+	template_path = 'pages/pdflayout.html'
+	context = {'app': app, 'credit': credit}
+	# Create a Django response object, and specify content_type as pdf
+	response = HttpResponse(content_type='application/pdf')
+	#Uncomment the below command if you want the PDF to download rather than http display.
+	#response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+	# find the template and render it.
+	template = get_template(template_path)
+	html = template.render(context)
+
+	# create a pdf
+	pisaStatus = pisa.CreatePDF(
+		html, dest=response, link_callback=link_callback)
+	# if error then show some funy view
+	if pisaStatus.err:
+		return HttpResponse('We had some errors <pre>' + html + '</pre>')
+	return response
 	
 '''##################################################
 # Form Views
@@ -420,58 +507,7 @@ class LoanApplyWizard(SessionWizardView):
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
-		
-#PDF generation
-def link_callback(uri, rel):
-	"""
-	Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-	resources
-	"""
-	# use short variable names
-	sUrl = settings.STATIC_URL      # Typically /static/
-	sRoot = settings.STATIC_ROOT    # Typically /home/userX/project_static/
-	mUrl = settings.MEDIA_URL       # Typically /static/media/
-	mRoot = settings.MEDIA_ROOT     # Typically /home/userX/project_static/media/
 
-	# convert URIs to absolute system paths
-	if uri.startswith(mUrl):
-		path = os.path.join(mRoot, uri.replace(mUrl, ""))
-	elif uri.startswith(sUrl):
-		path = os.path.join(sRoot, uri.replace(sUrl, ""))
-	else:
-		return uri  # handle absolute uri (ie: http://some.tld/foo.png)
-
-	# make sure that file exists
-	if not os.path.isfile(path):
-		raise Exception(
-			'media URI must start with %s or %s' % (sUrl, mUrl)
-			)
-	return path
-
-def pdfgenerate(request, app_id):
-	app = ApplicationSummary.objects.get(pk=app_id)
-	template_path = 'pages/pdflayout.html'
-	context = {'app': app}
-	# Create a Django response object, and specify content_type as pdf
-	response = HttpResponse(content_type='application/pdf')
-	#Uncomment the below command if you want the PDF to download rather than http display.
-	#response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-	# find the template and render it.
-	template = get_template(template_path)
-	html = template.render(context)
-
-	# create a pdf
-	pisaStatus = pisa.CreatePDF(
-		html, dest=response, link_callback=link_callback)
-	# if error then show some funy view
-	if pisaStatus.err:
-		return HttpResponse('We had some errors <pre>' + html + '</pre>')
-	return response
-
-
-
-
-		
 # Django FormWizard view for Basic Application
 class BasicWizard(NamedUrlSessionWizardView):
 	# Function to send the form some initial values
@@ -675,14 +711,15 @@ class StandardWizard(NamedUrlSessionWizardView):
 			e.source = self.request.user
 			e.save()
 			
+			g.source = self.request.user
+			g.save()
+			
 			# Saves Foreign Keys for 'AssetSummaryForm'
 			f.source = self.request.user
 			f.acct1 = e
 			f.employment_income = d
+			f.managed_property = g
 			f.save()
-			
-			g.source = self.request.user
-			g.save()
 			
 			i.source = self.request.user
 			i.save()
@@ -710,6 +747,7 @@ class StandardWizard(NamedUrlSessionWizardView):
 				source = self.request.user,
 				property = c,
 				borrower = j,
+				asset_summary = f,
 				acknowledge = k,
 				tier = 1,
 			)

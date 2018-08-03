@@ -16,7 +16,7 @@ class Address(models.Model):
 	country = models.CharField(max_length=3)
 	
 	def __str__(self):
-		return self.street1
+		return self.street1 + ', ' + self.city + ', ' + self.state + ' ' + self.zipcode
 
 class ContactRequest(models.Model):
 	source = models.ForeignKey(User)

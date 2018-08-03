@@ -1,7 +1,22 @@
 {% extends '../base.html' %}
 
 {% block content %}
-	<h2>Loan Requests:</h2>
+<h1>Loan Requests:</h1>
+<pre><caption>This is the page where staff can recieve incoming requests for Loans. 
+There are 5 statuses that these requests can be changed to:
+	- Sleep
+	- Active (default)
+	- Priority
+	- Basic
+	- Standard
+	
+Sleep - Requests that will be 'put on the backburner'
+Active - Requests that have been submitted, but not sorted. This is the default status.
+Priority - Requests that will likely be assigned to fill out the Basic or Standard Application
+Basic - Requests that have been assigned to a Basic Application requirement
+Standard - Requests that have been assigned to a Standard Application requirement
+</caption></pre>
+
 	{% if sleep %}
 		{% if sleep_vis == True%}
 			<a href="/loan_requests/?sleep_vis=0">Hide Slept Requests</a>
@@ -38,7 +53,8 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="sta_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -74,7 +90,8 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="sta_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -112,7 +129,8 @@
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td>{{ app.get_status_display }}<br> <a href="{{ app.id }}" >Update</a></td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="sta_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
 			</tr>
 				{% endfor %}
 			</table>

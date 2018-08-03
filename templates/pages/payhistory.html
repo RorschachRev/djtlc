@@ -5,6 +5,12 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
+<h1>Payment History:</h1>
+{% if request.user.is_staff %}
+	<pre><caption>This will be the page displays payment data to the user. For every loan, and loan payment, it will display the 
+principal balance and the transaction link (recorded by the blockchain), as well as the interest paid (recorded
+by the server).</caption></pre>
+
 <h2>Payment History</h2>
 <h3>(from blockchain)</h3>
 <table>
@@ -58,4 +64,10 @@
 		<p>There are no payments</p>
 		<br>
 	{% endif %}
+
+{% else %} <!-- if user.is_not_staff -->
+<pre><caption>This page will display payment information, as well as provide a link to the transaction
+on the blockchain.</caption></pre>
+
+{% endif %}
 {% endblock %}

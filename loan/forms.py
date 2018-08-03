@@ -34,7 +34,7 @@ class AddressForm(forms.ModelForm):
 class PersonForm(forms.ModelForm):
 	class Meta:
 		model = Person
-		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'email_address', 'taxid', 'language']
+		fields = ['name_first', 'name_middle', 'name_last', 'phone', 'email_address']
 
 class PersonEditForm(forms.ModelForm):
 	class Meta:
