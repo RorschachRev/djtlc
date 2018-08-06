@@ -184,9 +184,11 @@
 			<hr>
 			<h2>Acknowledge / Agree</h2>
 			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
-			<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
-			<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
-			<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
+			<p><strong>Signature:</strong> ________________________________</p>
+			{% if app.acknowledge.coborrower %}
+				<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
+				<p><strong>Signature:</strong> ________________________________</p>
+			{% endif %}
 			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
 			<hr>
 		</div>
@@ -290,9 +292,11 @@
 			<hr>
 			<h2>Acknowledge / Agree</h2>
 			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
-			<p><strong>Borrower Agreement:</strong> {{ app.acknowledge.borrower_agree }}</p>
-			<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
-			<p><strong>Coborrower Agreement:</strong> {{ app.acknowledge.coborrower_agree }}</p>
+			<p><strong>Signature:</strong> ________________________________</p>
+			{% if app.acknowledge.coborrower %}
+				<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
+				<p><strong>Signature:</strong> ________________________________</p>
+			{% endif %}
 			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
 			<hr>
 		</div>
