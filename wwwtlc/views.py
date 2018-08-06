@@ -225,6 +225,10 @@ def workflow_request(request, app_id):
 		except:
 			form = ChangeReqForm()
 			return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
+	
+	elif app_id[:4] == 'det_':
+		app = NewRequestSummary.objects.get(pk=app_id[4:])
+		return render(request, 'dashboard/request_details.html', {'app': app})
 			
 	elif app_id[:4] == 'cht_':
 		app = app_id[4:]

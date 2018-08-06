@@ -3,7 +3,11 @@
 {% block content %}
 <h1>Loan Request Details:</h1>
 
+{% if 'requests' in request.path %}
 <a href="/loan_requests" class="btn btn-default">Back</a>
+{% elif 'workflow' in request.path %}
+<a href="/workflow" class="btn btn-default">Back</a>
+{% endif %}
 
 {% if app.status == 0 %}
 	<h2>{{ app.property.property_address }} : Slept Loan Request</h2>

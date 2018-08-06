@@ -23,5 +23,7 @@
 <p><strong>Interest Paid : </strong>${{ loan.interest_paid|floatformat:2 }}</p>
 <p><strong>Payments Left : </strong>{{ loan.payments_left }}</p>
 <p><strong>Payment Due : </strong>${{ loan.payment_due|floatformat:2 }}</p>
-<p><strong>Payment Due Date : </strong>{{ loan.payment_due_date }}</p>
+<p><strong>Payment Due Date : </strong>1st of each month</p>
+<!-- TODO: Remove Hardcoded monthly payment due date above -->
+<!--<p><strong>Payment Due Date : </strong>{{ loan.payment_due_date }}</p>-->
 {% endblock content %}

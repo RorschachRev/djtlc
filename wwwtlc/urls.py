@@ -144,6 +144,11 @@ urlpatterns = [
         name='wf_change_status'
 ),
     url(
+        r'^workflow/(?P<app_id>[det_0-9]+)$',
+        views.workflow_request,
+        name='wf_request_details'
+),
+    url(
         r'^loan_payments/$',
         views.loan_payments,
         name='loan_payments'

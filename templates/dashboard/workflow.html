@@ -37,7 +37,8 @@ unintentionally 'approved' for a Basic or Standard Application.
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td>{{ app.get_status_display }}<br> <a href="req_{{ app.id }}" >Update</a></td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="req_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -73,7 +74,8 @@ unintentionally 'approved' for a Basic or Standard Application.
 				<td>{{ app.contact.email_address }}</td>
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
-				<td>{{ app.get_status_display }}<br> <a href="req_{{ app.id }}" >Update</a></td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="req_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
 			</tr>
 			{% endfor %}
 		</table>
