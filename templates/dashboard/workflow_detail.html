@@ -4,7 +4,11 @@
 
 {% block content %}
 <h1>View Details:</h1>
+{% if 'workflow' in request.path %}
 	<a href="/workflow" class="btn btn-default">Back</a>
+{% elif 'certify' in request.path %}
+	<a href="/certify" class="btn btn-default">Back</a>
+{% endif %}
 	<h2>{{ app.property.address }} : {{ app.get_status_display }}, {{ app.get_tier_display }} Application</h2>
 	<h3><strong>User</strong> : {{ app.user }}</h3> 
 	<h3> ({{ app.submission_date }})</h3>
@@ -200,7 +204,9 @@
 	<p><strong>Applicant's Acknowledgment & Agreement:</strong> {{ app.acknowledge.applicant_agree }}</p>
 	<p><strong>Date:</strong>{{ app.acknowledge.date }}</p>
 	<br />
-	<a href="/pdf_done/{{ app.id }}" class="btn btn-default">Generate PDF</a>
-	<br />
+	{% if 'certify' in request.path %}
+		<a href="/pdf_done/{{ app.id }}" class="btn btn-default">Generate PDF</a>
+		<br />
+	{% endif %}
 	
 {% endblock %}

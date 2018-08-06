@@ -178,6 +178,11 @@ url(
         views.certify,
         name='certify'
 ),
+     url(
+        r'^certify/(?P<app_id>[0-9]+)$',
+        views.certify_app,
+        name='certify_app'
+),
     url(
         r'^submit_loan/$',
         views.submit_loan,

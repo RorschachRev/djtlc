@@ -7,4 +7,109 @@ Here, a staff member will be able to view and choose which data source that they
 document. They  will also be able to view the details included in each source.
 
 This is also the page where the data will be converted into a PDF.</caption></pre>
+
+<h2>Basic Applications:</h2>
+	{% if basic %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Source</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in basic %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Basic Applications</p>
+	{% endif %}
+	<br>
+	<br>
+	<h2>Standard Applications:</h2>
+	{% if standard %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Source</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in standard %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Standard Applications</p>
+	{% endif %}
+	
+	{% if cert_basic %}
+	<br>
+	<br>
+	<h2>Certified Basic Applications:</h2>
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in cert_basic %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+	
+	{% if cert_standard %}
+	<br>
+	<br>
+	<h2>Certified Standard Applications:</h2>
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in cert_standard %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
 {% endblock content %}

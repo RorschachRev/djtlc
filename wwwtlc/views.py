@@ -310,7 +310,17 @@ def credit_verify(request):
 	return render(request, 'dashboard/credit_verify.html', {})
 	
 def certify(request):
-	return render(request, 'dashboard/certify.html', {})
+	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
+	req_standard = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
+	basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
+	standard = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
+	cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
+	cert_standard = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
+	return render(request, 'dashboard/certify.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard})
+	
+def certify_app(request, app_id):
+	app = ApplicationSummary.objects.get(pk=app_id)
+	return render(request, 'dashboard/workflow_detail.html', {'app': app})
 	
 def loan_payments(request, loan_id='0'):
 	if loan_id[:3] == 'vd_':
