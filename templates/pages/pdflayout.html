@@ -185,11 +185,13 @@
 			<h2>Acknowledge / Agree</h2>
 			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
 			<p><strong>Signature:</strong> ________________________________</p>
+			<p><strong>Date Signed:</strong> ________________________________<p>
 			{% if app.acknowledge.coborrower %}
 				<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
 				<p><strong>Signature:</strong> ________________________________</p>
+				<p><strong>Date Signed:</strong> ________________________________</p>
 			{% endif %}
-			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
+			<p><strong>Date Printed:</strong> {% now "m/d/Y" %}</p>
 			<hr>
 		</div>
 	{% else %}
@@ -293,11 +295,13 @@
 			<h2>Acknowledge / Agree</h2>
 			<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
 			<p><strong>Signature:</strong> ________________________________</p>
+			<p><strong>Date Signed:</strong> ________________________________<p>
 			{% if app.acknowledge.coborrower %}
 				<p><strong>Coborrower:</strong> {{ app.acknowledge.coborrower }}</p>
 				<p><strong>Signature:</strong> ________________________________</p>
+				<p><strong>Date Signed:</strong> ________________________________</p>
 			{% endif %}
-			<p><strong>Date:</strong> {{ app.acknowledge.date }}</p>
+			<p><strong>Date Printed:</strong> {% now "m/d/Y" %}</p>
 			<hr>
 		</div>
 	{% endif %}
