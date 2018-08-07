@@ -520,6 +520,7 @@ class LoanApplyWizard(SessionWizardView):
 			summary.save()
 			
 			# sends email when data is submitted and validated
+			# WIP
 			send_mail(
 				# subject line - returns LoanData __str__ method
 				'New Loan Request',
@@ -531,7 +532,8 @@ class LoanApplyWizard(SessionWizardView):
 				'no_reply@thelendingcoin.com',
 				
 				# recipient email address
-				['finance@thelendingcoin.com', 'lender@thelendingcoin.com', 'cto@mediacoin.stream']
+				['cto@mediacoin.stream']
+				#['finance@thelendingcoin.com', 'lender@thelendingcoin.com', 'cto@mediacoin.stream']
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
@@ -649,7 +651,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			
 			# Sends email when data is submitted to DB
 			send_mail(
-				'A new loan has been submitted', # subject line - will change to add more info
+				'A Basic application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
 				['cto@mediacoin.stream'] # recipient email address
@@ -809,7 +811,7 @@ class StandardWizard(NamedUrlSessionWizardView):
 			
 			# Sends email when data is submitted to DB
 			send_mail(
-				'A Tier 2 application has been submitted', # subject line - will change to add more info
+				'A Standard application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
 				['cto@mediacoin.stream'] # recipient email address

@@ -53,6 +53,11 @@ class AppTierForm(forms.ModelForm):
 	class Meta:
 		model = ApplicationSummary
 		fields = ['tier']
+		
+	# __init__ hides 'Converted' status from the AppTierForm	
+	def __init__(self, *args, **kwargs):
+		super(AppTierForm, self).__init__(*args, **kwargs)
+		self.fields['tier'].choices = self.Meta.model.TIER_CHOICES[:2]
 
 class AssetSummaryForm(forms.ModelForm):
 	step_name = 'Asset Summary:'
