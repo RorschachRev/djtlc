@@ -26,6 +26,11 @@ class ChangeReqForm(forms.ModelForm):
 			'status': '',
 		}
 		
+	# __init__ hides 'submitted' status from the ChangeReqForm	
+	def __init__(self, *args, **kwargs):
+		super(ChangeReqForm, self).__init__(*args, **kwargs)
+		self.fields['status'].choices = self.Meta.model.STATUS_CHOICES[:5]
+		
 class AddressForm(forms.ModelForm):
 	class Meta:
 		model = Address

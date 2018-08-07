@@ -99,10 +99,12 @@ def test(request):
 def loan(request):
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
+	basic = ApplicationSummary.objects.filter(user=request.user, status=0).order_by('-submission_date')
+	standard = ApplicationSummary.objects.filter(user=request.user, status=1).order_by('-submission_date')
 	req_basic = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
 	req_standard = NewRequestSummary.objects.filter(user=request.user, status=4).order_by('-submitted')
 	applied_loans = NewRequestSummary.objects.filter(status__in=[0, 1, 2], user=request.user).order_by('-status', '-submitted')
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_basic': req_basic, 'req_standard': req_standard})
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_basic': req_basic, 'req_standard': req_standard, 'basic': basic, 'standard': standard})
 	
 class loaninfo():
 	"""
@@ -197,13 +199,21 @@ def change_reqstatus(request, app_id):
 	
 	
 def workflow(request):
+	if request.method == 'GET':
+		submit_vis = request.GET.get('submit_vis')
+		if submit_vis == '0':
+			submit_vis = False
+		elif submit_vis == '1':
+			submit_vis = True
+			
 	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
 	req_standard = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
 	basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
 	cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
 	cert_standard = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
-	return render(request, 'dashboard/workflow.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard})
+	submitted = NewRequestSummary.objects.filter(status=5).order_by('-submitted')
+	return render(request, 'dashboard/workflow.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard, 'submitted': submitted, 'submit_vis': submit_vis})
 	
 # This function handles all possible requests on the '/workflow' page
 # handling for this comes from passing data via url into the view,
@@ -351,8 +361,12 @@ def loan_payments(request, loan_id='0'):
 		return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
 
 def loan_details(request, loan_id):
-	loan = NewLoan.objects.get(pk=loan_id)
-	return render(request, 'dashboard/loan_details.html', {'loan': loan})
+	if loan_id[:4] == 'bsa_':
+		app = ApplicationSummary.objects.get(pk=loan_id[4:])
+		return render(request, 'dashboard/workflow_detail.html', {'app': app})
+	else:
+		loan = NewLoan.objects.get(pk=loan_id)
+		return render(request, 'dashboard/loan_details.html', {'loan': loan})
 	
 '''##################################################
 PDF Generation Views
@@ -517,7 +531,7 @@ class LoanApplyWizard(SessionWizardView):
 				'no_reply@thelendingcoin.com',
 				
 				# recipient email address
-				['finance@thelendingcoin.com', 'lender@thelendingcoin.com']
+				['finance@thelendingcoin.com', 'lender@thelendingcoin.com', 'cto@mediacoin.stream']
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
@@ -531,10 +545,14 @@ class BasicWizard(NamedUrlSessionWizardView):
 			self.initial_dict = {'user': user}
 		return self.initial_dict
 		
-	def get_step_url(self, step):
-		print(step)
-		self.kwargs['step'] = step
-		return reverse(self.url_name, kwargs={'step': step})
+	def get_context_data(self, form, value=0, step=None, **kwargs):
+		context = super(BasicWizard, self).get_context_data(form=form, step=step, **kwargs)
+		if self.steps.current == '1':
+			try:
+				self.request.session['request_id'] = self.kwargs['value']
+			except:
+				pass
+		return context
 	
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -623,8 +641,8 @@ class BasicWizard(NamedUrlSessionWizardView):
 			e.application = summary
 			e.save()
 			
-			if 'value' in kwargs:
-				request_id = kwargs['value'][3:]
+			if 'request_id' in self.request.session:
+				request_id = self.request.session['request_id']
 				request = NewRequestSummary.objects.get(pk=request_id)
 				request.status = 5
 				request.save()
@@ -634,7 +652,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 				'A new loan has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
-				['loanofficer@tlc.com'] # recipient email address
+				['cto@mediacoin.stream'] # recipient email address
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html')
@@ -650,6 +668,15 @@ class StandardWizard(NamedUrlSessionWizardView):
 		):
 			self.initial_dict = {'user': user}
 		return self.initial_dict
+		
+	def get_context_data(self, form, value=0, step=None, **kwargs):
+		context = super(StandardWizard, self).get_context_data(form=form, step=step, **kwargs)
+		if self.steps.current == '1':
+			try:
+				self.request.session['request_id'] = self.kwargs['value']
+			except:
+				pass
+		return context
 		
 	def done(self, form_list, **kwargs):
 		aps = ApplicationSummary
@@ -773,12 +800,19 @@ class StandardWizard(NamedUrlSessionWizardView):
 			h.application = summary
 			h.save()
 			
+			# Changes the status of the LoanApply request to 'Submitted'
+			if 'request_id' in self.request.session:
+				request_id = self.request.session['request_id']
+				request = NewRequestSummary.objects.get(pk=request_id)
+				request.status = 5
+				request.save()
+			
 			# Sends email when data is submitted to DB
 			send_mail(
 				'A Tier 2 application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
-				['loanofficer@tlc.com'] # recipient email address
+				['cto@mediacoin.stream'] # recipient email address
 			)
 			
 		return render(self.request, 'pages/loan_apply_done.html')

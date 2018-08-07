@@ -38,6 +38,59 @@
 		<br>
 	{% endif %}
 	
+	<br>
+	<br>
+	{% if basic %}
+ 	<h2>Basic Applications Submitted:</h2>
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Source</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in basic %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="loan/bsa_{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+	<br>
+	<br>
+	{% if standard %}
+	<h2>Standard Applications Submitted:</h2>
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Source</th>
+				<th>Date Last Modified</th>
+			</tr>
+			{% for app in standard %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.source }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td><a href="loan/bsa_{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+	
 	{% if req_basic %}
 		<h2>Requests Approved for Basic Application :</h2>
 		<h3>(Application Unsubmitted)</h3>

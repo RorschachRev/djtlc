@@ -8,6 +8,8 @@
 	<a href="/workflow" class="btn btn-default">Back</a>
 {% elif 'certify' in request.path %}
 	<a href="/certify" class="btn btn-default">Back</a>
+{% elif 'loan' in request.path %}
+	<a href="/loan" class="btn btn-default">Back</a>
 {% endif %}
 	<h2>{{ app.property.address }} : {{ app.get_status_display }}, {{ app.get_tier_display }} Application</h2>
 	<h3><strong>User</strong> : {{ app.user }}</h3> 

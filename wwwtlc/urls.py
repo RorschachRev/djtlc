@@ -92,6 +92,11 @@ urlpatterns = [
         name='loan_details'
 ),
     url(
+        r'^loan/(?P<loan_id>[bsa_0-9]+)/$',
+        views.loan_details,
+        name='basic_standard_details'
+),
+    url(
         r'^wallet$', 
         views.wallet, 
         name='wallet'

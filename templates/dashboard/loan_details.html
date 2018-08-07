@@ -2,9 +2,9 @@
 <!-- will probably want to add moneyed to this page and others like it -->
 {% block content %}
 <h1>Loan Details:</h1>
-{% if user.is_staff %}
+{% if 'loan_payments' in request.path %}
 	<a href="/loan_payments" class="btn btn-default">Back</a>
-{% else %}
+{% elif 'loan' in request.path %}
 	<a href="/loan" class="btn btn-default">Back</a>
 {% endif %}
 

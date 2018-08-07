@@ -10,6 +10,15 @@ workflow status, or update the tier if necessary.
 Also included in this page is the ability to change a Loan Request to a different status, in case a Request was
 unintentionally 'approved' for a Basic or Standard Application.
 </caption></pre>
+
+{% if submitted %}
+	{% if submit_vis == True%}
+		<a href="/workflow/?submit_vis=0">Hide Submitted Requests</a>
+	{% else %}
+		<a href="/workflow/?submit_vis=1">View Submitted Requests</a>
+	{% endif %}
+{% endif %}
+
 	<h2>Requests Approved for Basic Application:</h2>
 	<h3>(Application Unsubmitted)</h3>
 	{% if req_basic %}
@@ -196,4 +205,40 @@ unintentionally 'approved' for a Basic or Standard Application.
 			{% endfor %}
 		</table>
 	{% endif %}
+	
+	<br>
+	<br>
+	{% if submit_vis == True %}
+	<h2>Requests Approved for Basic/Standard Application:</h2>
+	<h3>(Application Submitted)</h3>
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Address of Property</th>
+				<th>Contact Person</th>
+				<th>Current Mortgage Balance</th>
+				<th>Mortgage Amount Desired</th>
+				<th>Phone Number</th>
+				<th>Email Address</th>
+				<th>Borrower Type</th>
+				<th>Date Last Modified</th>
+				<th>Status</th>
+			</tr>
+			{% for app in submitted %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.property_address }}</td>
+				<td>{{ app.contact.name_last }}, {{ app.contact.name_first }}</td>
+				<td>${{ app.curr_mortgage.current_balance | floatformat:2  }}</td>
+				<td>${{ app.desired_mortgage.amount_desired | floatformat:2 }}</td>
+				<td>{{ app.contact.phone }}</td>
+				<td>{{ app.contact.email_address }}</td>
+				<td>{{ app.borrower.get_type_display }}</td>
+				<td>{{ app.submitted }}</td>
+				<td style="border-right: 1px solid black">{{ app.get_status_display }}<br> <a href="req_{{ app.id }}" >Update</a></td>
+				<td><a href="det_{{ app.id }}">View Details</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}	
  {% endblock content %}
