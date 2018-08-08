@@ -545,7 +545,7 @@ class LoanApplyWizard(SessionWizardView):
 			
 			# sends email when data is submitted and validated
 			# WIP
-			send_mail(
+			'''send_mail(
 				# subject line - returns LoanData __str__ method
 				'New Loan Request',
 				
@@ -558,7 +558,7 @@ class LoanApplyWizard(SessionWizardView):
 				# recipient email address
 				['cto@mediacoin.stream']
 				#['finance@thelendingcoin.com', 'lender@thelendingcoin.com', 'cto@mediacoin.stream']
-			)
+			)'''
 			
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
 
@@ -674,12 +674,12 @@ class BasicWizard(NamedUrlSessionWizardView):
 				request.save()
 			
 			# Sends email when data is submitted to DB
-			send_mail(
+			'''send_mail(
 				'A Basic application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
 				['cto@mediacoin.stream'] # recipient email address
-			)
+			)'''
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 		
@@ -834,12 +834,12 @@ class StandardWizard(NamedUrlSessionWizardView):
 				request.save()
 			
 			# Sends email when data is submitted to DB
-			send_mail(
+			'''send_mail(
 				'A Standard application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
 				['cto@mediacoin.stream'] # recipient email address
-			)
+			)'''
 			
 		return render(self.request, 'pages/loan_apply_done.html')
 		
@@ -935,7 +935,9 @@ class ConversionWizard(SessionWizardView):
 				borrower = a.application.borrower,
 				coborrower = a.application.coborrower,
 				loan_terms = a,
-				payment_due = a.loan_amount / a.months_left,
+				# formula for payment_due calculation here:
+				# https://www.vertex42.com/ExcelArticles/amortization-calculation.html
+				payment_due = a.loan_amount * (((a.int_rate  / 100) * ((1+(a.int_rate / 100))**a.months_left)) / (((1+(a.int_rate / 100))**a.months_left) - 1)),
 				# payment_due_date calculated above
 				payment_due_date = end_date.day,
 				payments_left = a.months_left,
