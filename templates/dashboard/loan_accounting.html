@@ -1,4 +1,5 @@
 {% extends '../base.html' %}
+{% load humanize %}
 
 {% block content %}
 <h1>Accounting:</h1>
@@ -15,6 +16,7 @@ with the ability to sort the data. The sort options will by 'by month', and 'by 
 				<th>Payment Total</th>
 				<th>Principal Paid</th>
 				<th>Interest Paid</th>
+				<!--<th>Date Due</th>--><!-- may want to add this later, though there is minor weirdness to consider -->
 				<th>Date Paid</th>
 			</tr>
 			{% for payment in payments %}
@@ -24,6 +26,7 @@ with the ability to sort the data. The sort options will by 'by month', and 'by 
 				<td>${{ payment.pmt_total | floatformat:2}}</td>
 				<td>${{ payment.principal_pmt | floatformat:2 }}</td>
 				<td>${{ payment.interest_pmt | floatformat:2}}</td>
+				<!--<td>{{ payment.loan.payment_due_date|ordinal }} of each month</td>--><!-- may want to add this later, though there is minor weirdness to consider -->
 				<td>{{ payment.pmt_date }}</td>
 			</tr>
 			{% endfor %}

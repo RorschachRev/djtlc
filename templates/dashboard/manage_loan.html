@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load djmoney %}
+{% money_localize money %}
+{% load loan_bal %}
+{% load humanize %}
 
 {% block content %}
 <h1>Manage Loans:</h1>
@@ -11,4 +15,30 @@ These tasks may include:
 	- so on, so forth
 
 This page will also contain a link to the deed associated to each loan.</caption></pre>
+
+<h2>List of Loans :</h2>
+{% if loans %}
+	<table>
+		<tr>
+			<th>User</th>
+			<th>Loan Wallet</th>
+			<th>Loan ID</th>
+			<th>Principal Owed</th>
+			<th>Payment Due</th>
+			<th>Date Due</th>
+		</tr>
+		{% for loan in loans %}
+		<tr>
+			<td>{{ loan.user.username }}</td>
+			<td>{{ loan.loan_wallet }}</td>
+			<td>{{ loan.id }}</td>
+			<td>{% money_localize loan.principal_balance 'USD' %}</td>
+			<td>{% money_localize loan.payment_due 'USD' %} due</td>
+			<td>{{ loan.payment_due_date|ordinal }} of each month<br><a href="/manage_loan/pdd_{{ loan.id }}">Change</a></td><!-- will need to change 'now' function later to turnover to the next month when that date is past -->
+			<td><a href="/manage_loan/{{ loan.id }}"><button>View Details</button></a></td>
+		</tr>
+		{% endfor %}
+	</table>
+{% endif %}
+
 {% endblock content %}

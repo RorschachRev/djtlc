@@ -215,6 +215,16 @@ url(
         name='manage_loan'
 ),
     url(
+        r'^manage_loan/(?P<loan_id>[0-9]+)/$',
+        views.manage_loan,
+        name='view_loan_details'
+),
+    url(
+        r'^manage_loan/(?P<loan_id>[a-z_0-9]+)/$',
+        views.manage_loan_forms,
+        name='manage_loan_forms'
+),
+    url(
         r'^loan_accounting/$',
         views.loan_accounting,
         name='loan_accounting'

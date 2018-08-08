@@ -10,7 +10,10 @@ from django.db.models.functions import Extract
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response, reverse
 
+import os
+import datetime
 import decimal as D
+
 from wwwtlc.forms import *
 from wwwtlc.ethereum import BC
 from wwwtlc.models_officer import NewLoan
@@ -23,7 +26,6 @@ from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
-import os
 from django.template import Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -277,8 +279,29 @@ def workflow_request(request, app_id):
 		credit_request = CreditRequest.objects.get(application=loan_request)
 		return render(request, 'dashboard/workflow_detail.html', {'app': loan_request, 'credit': credit_request})
 		
-def manage_loan(request):
-	return render(request, 'dashboard/manage_loan.html', {})
+def manage_loan(request, loan_id=0):
+	if loan_id == 0:
+		loan_iterable = NewLoan.objects.all().order_by('id')
+	else:
+		loan = NewLoan.objects.get(pk=loan_id)
+		return render(request, 'dashboard/loan_details.html', { 'loan': loan })
+	return render(request, 'dashboard/manage_loan.html', { 'loans': loan_iterable })
+	
+def manage_loan_forms(request, loan_id='0'):
+	if loan_id[:4] == 'pdd_':
+		loan = NewLoan.objects.get(pk=loan_id[4:])
+		try:
+			if request.method == 'POST':
+				form = PaymentDueDateForm(request.POST, instance=loan)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/manage_loan')
+			else:
+				form = PaymentDueDateForm(instance=loan)
+				return render(request, 'dashboard/manage_loan_forms.html', {'form': form, 'loan': loan})
+		except:
+			form = PaymentDueDateForm()
+			return render(request, 'dashboard/manage_loan_forms.html', {'form': form, 'loan': loan})
 	
 # PAYMENTS / ACCOUNTING
 ###################
@@ -298,7 +321,8 @@ def submit_loan(request, app_id='0'):
 	
 	if app_id[:3] != 0 and app_id[:3] == 'c2l':
 		app = ApplicationSummary.objects.get(pk=app_id[3:])
-		return render(request, 'dashboard/confirm_app_info.html', {'app': app})
+		credit = CreditRequest.objects.get(application=app)
+		return render(request, 'dashboard/confirm_app_info.html', {'app': app, 'credit': credit})
 		
 	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
 	
@@ -311,7 +335,7 @@ def loan_accounting(request):
 		if sort == 'month':
 			history_iterable = LoanPaymentHistory.objects.annotate(order_month=Extract('pmt_date', 'month')).all().order_by('-order_month', '-pmt_date')
 		elif sort == 'loan':
-			history_iterable = LoanPaymentHistory.objects.all().order_by('loan')
+			history_iterable = LoanPaymentHistory.objects.all().order_by('loan', '-pmt_date')
 		else:
 			history_iterable = LoanPaymentHistory.objects.all().order_by('-pmt_date')
 	return render(request, 'dashboard/loan_accounting.html', {'payments': history_iterable})
@@ -867,6 +891,11 @@ class ConversionWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
 		loan = NewLoan
 		contract = Contract
+		# Used to calculate payment_due_date
+		curr_date = datetime.datetime.now()
+		# calculation for payment_due_date, currently 15 days after loan is finalized
+		# may change in future. Depends on how TLC wants to calculate this date.
+		end_date = curr_date + datetime.timedelta(days=15)
 		
 		# a, 0 = LoanTerms
 		# b, 1 = LoanWallet
@@ -907,10 +936,8 @@ class ConversionWizard(SessionWizardView):
 				coborrower = a.application.coborrower,
 				loan_terms = a,
 				payment_due = a.loan_amount / a.months_left,
-				payment_due_date = 25, # hardcoded for testing, will need changed later
-									# this will either be done by adding due_date
-									# to loan_terms or figuring out a way to calculate
-									# this number
+				# payment_due_date calculated above
+				payment_due_date = end_date.day,
 				payments_left = a.months_left,
 				principal_balance = a.loan_amount,
 				loan_intrate_current = a.int_rate,

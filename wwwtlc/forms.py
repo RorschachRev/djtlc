@@ -181,7 +181,16 @@ class ManagedPropertyForm(forms.ModelForm):
 class PaymentForm(forms.ModelForm):
 	class Meta:
 		model = LoanPaymentHistory
+		#fields = ['pmt_total', 'pmt_date']
 		exclude = ['wallet', 'loan']
+
+class PaymentDueDateForm(forms.ModelForm):
+	class Meta:
+		model = NewLoan
+		fields = ['payment_due_date']
+		labels = {
+			'payment_due_date': 'New Payment Due Date',
+		}
 
 class PropertyInfoForm(forms.ModelForm):
 	step_name = 'Property Information:'
