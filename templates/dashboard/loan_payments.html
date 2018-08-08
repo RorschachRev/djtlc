@@ -10,8 +10,6 @@
 recorded by the server, and displayed under Accounting.</caption></pre>
 <h2>List of Loans :</h2>
 	{% if loan_iterable %}
-		<div>Active Wallet: (from JS) </div>
-		<div>TLC to USD:</div><div>{{ blockdata.tlctousdc }}</div>
 		<table>
 			<tr>
 				<th>User</th>
@@ -34,8 +32,5 @@ recorded by the server, and displayed under Accounting.</caption></pre>
 			</tr>
 			{% endfor %}
 		</table>
-	{% else %}
-		<p>You have no active loans.</p>
-		<br>
 	{% endif %}
 {% endblock content %}

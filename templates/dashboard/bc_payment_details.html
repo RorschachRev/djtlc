@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load djmoney %}
+{% money_localize money %}
+
+{% block content %}
+<a href="/payment_history" class="btn btn-default">Back</a>
+
+<h2>Payment History</h2>
+<h3>(from blockchain)</h3>
+<!--
+	TODO:
+	will need to be configured with a for loop
+	something like:
+	'for transaction in blockdata.trasactions:
+		blockdata.date
+		loan.wallet_addr
+		blockdata.loanbal
+		blockdata.principal_paid (in TLC? or USD?)
+		link to block'
+-->
+<table>
+	<tr>
+		<th>Date</th>
+		<th>Loan</th>
+		<th>Balance</th>
+		<th>Amount</th>
+		<th>Blockchain</th>
+	</tr>
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0x8c4681725167ea7c1d95ce3afdc5b5459d499ec255b46fc5b349d4e820353434">Tx 0x8c4681...</a></td>
+	</tr>
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a></td>
+	</tr>
+</table>
+{% endblock content %}

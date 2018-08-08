@@ -174,6 +174,11 @@ url(
         name='payment_history'
 ),
     url(
+        r'^payment_history/(?P<loan_id>[0-9]+)/$',
+        views.payment_history,
+        name='loan_payment_details'
+),
+    url(
         r'^credit_verify/$',
         views.credit_verify,
         name='credit_verify'

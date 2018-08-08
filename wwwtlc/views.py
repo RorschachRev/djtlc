@@ -32,6 +32,17 @@ from xhtml2pdf import pisa
 
 
 '''##################################################
+# For Payment/Amortization:
+#
+#	- look at amortization schedule that Ian sent via email
+# 	- Interest calculated daily (intrate / 365)
+#	- call python date import so that you can find the number of days per month
+# 	- loan_payments form will only contain one field (pmt_total)
+# 	- should be contained within one or two lines of code, if stuck ask Ian
+# 	- if stuck, look at googlesheets schedule math
+##################################################'''
+
+'''##################################################
 # Basic Functionality Views	
 ##################################################'''	
 def home(request):
@@ -326,14 +337,24 @@ def submit_loan(request, app_id='0'):
 		
 	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
 	
-def payment_history(request):
-	return render(request, 'dashboard/payment_history.html', {})
+def payment_history(request, loan_id=0):
+	if loan_id == 0:
+		loans = NewLoan.objects.all().order_by('id')
+		return render(request, 'dashboard/payment_history.html', {'loans': loans})
+	else:
+		loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
+		blockdata=BC()
+		blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
+		loaninfo.payment=0 #principal_paid
+		blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
+		loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
+		return render(request, 'dashboard/bc_payment_details.html', {'loan': loaninfo, 'blockdata':blockdata} )
 	
 def loan_accounting(request):
 	if request.method == 'GET':
 		sort = request.GET.get('sort')
 		if sort == 'month':
-			history_iterable = LoanPaymentHistory.objects.annotate(order_month=Extract('pmt_date', 'month')).all().order_by('-order_month', '-pmt_date')
+			history_iterable = LoanPaymentHistory.objects.annotate(order_month=Extract('pmt_date', 'month'), order_year=Extract('pmt_date','year')).all().order_by('-order_year','-order_month', '-pmt_date')
 		elif sort == 'loan':
 			history_iterable = LoanPaymentHistory.objects.all().order_by('loan', '-pmt_date')
 		else:
@@ -480,8 +501,24 @@ class LoanApplyWizard(SessionWizardView):
 	# Function to send the form some initial values
 	def get_form_initial(self, step):
 		user = self.request.user
-		if step == '1':
+		if step == '0':
 			self.initial_dict = {'user': user}
+			try:
+				person = Person.objects.get(user=user)
+			except:
+				pass
+			if person:
+				self.initial_dict.update({
+					'name_first': person.name_first,
+					'name_middle': person.name_middle,
+					'name_last': person.name_last,
+					'phone': person.phone,
+					'email_address': person.email_address,
+				})
+			
+		if step == '1':
+			self.initial_dict = {'user': self.request.user}
+			
 		return self.initial_dict
 	
 	def done(self, form_list, **kwargs):
