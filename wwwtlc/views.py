@@ -378,13 +378,10 @@ def loan_payments(request, loan_id='0'):
 	elif not 'vd_' in loan_id and loan_id != '0':
 		loan = NewLoan.objects.get(pk=loan_id)
 		try:
-			print('#### try \n')
 			most_recent = LoanPaymentHistory.objects.filter(wallet=loan.loan_wallet).order_by('-pmt_date')[0].pmt_date
 			if request.method == 'POST':
-				print('#### request.post \n')
 				form = PaymentForm(request.POST)
 				if form.is_valid():
-					print('#### form.is_valid\n')
 					obj = form.save(commit=False)
 					obj.wallet = loan.loan_wallet
 					obj.loan = loan
@@ -392,29 +389,21 @@ def loan_payments(request, loan_id='0'):
 					obj.principal_pmt = obj.pmt_total - obj.interest_pmt
 					obj.save()
 					
-					print('#### obj.save()\n')
-					
 					loan.interest_paid += obj.interest_pmt
 					loan.principal_paid += obj.principal_pmt
 					loan.principal_balance -= obj.principal_pmt
 					loan.payments_left -= 1
 					loan.save()
 					
-					print('#### loan.save()\n')
-					
 					submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
 					return submit
 			else:
-				print('#### request.get \n')
 				form = PaymentForm()
 			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
 		except:
-			print('#### except\n')
 			if request.method == 'POST':
-				print('#### request.post\n')
 				form = FirstPaymentForm(request.POST)
 				if form.is_valid():
-					print('#### form.is_valid\n')
 					obj = form.save(commit=False)
 					obj.wallet = loan.loan_wallet
 					obj.loan = loan
@@ -428,7 +417,6 @@ def loan_payments(request, loan_id='0'):
 					submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
 					return submit
 			else:
-				print('#### request.get\n')
 				form = FirstPaymentForm()
 			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
 	else:
