@@ -164,7 +164,7 @@ url(
         name='make_payment'
 ),
     url(
-        r'^loan_payments/(?P<loan_id>[vd_0-9]+)$',
+        r'^loan_payments/(?P<loan_id>[a-z_0-9]+)$',
         views.loan_payments,
         name='loan_details'
 ),

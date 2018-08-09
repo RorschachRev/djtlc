@@ -17,8 +17,8 @@ import decimal as D
 from wwwtlc.forms import *
 from wwwtlc.ethereum import BC
 from wwwtlc.models_officer import NewLoan
-from wwwtlc.models_meta import Person, Wallet, Contract
 from wwwtlc.models_bse import ApplicationSummary
+from wwwtlc.models_meta import Person, Wallet, Contract
 from wwwtlc.models_loan_apply import NewRequestSummary
 
 from loan.models import Loan_Data, Loan_Request#, Loan
@@ -26,21 +26,9 @@ from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 
 from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
+from xhtml2pdf import pisa
 from django.template import Context
 from django.template.loader import get_template
-from xhtml2pdf import pisa
-
-
-'''##################################################
-# For Payment/Amortization:
-#
-#	- look at amortization schedule that Ian sent via email
-# 	- Interest calculated daily (intrate / 365)
-#	- call python date import so that you can find the number of days per month
-# 	- loan_payments form will only contain one field (pmt_total)
-# 	- should be contained within one or two lines of code, if stuck ask Ian
-# 	- if stuck, look at googlesheets schedule math
-##################################################'''
 
 '''##################################################
 # Basic Functionality Views	
@@ -377,30 +365,72 @@ def certify_app(request, app_id):
 	app = ApplicationSummary.objects.get(pk=app_id)
 	return render(request, 'dashboard/workflow_detail.html', {'app': app})
 	
+# This is the function that calculates the interest accrued for loan payments	
+def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate):
+	date_delta = paid_date - last_paid_date
+	interest_accrued = date_delta.days * principal_bal * ((int_rate / 100) / 365)
+	return round(interest_accrued, 2)
+	
 def loan_payments(request, loan_id='0'):
 	if loan_id[:3] == 'vd_':
 		loan=NewLoan.objects.get(pk=loan_id[3:])
 		return render(request, 'dashboard/loan_details.html', {'loan': loan})
 	elif not 'vd_' in loan_id and loan_id != '0':
 		loan = NewLoan.objects.get(pk=loan_id)
-		if request.method == 'POST':
-			form = PaymentForm(request.POST)
-			if form.is_valid():
-				obj = form.save(commit=False)
-				obj.wallet = loan.loan_wallet
-				obj.loan = loan
-				obj.save()
-				
-				loan.interest_paid += obj.interest_pmt
-				loan.principal_paid += obj.principal_pmt
-				loan.principal_balance -= obj.principal_pmt
-				loan.payments_left -= 1
-				loan.save()
-				submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
-				return submit
-		else:
-			form = PaymentForm()
-		return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+		try:
+			print('#### try \n')
+			most_recent = LoanPaymentHistory.objects.filter(wallet=loan.loan_wallet).order_by('-pmt_date')[0].pmt_date
+			if request.method == 'POST':
+				print('#### request.post \n')
+				form = PaymentForm(request.POST)
+				if form.is_valid():
+					print('#### form.is_valid\n')
+					obj = form.save(commit=False)
+					obj.wallet = loan.loan_wallet
+					obj.loan = loan
+					obj.interest_pmt = calculate_interest(most_recent, obj.pmt_date, loan.principal_balance, loan.loan_intrate_current)
+					obj.principal_pmt = obj.pmt_total - obj.interest_pmt
+					obj.save()
+					
+					print('#### obj.save()\n')
+					
+					loan.interest_paid += obj.interest_pmt
+					loan.principal_paid += obj.principal_pmt
+					loan.principal_balance -= obj.principal_pmt
+					loan.payments_left -= 1
+					loan.save()
+					
+					print('#### loan.save()\n')
+					
+					submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
+					return submit
+			else:
+				print('#### request.get \n')
+				form = PaymentForm()
+			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+		except:
+			print('#### except\n')
+			if request.method == 'POST':
+				print('#### request.post\n')
+				form = FirstPaymentForm(request.POST)
+				if form.is_valid():
+					print('#### form.is_valid\n')
+					obj = form.save(commit=False)
+					obj.wallet = loan.loan_wallet
+					obj.loan = loan
+					obj.save()
+					
+					loan.interest_paid += obj.interest_pmt
+					loan.principal_paid += obj.principal_pmt
+					loan.principal_balance -= obj.principal_pmt
+					loan.payments_left -= 1
+					loan.save()
+					submit = pay(request, loan_id=obj.loan.id, principal_paid=obj.principal_pmt)
+					return submit
+			else:
+				print('#### request.get\n')
+				form = FirstPaymentForm()
+			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
 	else:
 		loan_iterable = NewLoan.objects.all()
 		return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
@@ -506,6 +536,7 @@ class LoanApplyWizard(SessionWizardView):
 			try:
 				person = Person.objects.get(user=user)
 			except:
+				person = None
 				pass
 			if person:
 				self.initial_dict.update({
