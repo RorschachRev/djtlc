@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from wwwtlc.add_new import SelectWithPop, MultipleSelectWithPop
 
 # some of the following models may need to be removed
@@ -182,6 +183,9 @@ class PaymentForm(forms.ModelForm):
 	class Meta:
 		model = LoanPaymentHistory
 		fields = ['pmt_total', 'interest_pmt', 'pmt_date']
+		widgets = {
+			'pmt_date': forms.DateInput(attrs={'class':'datepicker'}),
+		}
 		
 class FirstPaymentForm(forms.ModelForm):
 	class Meta:

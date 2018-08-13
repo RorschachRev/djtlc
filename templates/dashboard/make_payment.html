@@ -1,6 +1,14 @@
 {% extends '../base.html' %}
-
 {% block content %}
+
+
+<script>
+	$(function() {
+		$(".datepicker").datepicker({
+			dateFormat: 'yy-mm-dd',
+		});
+	});
+</script>
 <h1>Loan Payment Form:</h1>
 	<a href="/loan_payments" class="btn btn-default">Back</a>
 	
@@ -15,6 +23,7 @@
 	
 <script>
 	document.getElementById('id_pmt_total').setAttribute("onchange", "change_principal()");
+	document.getElementById('id_pmt_date').setAttribute("onchange", "change_principal()");
 	
 	function change_principal(){
 		var pmtTotal = document.getElementById("id_pmt_total").value;
@@ -33,9 +42,12 @@
 				var interestPmt = data.interest_calc
 				var principalPmt = pmtTotal - interestPmt
 				document.getElementById("id_interest_pmt").setAttribute("value", interestPmt);
-				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt + '</p>';
+				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt.toFixed(2) + '</p>';
 			}
 		})
 	};
 </script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 {% endblock content %}

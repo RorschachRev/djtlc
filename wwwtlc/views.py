@@ -371,7 +371,7 @@ def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate, conve
 	if conversion == 0:
 		date_delta = paid_date.date() - last_paid_date.date()
 	elif conversion ==1:
-		pd = datetime.datetime.strptime(paid_date, "%Y-%m-%d %H:%M:%S")
+		pd = datetime.datetime.strptime(paid_date, "%Y-%m-%d")
 		date_delta = pd.date() - last_paid_date.date()
 		
 	interest_accrued = date_delta.days * principal_bal * ((int_rate / 100) / 365)
