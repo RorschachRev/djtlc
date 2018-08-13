@@ -7,6 +7,35 @@
 	<form method="post">
 		{% csrf_token %}
 		{{ form.as_p }}
+		{% if form_name == 'PaymentForm' %}
+			<p><strong id='principal'>Principal Payment:</strong> </p>
+		{% endif %}
 		<input type="submit" value="Submit">
 	</form>
+	
+<script>
+	document.getElementById('id_pmt_total').setAttribute("onchange", "change_principal()");
+	
+	function change_principal(){
+		var pmtTotal = document.getElementById("id_pmt_total").value;
+		var pmtDate = document.getElementById("id_pmt_date").value;
+		document.getElementById("id_interest_pmt").removeAttribute("value");
+		
+		$.ajax({
+			type: "POST",
+			url: "/loan_payments/{{ loan.id }}",
+			data: {  
+				csrfmiddlewaretoken: "{{ csrf_token }}", //django needs this
+				'pmt_date': pmtDate,
+			},
+			timeout:0,
+			success: function(data){
+				var interestPmt = data.interest_calc
+				var principalPmt = pmtTotal - interestPmt
+				document.getElementById("id_interest_pmt").setAttribute("value", interestPmt);
+				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt + '</p>';
+			}
+		})
+	};
+</script>
 {% endblock content %}

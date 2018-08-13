@@ -11,6 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response, reverse
 
 import os
+import pytz
 import datetime
 import decimal as D
 
@@ -366,8 +367,13 @@ def certify_app(request, app_id):
 	return render(request, 'dashboard/workflow_detail.html', {'app': app})
 	
 # This is the function that calculates the interest accrued for loan payments	
-def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate):
-	date_delta = paid_date - last_paid_date
+def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate, conversion=0):
+	if conversion == 0:
+		date_delta = paid_date.date() - last_paid_date.date()
+	elif conversion ==1:
+		pd = datetime.datetime.strptime(paid_date, "%Y-%m-%d %H:%M:%S")
+		date_delta = pd.date() - last_paid_date.date()
+		
 	interest_accrued = date_delta.days * principal_bal * ((int_rate / 100) / 365)
 	return round(interest_accrued, 2)
 	
@@ -379,13 +385,20 @@ def loan_payments(request, loan_id='0'):
 		loan = NewLoan.objects.get(pk=loan_id)
 		try:
 			most_recent = LoanPaymentHistory.objects.filter(wallet=loan.loan_wallet).order_by('-pmt_date')[0].pmt_date
-			if request.method == 'POST':
+			if request.is_ajax():
+				form_name = 'PaymentForm'
+				pmt_date = request.POST['pmt_date']
+				interest_calc = calculate_interest(most_recent, pmt_date, loan.principal_balance, loan.loan_intrate_current, 1)
+				return JsonResponse({'interest_calc': interest_calc})
+			
+			elif request.method == 'POST' and not request.is_ajax():
 				form = PaymentForm(request.POST)
+				form_name = 'PaymentForm'
 				if form.is_valid():
 					obj = form.save(commit=False)
 					obj.wallet = loan.loan_wallet
 					obj.loan = loan
-					obj.interest_pmt = calculate_interest(most_recent, obj.pmt_date, loan.principal_balance, loan.loan_intrate_current)
+					obj.interest_pmt = calculate_interest(most_recent, obj.pmt_date, loan.principal_balance, loan.loan_intrate_current, 0)
 					obj.principal_pmt = obj.pmt_total - obj.interest_pmt
 					obj.save()
 					
@@ -399,10 +412,12 @@ def loan_payments(request, loan_id='0'):
 					return submit
 			else:
 				form = PaymentForm()
-			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+				form_name = 'PaymentForm'
+			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form, 'form_name': form_name})
 		except:
 			if request.method == 'POST':
 				form = FirstPaymentForm(request.POST)
+				form_name = 'FirstPaymentForm'
 				if form.is_valid():
 					obj = form.save(commit=False)
 					obj.wallet = loan.loan_wallet
@@ -418,7 +433,8 @@ def loan_payments(request, loan_id='0'):
 					return submit
 			else:
 				form = FirstPaymentForm()
-			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form})
+				form_name = 'FirstPaymentForm'
+			return render(request, 'dashboard/make_payment.html', {'loan':loan, 'form':form, 'form_name': form_name})
 	else:
 		loan_iterable = NewLoan.objects.all()
 		return render(request, 'dashboard/loan_payments.html', {'loan_iterable': loan_iterable})
