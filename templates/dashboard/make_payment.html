@@ -18,12 +18,13 @@
 		{% if form_name == 'PaymentForm' %}
 			<p><strong id='principal'>Principal Payment:</strong> </p>
 		{% endif %}
-		<input type="submit" value="Submit">
+		<input id="submit_button" type="submit" value="Submit" disabled>
 	</form>
 	
 <script>
 	document.getElementById('id_pmt_total').setAttribute("onchange", "change_principal()");
 	document.getElementById('id_pmt_date').setAttribute("onchange", "change_principal()");
+	var currDate = new Date();
 	
 	function change_principal(){
 		var pmtTotal = document.getElementById("id_pmt_total").value;
@@ -41,8 +42,13 @@
 			success: function(data){
 				var interestPmt = data.interest_calc
 				var principalPmt = pmtTotal - interestPmt
+				var newPmtDate = new Date(pmtDate)
 				document.getElementById("id_interest_pmt").setAttribute("value", interestPmt);
 				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt.toFixed(2) + '</p>';
+				
+				if (interestPmt >= 0 && principalPmt >= 0 && pmtTotal > 0 && newPmtDate >= currDate) {
+				document.getElementById('submit_button').disabled = false;
+			};
 			}
 		})
 	};

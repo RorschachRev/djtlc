@@ -27,7 +27,7 @@ with the ability to sort the data. The sort options will by 'by month', and 'by 
 				<td>${{ payment.principal_pmt | floatformat:2 }}</td>
 				<td>${{ payment.interest_pmt | floatformat:2}}</td>
 				<!--<td>{{ payment.loan.payment_due_date|ordinal }} of each month</td>--><!-- may want to add this later, though there is minor weirdness to consider -->
-				<td>{{ payment.pmt_date }}</td>
+				<td>{{ payment.pmt_date.date }}</td>
 			</tr>
 			{% endfor %}
 		</table>

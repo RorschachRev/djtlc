@@ -370,7 +370,7 @@ def certify_app(request, app_id):
 def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate, conversion=0):
 	if conversion == 0:
 		date_delta = paid_date.date() - last_paid_date.date()
-	elif conversion ==1:
+	elif conversion == 1:
 		pd = datetime.datetime.strptime(paid_date, "%Y-%m-%d")
 		date_delta = pd.date() - last_paid_date.date()
 		
