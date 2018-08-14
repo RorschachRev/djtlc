@@ -158,7 +158,7 @@ urlpatterns = [
         views.loan_payments,
         name='loan_payments'
 ),
-url(
+    url(
         r'^loan_payments/(?P<loan_id>[0-9]+)$',
         views.loan_payments,
         name='make_payment'
@@ -183,12 +183,17 @@ url(
         views.credit_verify,
         name='credit_verify'
 ),
-     url(
+    url(
+        r'credit_verify/(?P<app_id>[0-9]+)/$',
+        views.credit_verify_app,
+        name='credit_verify_app'
+),
+    url(
         r'^certify/$',
         views.certify,
         name='certify'
 ),
-     url(
+    url(
         r'^certify/(?P<app_id>[0-9]+)/$',
         views.certify_app,
         name='certify_app'
@@ -234,11 +239,10 @@ url(
         views.loan_accounting,
         name='loan_accounting'
 ),
-
-	url(
-		r'^pdf_done/(?P<app_id>[0-9]+)$',
-		views.pdfgenerate,
-		name='pdf_done'
+    url(
+        r'^pdf_done/(?P<app_id>[0-9]+)$',
+        views.pdfgenerate,
+        name='pdf_done'
 ),
 
 # Form URLs

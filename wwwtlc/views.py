@@ -362,7 +362,13 @@ def loan_accounting(request):
 	return render(request, 'dashboard/loan_accounting.html', {'payments': history_iterable})
 	
 def credit_verify(request):
-	return render(request, 'dashboard/credit_verify.html', {})
+	loan_apps = ApplicationSummary.objects.all().order_by('tier', '-submission_date')
+	return render(request, 'dashboard/credit_verify.html', {'apps': loan_apps})
+	
+def credit_verify_app(request, app_id):
+	app = ApplicationSummary.objects.get(pk=app_id)
+	status_list = app.STATUS_CHOICES[app.status+1:]
+	return render(request, 'dashboard/credit_verify_app.html', { 'status_list': status_list })
 	
 def certify(request):
 	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')

@@ -6,4 +6,27 @@
 It will act as a checklist of sorts for each 'in-progress' loan. This is also the page that will handle the 
 external-source documents. They will be Uploaded here, then Declared (to blockchain?), and Digested for our server
 records.</caption></pre>
+
+<table>
+	<tr>
+		<th>User</th>
+		<th>Property</th>
+		<th>Borrower</th>
+		<th>Tier</th>
+		<th>Status</th>
+		<th>Source</th>
+		<th>Date Last Modified</th>
+	</tr>
+	{% for app in apps %}
+	<tr>
+		<td>{{ app.user.username }}</td>
+		<td>{{ app.property.address }}</td>
+		<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+		<td>{{ app.get_tier_display }}</td>
+		<td>{{ app.get_status_display }}</td>
+		<td>{{ app.source }}</td>
+		<td>{{ app.submission_date }}</td>
+		<td><a href="/credit_verify/{{ app.id }}"><button>Steps Remaining</button></a></td>
+	{% endfor %}
+</table>
 {% endblock content %}

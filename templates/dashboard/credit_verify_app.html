@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Steps Remaining:</h1>
+<pre><caption>This is where the checklist will display based on the status of the current application. Currently it is just 
+a list of all the statuses that come after the status it is currently on.</caption></pre>
+<a href="/credit_verify" class="btn btn-default">Back</a>
+
+{% for status in status_list %}
+	<p>{{ status }}</p>
+{% endfor %}
+{% endblock content %}
