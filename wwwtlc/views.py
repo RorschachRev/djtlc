@@ -967,7 +967,7 @@ class ConversionWizard(SessionWizardView):
 		curr_date = datetime.datetime.now()
 		# calculation for payment_due_date, currently 15 days after loan is finalized
 		# may change in future. Depends on how TLC wants to calculate this date.
-		end_date = curr_date + datetime.timedelta(days=15)
+		due_date = curr_date + datetime.timedelta(days=15)
 		
 		# a, 0 = LoanTerms
 		# b, 1 = LoanWallet
@@ -1001,17 +1001,24 @@ class ConversionWizard(SessionWizardView):
 			)
 			new_contract.save()
 			
+			def payment_calc(Pv, r, n):
+				predec = 365/12
+				dec = D.Decimal(str(predec))
+				R = (1+(r/100/365))**(dec)-1
+				P = (Pv * R)/(1-(1+R)**(-n))
+				return round(P, 2)
+			
 			new_loan = loan(
 				user = a.application.user,
 				contract = Contract.objects.get(pk=1), # hardcoded for testing, will need changed
 				borrower = a.application.borrower,
 				coborrower = a.application.coborrower,
 				loan_terms = a,
-				# formula for payment_due calculation here:
-				# https://www.vertex42.com/ExcelArticles/amortization-calculation.html
-				payment_due = a.loan_amount * (((a.int_rate  / 100) * ((1+(a.int_rate / 100))**a.months_left)) / (((1+(a.int_rate / 100))**a.months_left) - 1)),
+				# formula for payment_due calculation here (interest daily):
+				#https://superuser.com/questions/871404/what-would-be-the-the-mathematical-equivalent-of-this-excel-formula-pmt
+				payment_due = payment_calc(a.loan_amount, a.int_rate, a.months_left),
 				# payment_due_date calculated above
-				payment_due_date = end_date.day,
+				payment_due_date = due_date.day,
 				payments_left = a.months_left,
 				principal_balance = a.loan_amount,
 				loan_intrate_current = a.int_rate,
