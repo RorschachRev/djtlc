@@ -119,7 +119,6 @@ def payhistory(request):
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
 	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-
 	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date')
 	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata, 'payments': payments })
 	
@@ -135,8 +134,6 @@ def wallet(request):
 	form=WalletForm()
 	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
 	
-# this function selects a specific loan associated with the user and displays just that one,
-# may not work as intended anymore. 
 def pay(request, loan_id, principal_paid=0):
 	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
 	blockdata=BC()
@@ -302,11 +299,24 @@ def manage_loan_forms(request, loan_id='0'):
 		except:
 			form = PaymentDueDateForm()
 			return render(request, 'dashboard/manage_loan_forms.html', {'form': form, 'loan': loan})
+	elif loan_id[:4] == 'pmd_':
+		loan = NewLoan.objects.get(pk=loan_id[4:])
+		try:
+			if request.method == 'POST':
+				form = PaymentDueForm(request.POST, instance=loan)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/manage_loan')
+			else:
+				form = PaymentDueForm(instance=loan)
+				return render(request, 'dashboard/manage_loan_forms.html', {'form': form, 'loan': loan})
+		except:
+			form = PaymentDueForm()
+			return render(request, 'dashboard/manage_loan_forms.html', {'form': form, 'loan': loan})
 	
 # PAYMENTS / ACCOUNTING
 ###################
-
-# Incomplete, will need work later		
+		
 def submit_loan(request, app_id='0'):
 	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
@@ -326,6 +336,7 @@ def submit_loan(request, app_id='0'):
 		
 	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
 	
+# TODO: Test this view on the blockchain to see if data can be pulled and displayed	
 def payment_history(request, loan_id=0):
 	if loan_id == 0:
 		loans = NewLoan.objects.all().order_by('id')
@@ -334,7 +345,7 @@ def payment_history(request, loan_id=0):
 		loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
 		blockdata=BC()
 		blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-		loaninfo.payment=0 #principal_paid
+		loaninfo.payment=0 #supposed to be principal_paid, hardcoded for testing
 		blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
 		loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
 		return render(request, 'dashboard/bc_payment_details.html', {'loan': loaninfo, 'blockdata':blockdata} )
@@ -365,8 +376,7 @@ def certify(request):
 def certify_app(request, app_id):
 	app = ApplicationSummary.objects.get(pk=app_id)
 	return render(request, 'dashboard/workflow_detail.html', {'app': app})
-	
-# This is the function that calculates the interest accrued for loan payments	
+		
 def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate, conversion=0):
 	if conversion == 0:
 		date_delta = paid_date.date() - last_paid_date.date()
@@ -492,7 +502,7 @@ def pdfgenerate(request, app_id):
 	# create a pdf
 	pisaStatus = pisa.CreatePDF(
 		html, dest=response, link_callback=link_callback)
-	# if error then show some funy view
+	# if error then show some funny view
 	if pisaStatus.err:
 		return HttpResponse('We had some errors <pre>' + html + '</pre>')
 	return response
@@ -690,8 +700,7 @@ class BasicWizard(NamedUrlSessionWizardView):
 			d = self.get_form(step='4', data=d_data).save(commit=False)
 			e = self.get_form(step='5', data=e_data).save(commit=False)
 			f = self.get_form(step='6', data=f_data).save(commit=False)
-			g = self.get_form(step='7', data=g_data).save(commit=False) # will need to add 'commit=False' when AcknowledgeAgree FK's get set automatically
-			
+			g = self.get_form(step='7', data=g_data).save(commit=False)
 			a.source = self.request.user
 			a.save()
 			
@@ -914,49 +923,6 @@ class StandardWizard(NamedUrlSessionWizardView):
 			)'''
 			
 		return render(self.request, 'pages/loan_apply_done.html')
-		
-# Form to Create a Loan
-# Is not permanent solution, once conversion method is working,
-# this formwizard will be removed
-class LoanWizard(SessionWizardView):
-	def done(self, form_list, **kwargs):
-		# a, 0 = BorrowerInfo
-		# b, 1 = LoanTerms
-		# c, 2 = Loan Wallet
-		# d, 3 = NewLoan
-		
-		a_data = self.storage.get_step_data('0')
-		a_valid = self.get_form(step='0', data=a_data).is_valid()
-		b_data = self.storage.get_step_data('1')
-		b_valid = self.get_form(step='1', data=b_data).is_valid()
-		c_data = self.storage.get_step_data('2')
-		c_valid = self.get_form(step='2', data=c_data).is_valid()
-		d_data = self.storage.get_step_data('3')
-		d_valid = self.get_form(step='3', data=d_data).is_valid()
-		
-		if (
-			a_valid and b_valid and
-			c_valid and d_valid
-		):
-			a = self.get_form(step='0', data=a_data).save(commit=False)
-			b = self.get_form(step='1', data=b_data).save()
-			c = self.get_form(step='2', data=c_data).save(commit=False)
-			d = self.get_form(step='3', data=d_data).save(commit=False)
-			
-			a.source = self.request.user
-			a.save()
-			
-			c.wallet = a.user
-			c.save()
-			
-			d.user = a.user
-			d.borrower = a
-			d.loan_terms = b
-			d.loan_wallet = c
-			
-			d.save()
-			
-		return HttpResponseRedirect('/loan_payments')
 		
 # Form to convert application into a loan
 class ConversionWizard(SessionWizardView):

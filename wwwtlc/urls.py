@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 
 from wwwtlc import views
 from wwwtlc.forms import *
-from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, LoanWizard, ConversionWizard
+from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, ConversionWizard
 
 from loan import views as views_loan
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm

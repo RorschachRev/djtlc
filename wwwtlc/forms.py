@@ -190,6 +190,14 @@ class FirstPaymentForm(forms.ModelForm):
 	class Meta:
 		model = LoanPaymentHistory
 		exclude = ['wallet', 'loan']
+		
+class PaymentDueForm(forms.ModelForm):
+	class Meta:
+		model = NewLoan
+		fields = ['payment_due']
+		labels = {
+			'payment_due': 'New Payment Due',
+		}
 
 class PaymentDueDateForm(forms.ModelForm):
 	class Meta:

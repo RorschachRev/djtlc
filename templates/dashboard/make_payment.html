@@ -18,12 +18,15 @@
 		{% if form_name == 'PaymentForm' %}
 			<p><strong id='principal'>Principal Payment:</strong> </p>
 			<input id="submit_button" type="submit" value="Submit" disabled>
+			<p id="warning" style="color: red"></p>
 		{% elif form_name == 'FirstPaymentForm' %}
 			<input id="submit_button" type="submit" value="Submit">
 		{% endif %}
 	</form>
 	
 <script>
+	document.getElementById('id_pmt_total').setAttribute("placeholder", {{ loan.payment_due }}.toFixed(2));
+	
 	document.getElementById('id_pmt_total').setAttribute("onchange", "change_principal()");
 	document.getElementById('id_pmt_date').setAttribute("onchange", "change_principal()");
 	var currDate = new Date();
@@ -48,9 +51,14 @@
 				document.getElementById("id_interest_pmt").setAttribute("value", interestPmt);
 				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt.toFixed(2) + '</p>';
 				
-				if (interestPmt >= 0 && principalPmt >= 0 && pmtTotal > 0 && newPmtDate >= currDate) {
-				document.getElementById('submit_button').disabled = false;
-			};
+				if (interestPmt > 0 && principalPmt >= 0 && pmtTotal > 0 && newPmtDate >= currDate) {
+					document.getElementById('submit_button').disabled = false;
+					document.getElementById('warning').innerHTML = ""
+				}
+				else{
+					document.getElementById('submit_button').disabled = true;
+					document.getElementById('warning').innerHTML = "Check that all inputs are correct"
+				}
 			}
 		})
 	};

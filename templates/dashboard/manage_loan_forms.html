@@ -2,7 +2,11 @@
 {% load humanize %}
 
 {% block content %}
-<h1>Change Payment Due Date:</h1>
+{% if 'pdd' in request.path %}
+	<h1>Change Payment Due Date:</h1>
+{% elif 'pmd' in request.path %}
+	<h1>Change Payment Due:</h1>
+{% endif %}
 <a href="/manage_loan" class="btn btn-default">Back</a>
 
 <h2>Loan ID: #{{ loan.id }}</h2>
