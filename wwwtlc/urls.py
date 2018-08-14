@@ -189,7 +189,7 @@ url(
         name='certify'
 ),
      url(
-        r'^certify/(?P<app_id>[0-9]+)$',
+        r'^certify/(?P<app_id>[0-9]+)/$',
         views.certify_app,
         name='certify_app'
 ),
