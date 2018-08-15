@@ -18,12 +18,18 @@
 	<br>
 	<br>
 	<h2><u>Property Information</u></h2>
+	{% if 'certify' in request.path %}
+		<p><strong>Source:</strong> {{ app.property.source }}</p>
+	{% endif %}
 	<p><strong>Address:</strong> {{ app.property.address }}</p>
 	<p><strong>Number of Units:</strong> {{ app.property.no_units }}</p>
 	<p><strong>Year Built:</strong> {{ app.property.year_built }}</p>
 	{% if app.property.construction_loan.total %}
 		<p><u><strong>Construction Loan:</strong> {{ app.property.construction_loan }}</u></p>
 		<div style="margin-left: 25px;">
+			{% if 'certify' in request.path %}
+				<p><strong>Source:</strong> {{ app.property.construction_loan.source }}</p>
+			{% endif %}
 			<p><strong>Year Acquired:</strong> {{ app.property.construction_loan.year_acquired }}</p>
 			<p><strong>Original Cost:</strong> {{ app.property.construction_loan.original_cost }}</p>
 			<p><strong>Existing Liens Amount:</strong> {{ app.property.construction_loan.amt_existing_liens }}</p>
@@ -38,12 +44,18 @@
 	
 	<br>
 	<br>
-	<h2><u>Borrower Information</u></h2>
+	<h2><u>Borrower Information</u></h2>	
+	{% if 'certify' in request.path %}
+		<p><strong>Source:</strong> {{ app.borrower.source }}</p>
+	{% endif %}
 	<p><strong>Application Type:</strong> {{ app.borrower.get_application_type_display }}</p>
 	<p><strong>First Name:</strong> {{ app.borrower.name_first }}</p>
 	<p><strong>Last Name:</strong> {{ app.borrower.name_last }}</p>
 	<p><u><strong>Business Name:</strong> {{ app.borrower.business.bus_name }}</u></p>
-		<div style="margin-left:25px">
+		<div style="margin-left:25px">	
+			{% if 'certify' in request.path %}
+				<p><strong>Source:</strong> {{ app.borrower.business.source }}</p>
+			{% endif %}
 			<p><strong>Business Description:</strong> {{ app.borrower.business.bus_description }}</p>
 			<p><strong>Income:</strong> ${{ app.borrower.business.income|floatformat:2}}</p>
 			<p><strong>Rent:</strong> ${{ app.borrower.business.rent|floatformat:2 }}</p>
@@ -98,7 +110,10 @@
 		</div>
 	{% endif %}
 	<p><u><strong>Declarations:</strong> {{ app.borrower.declarations }}</u></p>
-		<div style="margin-left: 25px">
+		<div style="margin-left: 25px">	
+			{% if 'certify' in request.path %}
+				<p><strong>Source:</strong> {{ app.borrower.declarations.source }}</p>
+			{% endif %}
 			<p><strong>Outstanding Judgements:</strong> {{ app.borrower.declarations.outstanding_judgements }}</p>
 			<p><strong>Bankrupt:</strong> {{ app.borrower.declarations.bankrupt }}</p>
 			<p><strong>Foreclosure:</strong> {{ app.borrower.declarations.forclosed }}</p>
@@ -119,10 +134,16 @@
 			{% endif %}
 		</div>
 	{% if app.tier == 1 %}
-		<p><u><strong>Asset Summary</strong></u></p>
+		<p><u><strong>Asset Summary</strong></u></p>	
+			{% if 'certify' in request.path %}
+				<p><strong>Source:</strong> {{ app.asset_summary.source }}</p>
+			{% endif %}
 			<div style="margin-left: 25px;">
 				<p><u><strong>Employment Income Information:</strong></u></p>
-				<div style="margin-left: 25px;">
+				<div style="margin-left: 25px;">	
+					{% if 'certify' in request.path %}
+						<p><strong>Source:</strong> {{ app.asset_summary.employment_income.source }}</p>
+					{% endif %}
 					<p><strong>Name of Employer:</strong> {{ app.asset_summary.employment_income.name }}</p>
 					<p><strong>Address:</strong> {{ app.asset_summary.employment_income.address }}</p>
 					<p><strong>Self Employment:</strong> {{ app.asset_summary.employment_income.self_employed }}</p>
@@ -150,14 +171,20 @@
 					{% endif %}
 				</div>
 				<p><u><strong>Bank Account</strong></u></p>
-				<div style="margin-left: 25px">
+				<div style="margin-left: 25px">	
+					{% if 'certify' in request.path %}
+						<p><strong>Source:</strong> {{ app.asset_summary.acct1.source }}</p>
+					{% endif %}
 					<p><strong>Name:</strong> {{ app.asset_summary.acct1.name }}</p>
 					<p><strong>Branch Address:</strong> {{ app.asset_summary.acct1.address }}</p>
 					<p><strong>Account Number:</strong> {{ app.asset_summary.acct1.acct_no }}</p>
 					<p><strong>Amount:</strong> ${{ app.asset_summary.acct1.amount|floatformat:2 }}</p>
 				</div>
 				<p><u><strong>Managed Property</strong></u></p>
-				<div style="margin-left: 25px">
+				<div style="margin-left: 25px">	
+					{% if 'certify' in request.path %}
+						<p><strong>Source:</strong> {{ app.asset_summary.managed_property.source }}</p>
+					{% endif %}
 					<p><strong>Schedule of Real Estate:</strong> {{ app.asset_summary.managed_property.real_estate_schedule }}</p>
 					<p><strong>Address of Property:</strong> {{ app.asset_summary.managed_property.property_address }}</p>
 					<p><strong>Type of Property:</strong> {{ app.asset_summary.managed_property.property_type }}</p>
@@ -186,7 +213,10 @@
 	
 	<br>
 	<br>
-	<h2><u>Credit Request</u></h2>
+	<h2><u>Credit Request</u></h2>	
+	{% if 'certify' in request.path %}
+		<p><strong>Source:</strong> {{ credit.source }}</p>
+	{% endif %}
 	<p><strong>Borrower:</strong> {{ credit.borrower }}</p>
 	<p><strong>Amount Requested:</strong> ${{ credit.amt_requested|floatformat:2 }}</p>
 	<p><strong>Term Requested:</strong> {{ credit.term_requested }}</p>
@@ -197,7 +227,10 @@
 	
 	<br>
 	<br>
-	<h2><u>Acknowledge / Agree</u></h2>
+	<h2><u>Acknowledge / Agree</u></h2>	
+	{% if 'certify' in request.path %}
+		<p><strong>Source:</strong> {{ app.acknowledge.source }}</p>
+	{% endif %}
 	{% if app.acknowledge.borrower %}
 		<p><strong>Borrower:</strong> {{ app.acknowledge.borrower }}</p>
 	{% elif app.acknowledge.coborrower %}

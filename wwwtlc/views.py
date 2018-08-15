@@ -381,7 +381,8 @@ def certify(request):
 	
 def certify_app(request, app_id):
 	app = ApplicationSummary.objects.get(pk=app_id)
-	return render(request, 'dashboard/workflow_detail.html', {'app': app})
+	credit = CreditRequest.objects.get(application=app)
+	return render(request, 'dashboard/workflow_detail.html', {'app': app, 'credit': credit})
 		
 def calculate_interest(last_paid_date, paid_date, principal_bal, int_rate, conversion=0):
 	if conversion == 0:
