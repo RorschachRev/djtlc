@@ -324,6 +324,7 @@ def manage_loan_forms(request, loan_id='0'):
 # PAYMENTS / ACCOUNTING
 ###################
 		
+# TODO: write views to handle the BC/Deed logic		
 def submit_loan(request, app_id='0'):
 	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
@@ -340,6 +341,7 @@ def submit_loan(request, app_id='0'):
 		app = ApplicationSummary.objects.get(pk=app_id[3:])
 		credit = CreditRequest.objects.get(application=app)
 		return render(request, 'dashboard/confirm_app_info.html', {'app': app, 'credit': credit})
+	# edit loan_terms
 	elif app_id[:3] != 0 and app_id[:3] == 'elt':
 		loan_terms = LoanTerms.objects.get(application=app_id[3:])
 		try:
@@ -354,12 +356,15 @@ def submit_loan(request, app_id='0'):
 		except:
 			form = LoanTermsForm()
 			return render(request, 'dashboard/submit_forms.html', {'form': form, 'loan_terms': loan_terms})
+	# edit deed
 	elif app_id[:3] != 0 and app_id[:3] == 'edd':
 		success = 'edd works'
 		return render(request, 'dashboard/submit_forms.html', {'success': success})
+	# publish loan_terms
 	elif app_id[:3] != 0 and app_id[:3] == 'pbl':
 		loan_terms = LoanTerms.objects.get(application=app_id[3:])
 		return render(request, 'dashboard/submit_forms.html', {'loan_terms': loan_terms})
+	# publish deed
 	elif app_id[:3] != 0 and app_id[:3] == 'pbd':
 		success = 'pbd works'
 		return render(request, 'dashboard/submit_forms.html', {'success': success})
@@ -967,10 +972,8 @@ class ConversionWizard(SessionWizardView):
 		loan = NewLoan
 		contract = Contract
 		# Used to calculate payment_due_date - Removed,
-		# it should allow the LO to set the due date manually.
+		# it should allow the LO to set the due date manually instead.
 		# curr_date = datetime.datetime.now()
-		# calculation for payment_due_date, currently 15 days after loan is finalized
-		# may change in future. Depends on how TLC wants to calculate this date.
 		# due_date = curr_date + datetime.timedelta(days=15)
 		
 		# a, 0 = LoanTerms
@@ -996,14 +999,14 @@ class ConversionWizard(SessionWizardView):
 			b.wallet = a.application.user
 			b.save()
 			
-			# For testing, assigns a contract to a newly created loan.
-			# This will need changed as we recieve more data on
-			# the contract model.
-			new_contract = contract(
-				source = a.application.user,
-				refkey = 1,
-			)
-			new_contract.save()
+			#~ # For testing, assigns a contract to a newly created loan.
+			#~ # This will need changed as we recieve more data on
+			#~ # the contract model.
+			#~ new_contract = contract(
+				#~ source = a.application.user,
+				#~ refkey = 1,
+			#~ )
+			#~ new_contract.save()
 			
 			#~ def payment_calc(Pv, r, n):
 				#~ predec = 365/12

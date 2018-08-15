@@ -21,6 +21,7 @@
 	</form>
 {% elif 'pbl' in request.path %}
 	<h2><u>Loan Terms:</u></h2>
+	<p><strong>Mortgage Type:</strong> {{ loan_terms.get_mortgage_applied_display }}</p>
 	<p><strong>Agency Case Number:</strong> #{{ loan_terms.agency_case_no }}</p>
 	<p><strong>Lender Case Number:</strong> #{{ loan_terms.lender_case_no }}</p>
 	<p><strong>Application ID:</strong> #{{ loan_terms.application.id }}</p>
@@ -43,7 +44,7 @@
 	</fieldset>
 	<br>
 	<br>
-	<input id="submitButton" type="submit" value="Submit" disabled>
+	<input id="submitButton" type="submit" value="Publish" disabled>
 {% endif %}
 <script type="text/javascript">
 	// Small script to disable 'submit' if radio button says 'no'
