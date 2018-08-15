@@ -204,7 +204,12 @@ urlpatterns = [
         name='submit_loan'
 ),
     url(
-        r'^submit_loan/(?P<app_id>[c2l0-9]+)/convert$',
+        r'^submit_loan/(?P<app_id>[a-z0-9]+)$',
+        views.submit_loan,
+        name='confirm_app_info'
+),
+    url(
+        r'^submit_loan/(?P<app_id>[a-z0-9]+)/convert$',
         ConversionWizard.as_view(
             [
                 LoanTermsForm,
@@ -213,11 +218,6 @@ urlpatterns = [
             template_name='dashboard/convert_to_loan.html'
         ),
         name='convert_to_loan'
-),
-    url(
-        r'^submit_loan/(?P<app_id>[c2l0-9]+)$',
-        views.submit_loan,
-        name='confirm_app_info'
 ),
     url(
         r'^manage_loan/$',

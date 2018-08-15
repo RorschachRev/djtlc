@@ -8,11 +8,11 @@ into the final version, as well as what source that data came from. Then, the st
 terms of the loan that will determine interest rate, principal owed, and payment due date, to name a couple items.</caption></pre>
 
 <h2><u>Submitted Applications</u></h2>
-	{% if converted %}
-		{% if convert_vis == True%}
-			<a href="/submit_loan/?convert_vis=0">Hide Converted Applications</a>
+	{% if finalized %}
+		{% if finalized_vis == True%}
+			<a href="/submit_loan/?finalized_vis=0">Hide Finalized Applications</a>
 		{% else %}
-			<a href="/submit_loan/?convert_vis=1">View Converted Applications</a>
+			<a href="/submit_loan/?finalized_vis=1">View Finalized Applications</a>
 		{% endif %}
 	{% endif %}
 	
@@ -71,11 +71,10 @@ terms of the loan that will determine interest rate, principal owed, and payment
 	{% else %}
 		<p>There are no Standard Applications</p>
 	{% endif %}
-	{% if convert_vis %}
 		<br>
 		<br>
-		{% if converted %}
 		<h2>Converted Applications:</h2>
+		{% if converted %}
 			<table>
 				<tr>
 					<th>User</th>
@@ -94,8 +93,13 @@ terms of the loan that will determine interest rate, principal owed, and payment
 					<td>{{ app.get_status_display }}</td>
 					<td>{{ app.submission_date }}</td>
 					<td>{{ app.source }}</td>
+					<td><a href="elt{{ app.id }}">Edit Loan Terms</a></td>
+					<td><a href="edd{{ app.id }}">Edit Deed</a></td>
+					<td><a href="pbl{{ app.id }}"><button>Publish Loan</button></a></td>
+					<td><a href="pbd{{ app.id }}"><button>Publish Deed</button></a></td>
 				{% endfor %}
 			</table>
+		{% else %}
+			<p>There are no Converted Applications</p>
 		{% endif %}
-	{% endif %}
 {% endblock content %}

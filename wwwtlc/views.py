@@ -69,7 +69,14 @@ def account(request):
 def signup(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
-		if form.is_valid():
+		if form.is_valid(): #~ and 'admin' in request.path: # Possible solution to admin/user signup
+			#~ form.save()
+			#~ username = form.cleaned_data.get('username')
+			#~ raw_password = form.cleaned_data.get('password1')
+			#~ user = authenticate(username=username, password=raw_password)
+			#~ login(request, user)
+			#~ return redirect('home')
+		#~ elif form.is_valid():
 			obj = form.save(commit=False)
 			x = User.objects.values('id')
 			z = []
@@ -323,18 +330,41 @@ def submit_loan(request, app_id='0'):
 	converted = ApplicationSummary.objects.filter(tier=2).order_by('-submission_date')
 	
 	if request.method == 'GET':
-		convert_vis = request.GET.get('convert_vis')
-		if convert_vis == '0':
-			convert_vis = False
-		elif convert_vis == '1':
-			convert_vis = True
+		finalized_vis = request.GET.get('finalized_vis')
+		if finalized_vis == '0':
+			finalized_vis = False
+		elif finalized_vis == '1':
+			finalized_vis = True
 	
 	if app_id[:3] != 0 and app_id[:3] == 'c2l':
 		app = ApplicationSummary.objects.get(pk=app_id[3:])
 		credit = CreditRequest.objects.get(application=app)
 		return render(request, 'dashboard/confirm_app_info.html', {'app': app, 'credit': credit})
+	elif app_id[:3] != 0 and app_id[:3] == 'elt':
+		loan_terms = LoanTerms.objects.get(application=app_id[3:])
+		try:
+			if request.method == 'POST':
+				form = LoanTermsForm(request.POST, instance=loan_terms)
+				if form.is_valid():
+					form.save()
+					return HttpResponseRedirect('/submit_loan')
+			else:
+				form = LoanTermsForm(instance=loan_terms)
+				return render(request, 'dashboard/submit_forms.html', {'form': form, 'loan_terms': loan_terms})
+		except:
+			form = LoanTermsForm()
+			return render(request, 'dashboard/submit_forms.html', {'form': form, 'loan_terms': loan_terms})
+	elif app_id[:3] != 0 and app_id[:3] == 'edd':
+		success = 'edd works'
+		return render(request, 'dashboard/submit_forms.html', {'success': success})
+	elif app_id[:3] != 0 and app_id[:3] == 'pbl':
+		loan_terms = LoanTerms.objects.get(application=app_id[3:])
+		return render(request, 'dashboard/submit_forms.html', {'loan_terms': loan_terms})
+	elif app_id[:3] != 0 and app_id[:3] == 'pbd':
+		success = 'pbd works'
+		return render(request, 'dashboard/submit_forms.html', {'success': success})
 		
-	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'convert_vis': convert_vis})
+	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'finalized_vis': finalized_vis})
 	
 # TODO: Test this view on the blockchain to see if data can be pulled and displayed	
 def payment_history(request, loan_id=0):
@@ -936,11 +966,12 @@ class ConversionWizard(SessionWizardView):
 	def done(self, form_list, **kwargs):
 		loan = NewLoan
 		contract = Contract
-		# Used to calculate payment_due_date
-		curr_date = datetime.datetime.now()
+		# Used to calculate payment_due_date - Removed,
+		# it should allow the LO to set the due date manually.
+		# curr_date = datetime.datetime.now()
 		# calculation for payment_due_date, currently 15 days after loan is finalized
 		# may change in future. Depends on how TLC wants to calculate this date.
-		due_date = curr_date + datetime.timedelta(days=15)
+		# due_date = curr_date + datetime.timedelta(days=15)
 		
 		# a, 0 = LoanTerms
 		# b, 1 = LoanWallet
@@ -974,33 +1005,33 @@ class ConversionWizard(SessionWizardView):
 			)
 			new_contract.save()
 			
-			def payment_calc(Pv, r, n):
-				predec = 365/12
-				dec = D.Decimal(str(predec))
-				R = (1+(r/100/365))**(dec)-1
-				P = (Pv * R)/(1-(1+R)**(-n))
-				return round(P, 2)
+			#~ def payment_calc(Pv, r, n):
+				#~ predec = 365/12
+				#~ dec = D.Decimal(str(predec))
+				#~ R = (1+(r/100/365))**(dec)-1
+				#~ P = (Pv * R)/(1-(1+R)**(-n))
+				#~ return round(P, 2)
 			
-			new_loan = loan(
-				user = a.application.user,
-				contract = Contract.objects.get(pk=1), # hardcoded for testing, will need changed
-				borrower = a.application.borrower,
-				coborrower = a.application.coborrower,
-				loan_terms = a,
-				# formula for payment_due calculation here (interest daily):
-				#https://superuser.com/questions/871404/what-would-be-the-the-mathematical-equivalent-of-this-excel-formula-pmt
-				payment_due = payment_calc(a.loan_amount, a.int_rate, a.months_left),
-				# payment_due_date calculated above
-				payment_due_date = due_date.day,
-				payments_left = a.months_left,
-				principal_balance = a.loan_amount,
-				loan_intrate_current = a.int_rate,
-				principal_paid = 0, # will be 0 on creation of loan
-				interest_paid = 0, # will be 0 on creation of loan
-				loan_wallet = b,
-				TLC_balance = 0, # unsure of what this will be, ask Ian
-			)
-			new_loan.save()
+			#~ new_loan = loan(
+				#~ user = a.application.user,
+				#~ contract = Contract.objects.get(pk=1), # hardcoded for testing, will need changed
+				#~ borrower = a.application.borrower,
+				#~ coborrower = a.application.coborrower,
+				#~ loan_terms = a,
+				#~ # formula for payment_due calculation here (interest daily):
+				#~ #https://superuser.com/questions/871404/what-would-be-the-the-mathematical-equivalent-of-this-excel-formula-pmt
+				#~ payment_due = payment_calc(a.loan_amount, a.int_rate, a.months_left),
+				#~ # payment_due_date calculated above
+				#~ payment_due_date = due_date.day,
+				#~ payments_left = a.months_left,
+				#~ principal_balance = a.loan_amount,
+				#~ loan_intrate_current = a.int_rate,
+				#~ principal_paid = 0, # will be 0 on creation of loan
+				#~ interest_paid = 0, # will be 0 on creation of loan
+				#~ loan_wallet = b,
+				#~ TLC_balance = 0, # unsure of what this will be, ask Ian
+			#~ )
+			#~ new_loan.save()
 			
 			a.application.status = 12
 			a.application.tier = 2

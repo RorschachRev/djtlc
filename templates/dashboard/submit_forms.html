@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if 'elt' in request.path %}
+	<h1>Edit Loan Terms:</h1>
+{% elif 'edd' in request.path %}
+	<h1>Edit Deed:</h1>
+{% elif 'pbl' in request.path %}
+	<h1>Publish Loan to Blockchain:</h1>
+{% elif 'pbd' in request.path %}
+	<h1>Publish Deed to Blockchain:</h1>
+{% endif %}
+<a href="/submit_loan" class="btn btn-default">Back</a><br>
+<br>
+<br>
+{% if 'e' in request.path %}
+	<form method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Submit">
+	</form>
+{% elif 'pbl' in request.path %}
+	<h2><u>Loan Terms:</u></h2>
+	<p><strong>Agency Case Number:</strong> #{{ loan_terms.agency_case_no }}</p>
+	<p><strong>Lender Case Number:</strong> #{{ loan_terms.lender_case_no }}</p>
+	<p><strong>Application ID:</strong> #{{ loan_terms.application.id }}</p>
+	<p><strong>Loan Amount:</strong> ${{ loan_terms.loan_amount|floatformat:2 }}</p>
+	<p><strong>Interest Rate:</strong> {{ loan_terms.int_rate }}%</p>
+	<p><strong>Months Left:</strong> {{ loan_terms.months_left }}</p>
+	<p><strong>Amortization Type:</strong> {{ loan_terms.get_amortization_type_display }}</p>
+	<p><strong>Approval Date:</strong> {{ loan_terms.approval_date }}</p>
+	<br>
+	<p>Is this information correct?</p>
+	<fieldset>
+		<div>
+			<input type="radio" id="info_correct" name="safeguard" />
+			<label for="info_correct">Yes</label>
+		</div>
+		<div>
+			<input type="radio" id="info_incorrect" name="safeguard" checked />
+			<label for="info_incorrect">No</label>
+		</div>
+	</fieldset>
+	<br>
+	<br>
+	<input id="submitButton" type="submit" value="Submit" disabled>
+{% endif %}
+<script type="text/javascript">
+	// Small script to disable 'submit' if radio button says 'no'
+	window.onload = function() {
+		var correct = document.getElementById('info_correct');
+		var incorrect = document.getElementById('info_incorrect');
+		
+		correct.onclick = check_safeguard;
+		incorrect.onclick = check_safeguard;
+	};
+	
+	function check_safeguard() {
+		if (document.getElementById('info_correct').checked === true){
+			document.getElementById('submitButton').disabled = false;
+		}
+		else {
+			document.getElementById('submitButton').disabled = true;
+		}
+	};
+</script>
+{% endblock content %}
