@@ -20,7 +20,7 @@
 {% for group in user.groups.all %}
 	{% if group.name == 'Admin' %}
 		<ul>
-			<li><a href="add_vendor/">Add Vendor</a></li>
+			<li><a href="/add_vendor">Add Vendor</a></li>
 		</ul>
 	{% endif %}
 {% endfor %}
