@@ -48,24 +48,64 @@
 	<br>
 	<br>
 	<input id="submitButton" type="submit" value="Publish" disabled>
-{% endif %}
-<script type="text/javascript">
-	// Small script to disable 'submit' if radio button says 'no'
-	window.onload = function() {
-		var correct = document.getElementById('info_correct');
-		var incorrect = document.getElementById('info_incorrect');
+	<script type="text/javascript">
+		// Small script to disable 'submit' if radio button says 'no'
+		window.onload = function() {
+			var correct = document.getElementById('info_correct');
+			var incorrect = document.getElementById('info_incorrect');
+			
+			correct.onclick = check_safeguard;
+			incorrect.onclick = check_safeguard;
+		};
 		
-		correct.onclick = check_safeguard;
-		incorrect.onclick = check_safeguard;
-	};
-	
-	function check_safeguard() {
-		if (document.getElementById('info_correct').checked === true){
-			document.getElementById('submitButton').disabled = false;
+		function check_safeguard() {
+			if (document.getElementById('info_correct').checked === true){
+				document.getElementById('submitButton').disabled = false;
+			}
+			else {
+				document.getElementById('submitButton').disabled = true;
+			}
+		};
+	</script>
+{% elif 'pbd' in request.path %}
+	<script src="https://wzrd.in/standalone/buffer"></script>
+	<script src="https://unpkg.com/ipfs-api@9.0.0/dist/index.js"
+	integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB"
+	crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		function upload() {
+		const reader = new FileReader();
+		reader.onloadend = function() {
+			const ipfs = window.IpfsApi('localhost', 5001) // Connect to IPFS
+			const buf = buffer.Buffer(reader.result) // Convert data into buffer
+			ipfs.files.add(buf, (err, result) => { // Upload buffer to IPFS
+				if(err) {
+					console.error(err)
+					return
+				}
+				let url = `https://ipfs.io/ipfs/${result[0].hash}`
+				console.log(`Url --> ${url}`)
+				document.getElementById("url").innerHTML= url
+				document.getElementById("url").href= url
+				document.getElementById("output").src = url
+			})
 		}
-		else {
-			document.getElementById('submitButton').disabled = true;
+		const photo = document.getElementById("photo");
+		reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
 		}
-	};
-</script>
+	</script>
+	<form action="/">
+		<fieldset>
+			<legend>Upload photo</legend>
+			<input type="file" name="photo" id="photo">
+			<button type="button" onclick="upload()">Upload</button>
+		</fieldset>
+	</form>
+	</br>
+	</br>
+	<a id="url"></a>
+	</br>
+	</br>
+	<img id="output">
+{% endif %}
 {% endblock content %}
