@@ -68,6 +68,18 @@
 		};
 	</script>
 {% elif 'pbd' in request.path %}
+<!-- 
+	Beginning of IPFS File Upload, content found on this article:
+		- https://medium.com/@angellopozo/uploading-an-image-to-ipfs-e1f65f039da4
+-->
+	
+	<form action="/">
+		<fieldset>
+			<legend>Upload photo</legend>
+			<input type="file" name="photo" id="photo">
+			<button type="button" onclick="upload()">Upload</button>
+		</fieldset>
+	</form>	
 	<script src="https://wzrd.in/standalone/buffer"></script>
 	<script src="https://unpkg.com/ipfs-api@9.0.0/dist/index.js"
 	integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB"
@@ -94,13 +106,6 @@
 		reader.readAsArrayBuffer(photo.files[0]); // Read Provided File
 		}
 	</script>
-	<form action="/">
-		<fieldset>
-			<legend>Upload photo</legend>
-			<input type="file" name="photo" id="photo">
-			<button type="button" onclick="upload()">Upload</button>
-		</fieldset>
-	</form>
 	</br>
 	</br>
 	<a id="url"></a>

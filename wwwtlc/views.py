@@ -39,7 +39,7 @@ def home(request):
 	if user.is_staff:
 		return render(request, 'dashboard/home.html', {})
 	else:
-		return render(request, 'pages/home.html')
+		return render(request, 'pages/home.html', {})
 				
 def account(request):
 	user = request.user
@@ -69,14 +69,7 @@ def account(request):
 def signup(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
-		if form.is_valid(): #~ and 'admin' in request.path: # Possible solution to admin/user signup
-			#~ form.save()
-			#~ username = form.cleaned_data.get('username')
-			#~ raw_password = form.cleaned_data.get('password1')
-			#~ user = authenticate(username=username, password=raw_password)
-			#~ login(request, user)
-			#~ return redirect('home')
-		#~ elif form.is_valid():
+		if form.is_valid():
 			obj = form.save(commit=False)
 			x = User.objects.values('id')
 			z = []
@@ -103,7 +96,7 @@ def test(request):
 	
 	
 '''##################################################
-# User Views - mostly unused in current state
+# User Views
 ##################################################'''
 def loan(request):
 	loan_iterable = NewLoan.objects.filter(user=request.user)
@@ -498,6 +491,12 @@ def loan_details(request, loan_id):
 	else:
 		loan = NewLoan.objects.get(pk=loan_id)
 		return render(request, 'dashboard/loan_details.html', {'loan': loan})
+		
+'''##################################################
+Admin Views
+##################################################'''
+def add_vendor(request):
+	return render(request, 'admin/add_vendor.html', {})
 	
 '''##################################################
 PDF Generation Views

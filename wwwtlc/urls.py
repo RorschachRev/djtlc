@@ -112,7 +112,7 @@ urlpatterns = [
         name='pay'
 ),
 
-# Loan Officer URLs
+# Dashboard URLs
     url(
         r'^loan_requests/$',
         views.loan_requests,
@@ -243,6 +243,13 @@ urlpatterns = [
         r'^pdf_done/(?P<app_id>[0-9]+)$',
         views.pdfgenerate,
         name='pdf_done'
+),
+
+# Admin URLs
+    url(
+        r'^add_vendor/$',
+        views.add_vendor,
+        name='add_vendor'
 ),
 
 # Form URLs
