@@ -20,6 +20,9 @@
 		<input type="submit" value="Submit">
 	</form>
 {% elif 'pbl' in request.path %}
+	<p><strong>Loan Wallet:</strong> </p>
+	<br>
+	<br>
 	<h2><u>Loan Terms:</u></h2>
 	<p><strong>Mortgage Type:</strong> {{ loan_terms.get_mortgage_applied_display }}</p>
 	<p><strong>Agency Case Number:</strong> #{{ loan_terms.agency_case_no }}</p>

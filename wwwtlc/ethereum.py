@@ -50,6 +50,10 @@ class BC():
 		jsondata={"jsonrpc":"2.0","method":"eth_call","params":[params , "latest"],"id":self.network_id}	
 		r = requests.post( url, json=jsondata )
 		return r.json()
+		
+	# Alex
+	'''def check_deed(time.sleep=30):
+		return false'''
 
 if __name__ == '__main__':
 	resp= BC()
