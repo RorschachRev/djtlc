@@ -7,7 +7,7 @@
 	<h2>User : {{ app.user.username }}</h2>
 	<h3>Address : {{ app.property.property_address }}</h3>
 	<h3>Date Last Modified: ({{ app.submitted }})</h3>
-	<h3>Contact: {{ app.contact.last_name }}, {{ app.contact.first_name }}</h3>
+	<h3>Contact: {{ app.contact.name_last }}, {{ app.contact.name_first }}</h3>
 	<h3>Desired Mortgage Amount: ${{ app.desired_mortgage.amount_desired | floatformat:2 }}</h3>
 	<form method="post">
 		{% csrf_token %}

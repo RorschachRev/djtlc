@@ -221,13 +221,13 @@ def workflow_request(request, app_id):
 	if app_id[:4] == 'req_':
 		app = app_id[4:]
 		app = NewRequestSummary.objects.get(pk=app)
-		
 		try:
 			if request.method == 'POST':
 				form = ChangeReqForm(request.POST, instance=app)
 				if form.is_valid():
 					form.save()
 					return HttpResponseRedirect('/workflow')
+
 			else:
 				form = ChangeReqForm(instance=app)
 				return render(request, 'dashboard/wf_request.html', {'app': app, 'form': form})
@@ -242,7 +242,6 @@ def workflow_request(request, app_id):
 	elif app_id[:4] == 'cht_':
 		app = app_id[4:]
 		app = ApplicationSummary.objects.get(pk=app)
-		
 		try:
 			if request.method == 'POST':
 				form = AppTierForm(request.POST, instance=app)
