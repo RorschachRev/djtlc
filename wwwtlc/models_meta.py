@@ -10,6 +10,11 @@ from wwwtlc.models_loan_apply import Address
 #Extend User to include Wallet FK_ID
 
 
+# I am still unsure how exactly all of these models will fit into the schema
+# it may be until we have data populating these tables before I understand it
+# although I know it's mostly supposed to hold externally acquired data, which
+# we don't know what it will look like.
+
 #NoSQL Section
 class Contract(models.Model):
 	source = models.ForeignKey(User, null=True, blank=True)
@@ -52,6 +57,8 @@ class Documents(models.Model):
 
 
 #Structured Data
+# Currently this model isn't used anywhere, is it still necessary?
+# Should it be added to Workflow? Certify? Credit and Verify?
 class Verified(models.Model):
 	ver_none = 0
 	ver_ID = 1
@@ -82,6 +89,10 @@ class Verified(models.Model):
 		return str(self.VERIFIED_CHOICES[self.verified_level]) + ' ' + str(z)
 		
 
+# I remember talking about this model, but still don't understand where
+# it fits in other than to hold 'account' information about each user.
+# Is this the model that we will filter all users and staff members, and if so
+# how should we approach that task?
 # Will need to contain all FK's for every BorrowerInfo
 class Person(models.Model):
 	user = models.OneToOneField(User, blank=True, null=True)
@@ -102,6 +113,7 @@ class Person(models.Model):
 	def __str__(self):
 		return self.name_first + ' ' + self.name_last
 		
+# The BLOCK_CHOICES need changed, what values should it display?		
 class Wallet(models.Model):
 	BLOCK_CHOICES = (
 		(0, 'eth'),

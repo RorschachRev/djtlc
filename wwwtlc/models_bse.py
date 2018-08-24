@@ -7,6 +7,11 @@ from django.contrib.auth.models import User
 
 from wwwtlc.models_loan_apply import Address
 
+# Again, like the models_loan_apply.py, what values should I put
+# for 'max_length' and such?
+# Also, is there a better way to implement the 'Declarations' model
+# other than just having a bunch of boolean fields?
+
 # Models included in BOTH Basic and Standard applications
 class BusinessInfo(models.Model):
 	source = models.ForeignKey(User)

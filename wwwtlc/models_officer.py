@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from wwwtlc.models_meta import Wallet, Person, Contract
 from wwwtlc.models_bse import ApplicationSummary, BorrowerInfo
 
+# Is this table necessary?
+# I think it could be useful if attached to either the LoanTerms model,
+# or a summary table for loans
 class LenderInfo(models.Model):
 	DECISION_CHOICES = (
 		(0, 'Approved'),
@@ -74,7 +77,6 @@ class LoanTerms (models.Model):
 	def __str__(self):
 		return 'Lender Case Number: ' + str(self.lender_case_no) + ', Loan Amount: $' + str("%.2f" % round(self.loan_amount,2))
 		
-# Model that will replace 'loan.models.Loan'		
 class NewLoan(models.Model):
 	user = models.ForeignKey(User)
 	contract = models.ForeignKey(Contract)
@@ -94,6 +96,10 @@ class NewLoan(models.Model):
 	def __str__(self):
 		return str(self.user) + ', ' + str(self.loan_wallet)
 		
+# This model could be the key to the issue where converting a request
+# doesn't create a NewLoan object, creating the workflow query-ing issue for
+# requests that are being processed into loans, however, it will probably need
+# to include NewLoan as a ForeignKey field in order for that to work
 class LoanSummary(models.Model):
 	application = models.ForeignKey(ApplicationSummary, verbose_name='Application Summary')
 	lender_info = models.ForeignKey(LenderInfo, verbose_name='Lender Information')
@@ -112,7 +118,7 @@ class LoanPaymentHistory(models.Model):
 	
 	def __str__(self):
 		return str(self.loan) + ', $' + str(self.pmt_total)
-	
+		
 # Unsure if this is needed/what it will hold
 #~ class BlockPaymentHistory(models.Model):
 	#~ wallet ?

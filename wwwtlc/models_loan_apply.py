@@ -4,6 +4,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+# For the most part, this models file is straightforward,
+# the only things that I would like to know about it would be
+# what values I should use for things like 'max_length' and
+# 'max_digits', as well as which value should be default on
+# the CHOICES fields
+
 class Address(models.Model):
 	user = models.ForeignKey(User)
 	source = models.ForeignKey(User, related_name='address_source')
