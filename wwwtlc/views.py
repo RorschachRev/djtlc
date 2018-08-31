@@ -28,6 +28,7 @@ from loan.forms import PersonEditForm, PersonForm, ChangeReqForm
 from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
 from xhtml2pdf import pisa
+from pymongo import MongoClient
 from django.template import Context
 from django.template.loader import get_template
 
@@ -396,6 +397,28 @@ def credit_verify_app(request, app_id):
 	app = ApplicationSummary.objects.get(pk=app_id)
 	status_list = app.STATUS_CHOICES[app.status+1:]
 	return render(request, 'dashboard/credit_verify_app.html', { 'status_list': status_list })
+
+def upload_doc(request, app_id=0):
+	client = MongoClient()
+	db = client.appdocs
+	collection = db.documents
+	if request.method == 'POST' and request.FILES['updoc']:
+		doc = request.FILES['updoc'].file
+		content = doc.read()
+		updoc = {"filename": "Application ID: #{{ app.id }} Document", "content": content}
+		updoc_id = collection.insert_one(updoc).inserted_id
+		print(updoc_id)
+		# TODO:
+		# insert into NoSQL Model here
+		# using the refkey from doc_id
+		
+		# model_ref = Credit_Report(source=request.user, refkey=updoc_id, app_id=app_id)
+		# in order for this to work, there needs to be changes
+		# in models, specifically, changing:
+		# refkey = models.IntegerField() => refkey = models.Charfield(max_length=24)
+		# adding:
+		# app_id = models.ForeignKey(ApplicationSummary)	
+	return render(request, 'dashboard/upload_doc.html', {})
 	
 def certify(request):
 	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
@@ -495,6 +518,8 @@ def loan_details(request, loan_id):
 Admin Views
 ##################################################'''
 def add_vendor(request):
+	# TODO:
+	# Add logic to create form for adding vendors	
 	return render(request, 'admin/add_vendor.html', {})
 	
 '''##################################################

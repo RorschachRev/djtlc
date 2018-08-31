@@ -14,7 +14,6 @@ records.</caption></pre>
 		<th>Borrower</th>
 		<th>Tier</th>
 		<th>Status</th>
-		<th>Source</th>
 		<th>Date Last Modified</th>
 	</tr>
 	{% for app in apps %}
@@ -24,9 +23,8 @@ records.</caption></pre>
 		<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
 		<td>{{ app.get_tier_display }}</td>
 		<td>{{ app.get_status_display }}</td>
-		<td>{{ app.source }}</td>
 		<td>{{ app.submission_date }}</td>
-		<td><a href="/credit_verify/{{ app.id }}"><button>Steps Remaining</button></a></td>
+		<td><a href="/credit_verify/upload_doc/{{app.id}}"><button>Document 1</button></a></td>
 	{% endfor %}
 </table>
 {% endblock content %}

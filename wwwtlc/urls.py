@@ -189,6 +189,11 @@ urlpatterns = [
         name='credit_verify_app'
 ),
     url(
+        r'credit_verify/upload_doc/(?P<app_id>[0-9]+)/$',
+        views.upload_doc,
+        name='upload_doc'
+),
+    url(
         r'^certify/$',
         views.certify,
         name='certify'

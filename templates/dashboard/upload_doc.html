@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Upload Document</h1>
+<a href="/credit_verify" class="btn btn-default">Back</a>
+<br>
+<br>
+
+<h2>Upload Document:</h2>
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<input type="file" name="updoc" />
+	<input type="submit" value="Submit" id="udsubmit" />
+</form>
+{% endblock content %}

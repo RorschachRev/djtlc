@@ -10,11 +10,6 @@ from wwwtlc.models_loan_apply import Address
 #Extend User to include Wallet FK_ID
 
 
-# I am still unsure how exactly all of these models will fit into the schema
-# it may be until we have data populating these tables before I understand it
-# although I know it's mostly supposed to hold externally acquired data, which
-# we don't know what it will look like.
-
 #NoSQL Section
 class Contract(models.Model):
 	source = models.ForeignKey(User, null=True, blank=True)

@@ -3,4 +3,10 @@
 {% block content %}
 <h1>Add Vendor:</h1>
 <pre><caption>This is where users with the 'Admin' group permissions will be able to add a 'Vendor' user to the server.</caption></pre>
+
+<form method="post">
+	{% csrf_token %}
+	<!-- add a { form.as_p } with double curly braces here -->
+	<input type="submit" value="Submit" />
+</form>
 {% endblock content %}

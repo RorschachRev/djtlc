@@ -7,7 +7,6 @@ django-money==0.13.3
 xhtml2pdf~=0.2.2
 ipfsapi~=0.4.3
 idna~=2.6
-pkg-resources~=0.0.0
 py-moneyed==0.7.0
 pymongo~=3.6.1
 pytz~=2018.4
