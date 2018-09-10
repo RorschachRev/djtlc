@@ -35,6 +35,8 @@ from django.template.loader import get_template
 '''##################################################
 # Basic Functionality Views	
 ##################################################'''	
+def TESTING(request):
+	return render(request,'pages/Test.html',{})
 def home(request):
 	user = request.user
 	if user.is_staff:
