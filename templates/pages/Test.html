@@ -1,19 +1,86 @@
 {% extends 'base.html'%}
-
 {% block title %}TEST{% endblock %}
 
 {% block content %}
-    <div id="main">
-        <div class="container">
-            <div class="row">
+<style>
+.container {
+	width: 100%;
+}
 
+#heading {
+	margin: 0 40% 0 20%;
+	text-align: center;
+}
 
-                <p> This application is only available to registered users. </p>
-                <a href="/login/" role="button" style='background-color: 247,154,14,1; border-radius: 20px;'>Login</a><br>
-                <a href="/signup/">Signup</a>
+#comparison h1 {
+	font-weight: bold;
+	font-size: 25px;
+	margin: 5% 40% 0 20%;
+}
 
+#comparison .row {
+	display:flex;
+	text-align: center;
+	padding-left: 0;
+	margin: 0 22.5% 0 0;
+}
 
-            </div>
-        </div>
-    </div>
+#comparison .col {
+	margin: 50px 0 0 30px;
+	width: 30%;
+	padding-left: 0;
+}
+</style>
+<div id="heading">
+	<div class="container">
+		<div class="row">
+			<h1>Refinance with The Lending Coin</h1>
+		</div> <!-- row -->
+		<div class="row">
+			<p>BLOCKCHAIN EMPOWERED REAL ESTATE LENDING</p>
+			<h2>208-401-9596</h2>
+		</div><!-- row -->
+	
+		<div class="row">
+			<p class="text-justify">Conventional and Private lending have their own distinctions, and the unique circumstances of a financing project would indicate which method is more suitable. The LendingCoin is able to incorporate most of the attractive qualities of each lender while providing lowest interest rates on the most secure lending platform.</p>
+			<a href="https://accounts.thelendingcoin.com/signup" class="yellow-btn">Register</a>
+			<a href="https://accounts.thelendingcoin.com/login" class="yellow-btn">Login</a>
+		</div> <!-- row -->
+	</div> <!-- container -->
+</div> <!-- heading -->
+
+<div id="comparison">
+	<h1 class="text-center">Comparison</h1>
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<h3>Private Lender Financing</h3>
+				<h4>REITs</h4>
+				<p>Higher Interest Rates</p>
+				<p>Short Term</p>
+				<p>Higher Collateral Requirements</p>
+				<p>Hidden Fees, Prepayment Penalty, and Processing Fees</p>
+				<p>Higer default rates, must have exit strategy</p>
+			</div> <!-- col -->
+			<div class="col">
+				<img src="">
+				<h2>FUTURE OF LENDING</h2>
+				<p>0.25% below prime interest rates</p>
+				<p>No Hidden Fees / Prepayment Penalties</p>
+				<p>Easy reporting/tracking on the Blockchain</p>
+				<p>Immutable transactions & high transparency</p>
+			</div> <!-- col -->
+			<div class="col">
+				<h3>TRADITIONAL BANK FINANCING</h3>
+				<h4>Archaic</h4>
+				<p>Long, Delayed Approval Process</p>
+				<p>Prepayment Penalty Fees</p>
+				<p>High Down Payments</p>
+				<p>Private Mortgage Insurance</p>
+				<p>Strict Requirements for Loan Approval</p>
+			</div> <!-- col -->
+		</div> <!-- row -->
+	</div> <!-- container -->
+</div> <!-- comparision -->
+
 {% endblock %}
