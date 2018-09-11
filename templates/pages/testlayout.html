@@ -1,85 +1,252 @@
+{% load staticfiles %}
+
 {% block title %}TEST{% endblock %}
 
 {% block content %}
+{% include 'header.html' %}
+
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
+<link href="{% static 'css/tlc.css' %}" rel="stylesheet" />
+<link href="{% static 'admin/css/base.css' %}" rel="stylesheet"/>
+
 <style>
 .container {
 	width: 100%;
 }
 
+#background {
+	margin-top: 34px;
+}
+
+#background .left {
+	float: left;
+}
+
+#background .right {
+	float: right;
+}
+
 #heading {
-	margin: 0 40% 0 20%;
+	margin: 0% 25% 0 25%;
+	padding: 5% 5% 0 5%;
+}
+
+#heading h1 {
+	color: #F79A0E;
+	font-size: 45px;
+	font-weight: bold;
+}
+
+#heading h2 {
+	font-weight: lighter;
+	font-size: 30px;
+	margin-top: 2.5%;
+}
+
+#heading .subhead {
+	color: #006990;
+}
+
+#heading .row {
+	display: flex;
+	justify-content: space-around;
 	text-align: center;
+	margin: 0 auto;
+}
+
+#heading .col {
+	width: 50%;
+	font-weight: bold;
+}
+
+#heading .extramargin {
+	text-align: justify;
+	color: #2a2a2a;
+	margin: 10px 60px;
+	font-size: 15px;
+	font-weight: lighter;
+	line-height: 1.5em;
+	padding:  2.5% 0 2.5% 0;
+	border-top: 1px solid #006990;
+	border-bottom: 1px solid #006990;
+}
+
+#heading .row a {
+	width: 25%;
+	margin: 2.5% 15% 0 15%;
+	font-size: 20px;
+	font-weight: bolder;
+	color: #003448;
+	background-color: #F79A0E;
+	padding: 10px;
+	border-radius: 15px;
+}
+
+#heading .links {
+	margin: 0;
+	padding: 0;
+}
+
+#comparison {
+	border-top: 2px solid #003448;
+	padding-top: 1%;
 }
 
 #comparison h1 {
+	color: #000000;
 	font-weight: bold;
-	font-size: 25px;
-	margin: 5% 40% 0 20%;
+	font-size: 40px;
+	text-align: center;
+}
+
+#comparison .lighter {
+	font-weight: lighter;
 }
 
 #comparison .row {
-	display:flex;
+	display: flex;
 	text-align: center;
-	padding-left: 0;
-	margin: 0 22.5% 0 0;
+	margin: 0 15%;
 }
 
 #comparison .col {
-	margin: 50px 0 0 30px;
-	width: 30%;
+	width: 100%;
+	justify-content: space-around;
 	padding-left: 0;
+	
 }
+
+#comparison .uborder {
+	padding: 0;
+	margin-bottom: 5%;
+	border-right: 3px solid  #F79A0E;
+	border-bottom: 3px solid #F79A0E;
+	border-left: 3px solid #F79A0E;
+}
+
+#comparison .col h3 {
+	font-weight: bold;
+	color: #000000;
+	font-size: 20px;
+}
+
+#comparison .col h4 {
+	font-weight: lighter;
+	color: #2a2a2a;
+	font-size: 15px;
+}
+
+#comparison .col p {
+	padding: 0;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+#comparison .col hr {
+	margin: 0 auto;
+	width: 50%;
+	height: 3px;
+}
+
+#comparison .alt-bg {
+	margin: 0 2.5%;
+	background-color: #003448;
+	color: #FFFFFF;
+}
+
+#comparison .alt-bg h2 {
+	font-weight: lighter;
+	font-size: 20px;
+	margin-bottom: 5%;
+}
+
+#comparison .alt-bg p {
+	font-weight: normal;
+	font-size: 15px;
+}
+
+#comparison .alt-bg hr {
+	height: 2px;
+}
+
 </style>
+<div id="background">
+	<div class="left">
+		<img src="{% static 'img/landing-bg1.jpg' %}">
+	</div> <!-- left -->
+	<div class="right">
+		<img src="{% static 'img/landing-bg2.jpg' %}">
+	</div> <!-- right -->
+</div> <!-- background -->
+
 <div id="heading">
 	<div class="container">
 		<div class="row">
 			<h1>Refinance with The Lending Coin</h1>
 		</div> <!-- row -->
 		<div class="row">
-			<p>BLOCKCHAIN EMPOWERED REAL ESTATE LENDING</p>
-			<h2>208-401-9596</h2>
-		</div><!-- row -->
+			<p class="subhead">BLOCKCHAIN EMPOWERED REAL ESTATE LENDING</p>
+		</div> <!-- row -->
+		<div class="row">
+			<h2>208-401-9506</h2>
+		</div> <!-- row -->
+		<div class="row">
+			<p class="extramargin">Conventional and Private lending have their own distinctions, and the unique circumstances of a financing project would indicate which method is more suitable. The LendingCoin is able to incorporate most of the attractive qualities of each lender while providing lowest interest rates on the most secure lending platform.</p>
+		</div> <!-- row -->
 	
 		<div class="row">
-			<p class="text-justify">Conventional and Private lending have their own distinctions, and the unique circumstances of a financing project would indicate which method is more suitable. The LendingCoin is able to incorporate most of the attractive qualities of each lender while providing lowest interest rates on the most secure lending platform.</p>
-			<a href="https://accounts.thelendingcoin.com/signup" class="yellow-btn">Register</a>
-			<a href="https://accounts.thelendingcoin.com/login" class="yellow-btn">Login</a>
+			<div class="col">
+				<p>If you already have a username and password, select Login.</p>
+			</div> <!-- col -->
+			<div class="col">
+				<p>If you are new to this page and would like more information about refinancing a commercial property with The LendingCoin, select Signup</p>
+			</div> <!-- col -->
+		</div> <!-- row -->
+		<div class="row links">
+			<a href="/login" class="yellow-btn">Login</a>
+			<a href="/signup" class="yellow-btn">Signup</a>
 		</div> <!-- row -->
 	</div> <!-- container -->
 </div> <!-- heading -->
 
 <div id="comparison">
-	<h1 class="text-center">Comparison</h1>
+	<h1>Comparison</h1>
+	<h1 class="lighter">~</h1>
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				<h3>Private Lender Financing</h3>
-				<h4>REITs</h4>
-				<p>Higher Interest Rates</p>
-				<p>Short Term</p>
-				<p>Higher Collateral Requirements</p>
-				<p>Hidden Fees, Prepayment Penalty, and Processing Fees</p>
+				<div class="uborder">
+					<h3>Private Lender Financing</h3>
+					<h4>REITs</h4>
+				</div> <!-- uborder -->
+				<p>Higher Interest Rates<hr></p>
+				<p>Short Term<hr></p>
+				<p>Higher Collateral Requirements<hr></p>
+				<p>Hidden Fees, Prepayment Penalty, and Processing Fees<hr></p>
 				<p>Higer default rates, must have exit strategy</p>
 			</div> <!-- col -->
-			<div class="col">
-				<img src="">
-				<h2>FUTURE OF LENDING</h2>
-				<p>0.25% below prime interest rates</p>
-				<p>No Hidden Fees / Prepayment Penalties</p>
-				<p>Easy reporting/tracking on the Blockchain</p>
+			<div class="col alt-bg">
+				<img src="{% static 'img/logo.png' %}">
+				<h2>Future of Lending</h2>
+				<p>0.25% below prime interest rates<hr></p>
+				<p>No Hidden Fees / Prepayment Penalties<hr></p>
+				<p>Easy reporting/tracking on the Blockchain<hr></p>
 				<p>Immutable transactions & high transparency</p>
 			</div> <!-- col -->
 			<div class="col">
-				<h3>TRADITIONAL BANK FINANCING</h3>
-				<h4>Archaic</h4>
-				<p>Long, Delayed Approval Process</p>
-				<p>Prepayment Penalty Fees</p>
-				<p>High Down Payments</p>
-				<p>Private Mortgage Insurance</p>
-				<p>Strict Requirements for Loan Approval</p>
+				<div class="uborder">
+					<h3>Traditional Bank Financing</h3>
+					<h4>Archaic</h4>
+				</div> <!-- uborder -->
+				<p>Long, Delayed Approval Process<hr></p>
+				<p>Prepayment Penalty Fees<hr></p>
+				<p>High Down Payments<hr></p>
+				<p>Private Mortgage Insurance<hr></p>
+				<p>Strict Requirements for Loan Approval></p>
 			</div> <!-- col -->
 		</div> <!-- row -->
 	</div> <!-- container -->
 </div> <!-- comparision -->
 
 {% endblock %}
+{% include 'footer.html' %}
