@@ -36,7 +36,14 @@ from django.template.loader import get_template
 # Basic Functionality Views	
 ##################################################'''	
 def TESTING(request):
-	return render(request,'pages/Test.html',{})
+	#Layout test
+	return render(request,'pages/testlayout.html',{})
+	
+def test(request):
+	#Wallet Test
+	return render(request, 'pages/testwallet.html')
+		
+	
 def home(request):
 	user = request.user
 	if user.is_staff:
@@ -93,10 +100,7 @@ def signup(request):
 	else:
 		form = UserCreationForm()
 	return render(request, 'base.html', {'form': form})
-	
-def test(request):
-	return render(request, 'pages/test.html')
-	
+
 	
 '''##################################################
 # User Views
