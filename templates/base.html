@@ -39,6 +39,8 @@
             </div>
             {% elif 'login' in request.path %}
 		{% include 'pages/login.html' %}
+	    {% elif 'signup' in request.path %}
+		{% include 'pages/signup.html' %}
             {% else %}
             	{% include 'pages/testlayout.html' %}
             {% endif %}

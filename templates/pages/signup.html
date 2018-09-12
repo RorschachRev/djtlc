@@ -1,10 +1,105 @@
-{% extends 'base.html' %}
+{% load staticfiles %}
 
-{% block content %}
-<h2>Sign up</h2>
-<form method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<button type="submit">Sign up</button>
-</form>
-{% endblock %}
+{% include 'header.html' %}
+
+{% block title %}Login{% endblock %}
+
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
+<link href="{% static 'css/tlc.css' %}" rel="stylesheet" />
+<link href="{% static 'admin/css/base.css' %}" rel="stylesheet"/>
+
+<script>
+
+</script>
+
+<style>
+#background {
+	margin-top: 32px;
+}
+
+#background .left {
+	float: left;
+}
+
+#background .right {
+	float: right;
+}
+
+#signup-form {
+	margin: 10% 0 0 5%;
+	text-align: center;
+	display: block;
+}
+
+#signup-form h1 {
+	color: #F79A0E;
+	font-size: 45px;
+	font-weight: bold;
+}
+
+#signup-form .helptext {
+	font-size: 12px;
+	font-weight: lighter;
+	color: #2a2a2a;
+}
+
+#signup-form ul {
+	display: none;
+}
+
+#signup-form .errorlist {
+	display: block;
+}
+
+#signup-form button {
+	background-color: #003448;
+	color: #F79A0E;
+	border: 0;
+	padding: 10px 25px 10px 25px;
+	border-radius: 15px;
+	text-decoration: none;
+	font-size: 20px;
+	font-weight: bolder;
+	margin: 2.5% 15% 0 15%;
+}
+
+.footer {
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #003448;
+	padding: 2.5px;
+}
+
+</style>
+<div id="background">
+	<div class="left">
+		<img src="{% static 'img/landing-bg1.jpg' %}">
+	</div> <!-- left -->
+	<div class="right">
+		<img src="{% static 'img/landing-bg2.jpg' %}">
+	</div> <!-- right -->
+</div> <!-- background -->
+
+<div id="signup-form">
+	<h1>The LendingCoin</h1>
+	<div class="container">
+		<form method="post">
+			{% csrf_token %}
+			{% for field in form %}
+   			<div class="fieldWrapper">
+       			{{ field.errors }}
+       			{{ field.label_tag }} {{ field }}
+				{% if field.help_text %}
+				<p class="help">{{ field.help_text|safe }}</p>
+				{% endif %}
+			    </div>
+			{% endfor %}
+			<!-- {{ form.as_p }} -->
+			<button type="submit">Sign Up</button>
+		</form>
+	</div> <!-- container -->
+</div> <!-- login-form -->
+
+<div class="footer">
+	{% include "footer.html" %}
+</div> <!-- footer -->
