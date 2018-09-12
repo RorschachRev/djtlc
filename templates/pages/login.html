@@ -1,12 +1,75 @@
-{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% include 'header.html' %}
 
 {% block title %}Login{% endblock %}
 
-{% block content %}
-	<h2>Login</h2>
-	<form method="post">
-		{% csrf_token %}
-		{{ form.as_p }}
-		<button type="submit">Login</button>
-	</form>
-{% endblock %}
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" />
+<link href="{% static 'css/tlc.css' %}" rel="stylesheet" />
+<link href="{% static 'admin/css/base.css' %}" rel="stylesheet"/>
+
+<style>
+#background {
+	margin-top: 32px;
+}
+
+#background .left {
+	float: left;
+}
+
+#background .right {
+	float: right;
+}
+
+#login-form {
+	margin: 10% 0 0 5%;
+	text-align: center;
+}
+
+#login-form h1 {
+	color: #F79A0E;
+	font-size: 45px;
+	font-weight: bold;
+}
+
+#login-form button {
+	background-color: #003448;
+	color: #F79A0E;
+	border: 0;
+	padding: 10px 25px 10px 25px;
+	border-radius: 15px;
+	text-decoration: none;
+	font-size: 20px;
+	font-weight: bolder;
+	margin: 2.5% 15% 0 15%;
+}
+
+.footer {
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #003448;
+	padding: 2.5px;
+}
+
+</style>
+<div id="background">
+	<div class="left">
+		<img src="{% static 'img/landing-bg1.jpg' %}">
+	</div> <!-- left -->
+	<div class="right">
+		<img src="{% static 'img/landing-bg2.jpg' %}">
+	</div> <!-- right -->
+</div> <!-- background -->
+
+<div id="login-form">
+	<h1>The LendingCoin</h1>
+	<div class="container">
+		<form method="post">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<button type="submit">Login</button>
+		</form>
+	</div> <!-- container -->
+</div> <!-- login-form -->
+
+{% include 'footer.html' %}

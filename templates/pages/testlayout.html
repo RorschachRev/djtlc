@@ -1,7 +1,5 @@
 {% load staticfiles %}
 
-{% block title %}TEST{% endblock %}
-
 {% block content %}
 {% include 'header.html' %}
 
@@ -15,7 +13,7 @@
 }
 
 #background {
-	margin-top: 34px;
+	margin-top: -2%;
 }
 
 #background .left {
@@ -28,7 +26,7 @@
 
 #heading {
 	margin: 0% 25% 0 25%;
-	padding: 5% 5% 0 5%;
+	padding: 2.5% 5% 0 5%;
 }
 
 #heading h1 {
@@ -169,6 +167,13 @@
 	height: 2px;
 }
 
+.footer {
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #003448;
+	padding: 2.5px;
+}
+
 </style>
 <div id="background">
 	<div class="left">
@@ -249,4 +254,3 @@
 </div> <!-- comparision -->
 
 {% endblock %}
-{% include 'footer.html' %}

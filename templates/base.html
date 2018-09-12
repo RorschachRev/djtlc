@@ -37,26 +37,10 @@
             <div class="col-sm-12 col-md-9">
                 {% block content %}{% endblock %}
             </div>
+            {% elif 'login' in request.path %}
+		{% include 'pages/login.html' %}
             {% else %}
-            {% if request.get_full_path == "/login/" %}
-                <h2>Login</h2>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit">Login</button>
-                </form>
-	    {% elif request.get_full_path == "/signup/" %}
-	        <h2>Signup</h2>
-		<form method="post">
-		    {% csrf_token %}
-		    {{ form.as_p }}
-		    <button type="submit">Signup</button>
-		</form>
-            {% else %}
-            <p> This application is only available to registered users. </p>
-            <a href="{% url 'login' %}">Login</a><br>
-	    <a href="{% url 'signup' %}">Signup</a>
-            {% endif %}
+            	{% include 'pages/testlayout.html' %}
             {% endif %}
         </div>
     </div>
