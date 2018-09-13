@@ -24,6 +24,61 @@
 <input type="submit" value="{% trans 'Submit' %}"/>
 </form>
 
+<script>
+	// Step 2, field=rent
+	try { 
+		x = document.getElementById('id_1-rent').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+	}
+	catch (e) {}
+	
+	try {
+		// Step 3, field=original_amount
+		x = document.getElementById('id_2-original_amount').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+
+		// Step 3, field=current_balance
+		x = document.getElementById('id_2-current_balance').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+
+		// Step 3, field=current_intrate
+		x = document.getElementById('id_2-current_intrate').parentElement;
+		x.innerHTML = x.innerHTML + "<span> %</span>";
+	}
+	catch (e) {}
+
+	try {
+		// Step 4, field=amount_desired
+		x = document.getElementById('id_3-amount_desired').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+	
+		// Step 4, field=cash_back_desired
+		x = document.getElementById('id_3-cash_back_desired').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+
+		// Step 4, field=payment_desired
+		x = document.getElementById('id_3-payment_desired').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+
+		// Step 4, field=intrate_desired
+		x = document.getElementById('id_3-intrate_desired').parentElement;
+		x.innerHTML = x.innerHTML + "<span> %</span>"
+	}
+	catch (e) {}
+
+	try {
+		// Step 5, field=annual_income
+		x = document.getElementById('id_4-annual_income').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+		
+
+		// Step 5, field=net_worth
+		x = document.getElementById('id_4-net_worth').parentElement;
+		x.innerHTML = "<span>$</span>" + x.innerHTML;
+	}
+	catch (e) {}
+</script> <!-- selects input elements and adds either '$' or '%' to them -->
+
 <script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
 <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
 <script type="text/javascript" src="/static/admin/js/core.js"></script>
@@ -31,5 +86,8 @@
 <script type="text/javascript" src="/static/admin/js/change_form.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectBox.js"></script>
 <script type="text/javascript" src="/static/admin/js/SelectFilter2.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 {% endblock %}
 

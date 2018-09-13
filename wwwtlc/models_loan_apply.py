@@ -18,7 +18,7 @@ class Address(models.Model):
 	street3 = models.CharField(max_length=254, blank=True, verbose_name="Street 3", help_text="(optional)")
 	city = models.CharField(max_length=127)
 	state = models.CharField(max_length=25)
-	zipcode = models.CharField(max_length=10)
+	zipcode = models.CharField(max_length=10, blank=True, null=True)
 	country = models.CharField(max_length=3)
 	
 	def __str__(self):
@@ -45,10 +45,10 @@ class PropertyInfoRequest(models.Model):
 		verbose_name='Property Type'
 	)
 	source = models.ForeignKey(User)
-	property_address = models.ForeignKey(Address)
-	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Occupancy Rate')
-	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Lease Rate')
-	rent = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Rent')
+	property_address = models.ForeignKey(Address, help_text="Select property from list, or click '+' to add new property.")
+	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, verbose_name='Occupancy Rate')
+	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, verbose_name='Lease Rate')
+	rent = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Loan Payment')
 	property_age = models.IntegerField(verbose_name='Property Age')
 	
 class CurrentMortgage(models.Model):
@@ -56,17 +56,25 @@ class CurrentMortgage(models.Model):
 		(0, 'Fixed'),
 		(1, 'ARM'),
 	)
+	LATE_CHOICES = (
+		(0, 'No'),
+		(1, 'Yes'),
+	)
 	source = models.ForeignKey(User)
-	date_loan_originated = models.DateField(verbose_name='Date Loan Originated', help_text='(mm/dd/yyyy)')
+	date_loan_originated = models.CharField(max_length=30, verbose_name='Date Loan Originated')
 	current_loan_type = models.IntegerField(
 		choices = TYPE_CHOICES,
 		default = 0,
 	)
 	original_amount = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Original Amount')
 	current_balance = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Balance')
-	current_term = models.CharField(max_length=255, verbose_name='Current Term', help_text='(months remaining)')
+	current_term = models.CharField(max_length=255, verbose_name='Current Term', help_text='Months remaining of total (e.g. 45 of 120)')
 	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Current Interest Rate')
-	late_payments = models.BooleanField(default=False, verbose_name='Any Late Payments?')
+	late_payments = models.IntegerField(
+		choices = LATE_CHOICES,
+		default = 0,
+		verbose_name = "Have you made any late payments?",
+	)
 	
 class MortgageDesired(models.Model):
 	TYPE_CHOICES = (
@@ -83,6 +91,7 @@ class MortgageDesired(models.Model):
 		(1, '15 Year'),
 		(2, '10 Year'),
 		(3, 'Less than 10 Years'),
+		(4, 'Other'),
 	)
 	source = models.ForeignKey(User)
 	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
@@ -93,18 +102,19 @@ class MortgageDesired(models.Model):
 		default = 0,
 		verbose_name='Desired Loan Type'
 	)
-	payment_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Desired Payment')
+	payment_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Desired Payment of About')
 	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Desired Interest Rate')
 	time_frame = models.IntegerField(
 		choices = TIMEFRAME_CHOICES,
 		default = 0,
-		verbose_name='Desired Time Frame'
+		verbose_name='Ready to Move Forward'
 	)
 	term_desired = models.IntegerField(
 		choices = TERM_CHOICES,
 		default = 0,
 		verbose_name='Desired Term'
 	)
+	if_not_listed = models.CharField(max_length=30, blank=True, null=True, verbose_name='Desired Term (if not listed)')
 	
 class BorrowerInfoRequest(models.Model):
 	B_TYPE_CHOICES = (

@@ -244,7 +244,7 @@ class PropertyInfoRequestForm(forms.ModelForm):
 	step_name = 'Property Information:'
 	class Meta:
 		model = PropertyInfoRequest
-		exclude = ['source']
+		exclude = ['source', 'occupancy_rate', 'lease_rate']
 		widgets = {
 			'property_address' : SelectWithPop
 		}
