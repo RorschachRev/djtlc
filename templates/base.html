@@ -24,19 +24,15 @@
 
 </head>
 <body>
-
-    {% csrf_token %}
-    {% include "header.html" %}
+{% csrf_token %}
+{% include "header.html" %}
+    {% if user.is_authenticated %}
+        {% include "sidebar.html" %}
 <div id="main">
     <div class="container">
-        <div class="row">
-            {% if user.is_authenticated %}
-            <div class="col-sm-12 col-md-3">
-                {% include "sidebar.html" %}
-            </div>
-            <div class="col-sm-12 col-md-9">
+            <div id="content-block" class="col-sm-12 col-md-9">
                 {% block content %}{% endblock %}
-            </div>
+            </div> <!-- content-block -->
             {% elif 'login' in request.path %}
 		{% include 'pages/login.html' %}
 	    {% elif 'signup' in request.path %}
@@ -44,10 +40,9 @@
             {% else %}
             	{% include 'pages/testlayout.html' %}
             {% endif %}
-        </div>
-    </div>
-</div>
-    {% include "footer.html" %}
+    </div> <!-- container -->
+</div> <!-- main -->
+{% include "footer.html" %}
 
 </body>
 

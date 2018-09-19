@@ -1,5 +1,6 @@
+<div id='sidebar' class='col-sm-12 col-md-3'>
 {% if user.is_staff %}
-	<ul>
+	<ul class='officer_dash'>
 		<!--<li><a href="/dashboard">Loan Officer Dashboard</a></li>-->
 		<li><a href="/">Home</a></li>
 		<li><a href="/loan_requests">Loan Requests</a></li>
@@ -19,12 +20,12 @@
 {% endif %}
 {% for group in user.groups.all %}
 	{% if group.name == 'Admin' %}
-		<ul>
+		<ul class='admin_dash'>
 			<li><a href="/add_vendor">Add Vendor</a></li>
 		</ul>
 	{% endif %}
 {% endfor %}
-<ul>
+<ul class='user_dash'>
 	<li><a href="/">Home</a></li>
 	<li><a href="/account">Account</a></li>
 	<li><a href="/loan">Loans</a></li>
@@ -32,3 +33,4 @@
 	<li><a href="/wallet">Wallet</a></li>
 	<li><a href="/payhistory">Payment History</a></li>
 </ul>
+</div> <!-- sidebar -->
