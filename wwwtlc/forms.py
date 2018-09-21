@@ -83,7 +83,7 @@ class BankAccountForm(forms.ModelForm):
 			self.fields['address'].queryset = Address.objects.filter(user=user).order_by('-id')
 			
 class BorrowerInfoForm(forms.ModelForm):
-	step_name = 'Borrower Information:'
+	step_name = 'Borrower Income:'
 	class Meta:
 		model = BorrowerInfo
 		exclude = ['user', 'source', 'business', 'assets_liabilities', 'declarations']
