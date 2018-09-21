@@ -22,7 +22,7 @@ class Address(models.Model):
 	country = models.CharField(max_length=3)
 	
 	def __str__(self):
-		return self.street1 + ', ' + self.city + ', ' + self.state + ' ' + self.zipcode
+		return self.street1 + ', ' + self.city + ', ' + self.state 
 
 class ContactRequest(models.Model):
 	source = models.ForeignKey(User)
