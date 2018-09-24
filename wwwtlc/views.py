@@ -713,6 +713,7 @@ class LoanApplyWizard(SessionWizardView):
 			def payment_calc(Pv, r, n):
 				predec = 365/12
 				dec = D.Decimal(str(predec))
+				n = 12 * n
 				R = (1+(r/100/365))**(dec)-1
 				P = (Pv * R)/(1-(1+R)**(-n))
 				return round(P, 2)
@@ -726,7 +727,7 @@ class LoanApplyWizard(SessionWizardView):
 				'Your The LendingCoin, Inc. Loan Refinancing Query',
 				
 				# message
-				'Greeting ' + a.name_first + ' ' + a.name_last + ',\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBase on your requested loan, a loan of $' + str(d.amount_desired) + ' for ' + str(d.TERM_CHOICES[d.term_desired][1])+ '(s) at ' + str(d.intrate_desired) + '% would make your payment approximately $' + 'TODO' + '.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer', 
+				'Greeting ' + a.name_first + ' ' + a.name_last + ',\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBase on your requested loan, a loan of $' + str(d.amount_desired) + ' for ' + str(d.TERM_CHOICES[d.term_desired][1])+ '(s) at ' + str(d.intrate_desired) + '% would make your payment approximately $' + str(payment_calc(d.amount_desired, d.intrate_desired, int(d.TERM_CHOICES[d.term_desired][1][:2]))) + '.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer', 
 	
 				# 'from' email address
 				# doesn't seem to work, but defaults to settings
