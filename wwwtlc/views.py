@@ -746,7 +746,7 @@ class LoanApplyWizard(SessionWizardView):
 				'loan-app@thelendingcoin.com',
 				
 				# 'to' email address(es)
-				[a.email_address, 'loan-app@thelendingcoin.com']
+				[a.email_address, 'loan-app@thelendingcoin.com', 'rich@thelendingcoin.com']
 			)
 			
 			# sends email (to STAFF) when data is submitted and validated
@@ -756,13 +756,13 @@ class LoanApplyWizard(SessionWizardView):
 				'New Refinancing Query',
 			
 				# message
-				'Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interes in obtaining more information about refinancing a commercial loan from ' + a.name_first + ' ' + a.name_last + '.\n\n[TODO: Insert form data to display in email]\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed at [TODO: insert link] or ["by signing into xxxx and selecting xxx"]\n\nRegards,\n\nThe LendingCoin, Inc.',
+				'Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interest in obtaining more information about refinancing a commercial loan from ' + a.name_first + ' ' + a.name_last + '.\n\n[TODO: Insert form data to display in email]\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed at [TODO: insert link] or ["by signing into xxxx and selecting xxx"]\n\nRegards,\n\nThe LendingCoin, Inc.',
 
 				# 'from' email address
 				'loan-app@thelendingcoin.com',
 
 				# 'to' email address(es)
-				['loan-app@thelendingcoin.com']
+				['loan-app@thelendingcoin.com', 'rich@thelendingcoin.com']
 			)	
 
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
