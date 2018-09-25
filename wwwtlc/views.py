@@ -108,12 +108,12 @@ def signup(request):
 def loan(request):
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
-	basic = ApplicationSummary.objects.filter(user=request.user, status=0).order_by('-submission_date')
+	#basic = ApplicationSummary.objects.filter(user=request.user, status=0).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(user=request.user, status=1).order_by('-submission_date')
-	req_basic = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
+	#req_basic = NewRequestSummary.objects.filter(user=request.user, status=3).order_by('-submitted')
 	req_standard = NewRequestSummary.objects.filter(user=request.user, status=4).order_by('-submitted')
 	applied_loans = NewRequestSummary.objects.filter(status__in=[0, 1, 2], user=request.user).order_by('-status', '-submitted')
-	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_basic': req_basic, 'req_standard': req_standard, 'basic': basic, 'standard': standard})
+	return render(request, 'pages/loan.html', {'loan_iterable': loan_iterable, 'blockdata': blockdata, 'applied_loans': applied_loans, 'req_standard': req_standard, 'standard': standard})#, 'basic': basic, 'req_basic': req_basic})
 	
 class loaninfo():
 	"""
@@ -212,14 +212,14 @@ def workflow(request):
 		elif submit_vis == '1':
 			submit_vis = True
 			
-	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
+	#req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
 	req_standard = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
-	basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
+	#basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
-	cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
+	#cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
 	cert_standard = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
 	submitted = NewRequestSummary.objects.filter(status=5).order_by('-submitted')
-	return render(request, 'dashboard/workflow.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard, 'submitted': submitted, 'submit_vis': submit_vis})
+	return render(request, 'dashboard/workflow.html', {'standard': standard, 'req_standard': req_standard, 'cert_standard': cert_standard, 'submitted': submitted, 'submit_vis': submit_vis})#, 'basic': basic, 'req_basic': req_basic, 'cert_basic': cert_basic})
 	
 # This function handles all possible requests on the '/workflow' page
 # handling for this comes from passing data via url into the view,
@@ -325,7 +325,7 @@ def manage_loan_forms(request, loan_id='0'):
 		
 # TODO: write views to handle the BC/Deed logic		
 def submit_loan(request, app_id='0'):
-	basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
+	#basic = ApplicationSummary.objects.filter(tier=0).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).order_by('-submission_date')
 	converted = ApplicationSummary.objects.filter(tier=2).order_by('-submission_date')
 	
@@ -368,7 +368,7 @@ def submit_loan(request, app_id='0'):
 		success = 'pbd works'
 		return render(request, 'dashboard/submit_forms.html', {'success': success})
 		
-	return render(request, 'dashboard/submit_loan.html', {'basic': basic, 'standard': standard, 'converted': converted, 'finalized_vis': finalized_vis})
+	return render(request, 'dashboard/submit_loan.html', {'standard': standard, 'converted': converted, 'finalized_vis': finalized_vis})# 'basic': basic})
 	
 # TODO: Test this view on the blockchain to see if data can be pulled and displayed	
 def payment_history(request, loan_id=0):
@@ -427,13 +427,13 @@ def upload_doc(request, app_id=0):
 	return render(request, 'dashboard/upload_doc.html', {})
 	
 def certify(request):
-	req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
+	#req_basic = NewRequestSummary.objects.filter(status=3).order_by('-submitted')
 	req_standard = NewRequestSummary.objects.filter(status=4).order_by('-submitted')
-	basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
+	#basic = ApplicationSummary.objects.filter(tier=0).exclude(status=12).order_by('-submission_date')
 	standard = ApplicationSummary.objects.filter(tier=1).exclude(status=12).order_by('-submission_date')
-	cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
+	#cert_basic = ApplicationSummary.objects.filter(status=12, tier=0).order_by('-submission_date')
 	cert_standard = ApplicationSummary.objects.filter(status=12, tier=1).order_by('-submission_date')
-	return render(request, 'dashboard/certify.html', {'basic': basic, 'standard': standard, 'req_basic': req_basic, 'req_standard': req_standard, 'cert_basic': cert_basic, 'cert_standard': cert_standard})
+	return render(request, 'dashboard/certify.html', {'standard': standard, 'req_standard': req_standard, 'cert_standard': cert_standard})# 'basic': basic, 'req_basic': req_basic, 'cert_basic': cert_basic})
 	
 def certify_app(request, app_id):
 	app = ApplicationSummary.objects.get(pk=app_id)
@@ -753,7 +753,7 @@ class LoanApplyWizard(SessionWizardView):
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
 
 # Django FormWizard view for Basic Application
-class BasicWizard(NamedUrlSessionWizardView):
+'''class BasicWizard(NamedUrlSessionWizardView):
 	# Function to send the form some initial values
 	def get_form_initial(self, step):
 		user = self.request.user
@@ -863,14 +863,14 @@ class BasicWizard(NamedUrlSessionWizardView):
 				request.save()
 			
 			# Sends email when data is submitted to DB
-			'''send_mail(
+			send_mail(
 				'A Basic application has been submitted', # subject line - will change to add more info
 				'This is where the application details will go', # message - will add more info to this
 				'noreply@tlc.com', # 'from' email address
 				['cto@mediacoin.stream'] # recipient email address
-			)'''
+			)
 			
-		return render(self.request, 'pages/loan_apply_done.html')
+		return render(self.request, 'pages/loan_apply_done.html')'''
 		
 # Form for Standard application
 class StandardWizard(NamedUrlSessionWizardView):

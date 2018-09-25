@@ -41,7 +41,7 @@
 	<br>
 	<br>
 	{% if basic %}
- 	<h2>Basic Applications Submitted:</h2>
+<!--	<h2>Basic Applications Submitted:</h2>
 		<table>
 			<tr>
 				<th>User</th>
@@ -63,7 +63,7 @@
 			</tr>
 			{% endfor %}
 		</table>
-	{% endif %}
+	{% endif %} -->
 	<br>
 	<br>
 	{% if standard %}
@@ -91,7 +91,7 @@
 		</table>
 	{% endif %}
 	
-	{% if req_basic %}
+<!--	{% if req_basic %}
 		<h2>Requests Approved for Basic Application :</h2>
 		<h3>(Application Unsubmitted)</h3>
 		<table>
@@ -120,11 +120,11 @@
 				<td>{{ app.borrower.get_type_display }}</td>
 				<td>{{ app.submitted }}</td>
 				<td><a href="loan/{{ app.id }}/basic_app/1">Apply Here</a></td>
-				<!--<td><a href="{% url 'basic_app' app.id %}">Apply Here</a></td>-->
+				<td><a href="{% url 'basic_app' app.id %}">Apply Here</a></td>
 			</tr>
 			{% endfor %}
 		</table>
-	{% endif %}
+	{% endif %} -->
 	
 	{% if req_standard %}
 		<h2>Requests Approved for Standard Application :</h2>

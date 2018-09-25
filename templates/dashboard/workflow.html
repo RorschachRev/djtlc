@@ -3,12 +3,12 @@
  {% block content %}
  <h1>Workflow:</h1>
  <pre><caption>This is the page where staff will be able to view all Loan Requests that have been approved for either the 
-Basic or Standard Application, as well as all of the Basic and Standard Applications that have been submitted. 
-From here, a staff member will be able to view the details of Basic or Standard Applications, change their 
+Basic (Deprecated) or Standard Application, as well as all of the Basic (Deprecated) and Standard Applications that have been submitted. 
+From here, a staff member will be able to view the details of Basic (Deprecated) or Standard Applications, change their 
 workflow status, or update the tier if necessary.
 
 Also included in this page is the ability to change a Loan Request to a different status, in case a Request was
-unintentionally 'approved' for a Basic or Standard Application.
+unintentionally 'approved' for a Basic (Deprecated) or Standard Application.
 </caption></pre>
 
 {% if submitted %}
@@ -19,7 +19,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 	{% endif %}
 {% endif %}
 
-	<h2>Requests Approved for Basic Application:</h2>
+<!--	<h2>Requests Approved for Basic Application:</h2>
 	<h3>(Application Unsubmitted)</h3>
 	{% if req_basic %}
 		<table>
@@ -53,7 +53,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 		</table>
 	{% else %}
 		<p>There are no Requests that have been approved for Basic Application</p>
-	{% endif %}
+	{% endif %} -->
 	<br>
 	<br>
 	<h2>Requests Approved for Standard Application:</h2>
@@ -93,7 +93,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 	{% endif %}
 	<br>
 	<br>
- 	<h2>Basic Applications:</h2>
+ <!--	<h2>Basic Applications:</h2>
 	{% if basic %}
 		<table>
 			<tr>
@@ -120,7 +120,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 		</table>
 	{% else %}
 		<p>There are no Basic Applications</p>
-	{% endif %}
+	{% endif %} -->
 	<br>
 	<br>
 	<h2>Standard Applications:</h2>
@@ -152,7 +152,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 		<p>There are no Standard Applications</p>
 	{% endif %}
 	
-	{% if cert_basic %}
+<!--	{% if cert_basic %}
 	<br>
 	<br>
 	<h2>Certified Basic Applications:</h2>
@@ -177,7 +177,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 			</tr>
 			{% endfor %}
 		</table>
-	{% endif %}
+	{% endif %} -->
 	
 	{% if cert_standard %}
 	<br>
@@ -209,7 +209,7 @@ unintentionally 'approved' for a Basic or Standard Application.
 	<br>
 	<br>
 	{% if submit_vis == True %}
-	<h2>Requests Approved for Basic/Standard Application:</h2>
+	<h2>Requests Approved for Basic (Deprecated)/Standard Application:</h2>
 	<h3>(Application Submitted)</h3>
 		<table>
 			<tr>

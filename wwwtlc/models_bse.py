@@ -12,6 +12,9 @@ from wwwtlc.models_loan_apply import Address
 # Also, is there a better way to implement the 'Declarations' model
 # other than just having a bunch of boolean fields?
 
+# TODO:
+# Remove all 'basic' from all CHOICE fields
+
 # Models included in BOTH Basic and Standard applications
 class BusinessInfo(models.Model):
 	source = models.ForeignKey(User)

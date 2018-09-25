@@ -7,14 +7,14 @@ from django.views.generic.base import TemplateView
 
 from wwwtlc import views
 from wwwtlc.forms import *
-from wwwtlc.views import LoanApplyWizard, BasicWizard, StandardWizard, ConversionWizard
+from wwwtlc.views import LoanApplyWizard, StandardWizard, ConversionWizard#, BasicWizard
 
 from loan import views as views_loan
 from loan.forms import PersonForm, LoanDataForm, LoanRequestForm
 
 # below is the forms for the NamedUrlSessionsView of the formtools app
 # https://django-formtools.readthedocs.io/en/latest/wizard.html#usage-of-namedurlwizardview
-basic_app_forms = (
+'''basic_app_forms = (
 	(1, BusinessInfoForm),
 	(2, ConstructionInfoForm),
 	(3, PropertyInfoForm),
@@ -22,7 +22,7 @@ basic_app_forms = (
 	(5, CreditRequestForm),
 	(6, DeclarationForm),
 	(7, AcknowledgeAgreeForm),
-)
+)'''
 
 standard_app_forms = (
 	(1, BusinessInfoForm),
@@ -37,7 +37,7 @@ standard_app_forms = (
 	(10, BorrowerInfoForm),
 	(11, AcknowledgeAgreeForm),
 )
-basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')#, initial={'form_id': value})
+#basic_wizard = BasicWizard.as_view(basic_app_forms, url_name='basic_app_step', template_name='pages/basic_app.html')#, initial={'form_id': value})
 
 standard_wizard = StandardWizard.as_view(standard_app_forms, url_name='standard_app_step', template_name='pages/standard_app.html')
 
@@ -286,17 +286,18 @@ urlpatterns = [
         TemplateView.as_view(template_name='pages/loan_apply_done.html'), 
         name='loan_apply_done'
 ),
-# urls for BasicWizard form, as presented to the User
-    url(
-        r'^loan/(?P<value>[0-9]+)/basic_app/(?P<step>[0-9]+)/$',
-        basic_wizard,
-        name='basic_app_step'
-),
-    url(
-        r'^loan/(?P<value>[0-9]+)/basic_app/$',
-        basic_wizard,
-        name='basic_app'
-),
+# urls for BasicWizard (Deprecated) form, as presented to the User
+
+#    url(
+#        r'^loan/(?P<value>[0-9]+)/basic_app/(?P<step>[0-9]+)/$',
+#        basic_wizard,
+#        name='basic_app_step'
+#),
+#    url(
+#        r'^loan/(?P<value>[0-9]+)/basic_app/$',
+#        basic_wizard,
+#        name='basic_app'
+#),
 # urls for StandardWizard form, as presented to the User
     url(
         r'^loan/(?P<value>[0-9]+)/standard_app/(?P<step>.+)/$',
@@ -308,17 +309,17 @@ urlpatterns = [
         standard_wizard,
         name='standard_app'
 ),
-# urls for BasicWizard form - for testing, these are the links that show in dashboard navigation
-    url(
-        r'^basic_app/(?P<step>.+)/$',
-        basic_wizard,
-        name='basic_app_step'
-),
-    url(
-        r'^basic_app/$',
-        basic_wizard,
-        name='basic_app'
-),
+# urls for BasicWizard (Deprecated) form - for testing, these are the links that show in dashboard navigation
+#    url(
+#        r'^basic_app/(?P<step>.+)/$',
+#        basic_wizard,
+#        name='basic_app_step'
+#),
+#    url(
+#        r'^basic_app/$',
+#        basic_wizard,
+#        name='basic_app'
+#),
 # urls for StandardWizard form - for testing, these are the links that show in dashboard navigation
     url(
         r'^standard_app/(?P<step>.+)/$',
