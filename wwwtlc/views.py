@@ -756,7 +756,35 @@ class LoanApplyWizard(SessionWizardView):
 				'New Refinancing Query',
 			
 				# message
-				'Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interest in obtaining more information about refinancing a commercial loan from ' + a.name_first + ' ' + a.name_last + '.\n\n[TODO: Insert form data to display in email]\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed at [TODO: insert link] or ["by signing into xxxx and selecting xxx"]\n\nRegards,\n\nThe LendingCoin, Inc.',
+				'Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interest in obtaining more information about refinancing a commercial loan from ' + str(a.name_first) + ' ' + str(a.name_last) + '.\n\n' + 
+				'Contact Information\n\n' +
+				'Name: ' +  a.name_first + ' ' + a.name_last + 
+				'\nPhone: ' + a.phone + 
+				'\nEmail: ' + a.email_address + 
+				'\n\nProperty Information\n\nProperty Type: ' + str(b.TYPE_CHOICES[b.property_type][1]) +
+				'\nProperty Address: ' + str(b.property_address) + 
+				'\nRent: $' + str(b.rent) + 
+				'\nProperty Age: ' + str(b.property_age) + 
+				'\n\nCurrent Mortgage\n\nDate Loan Originated: ' + str(c.date_loan_originated) + 
+				'\nCurrent Loan Type: ' + str(c.TYPE_CHOICES[c.current_loan_type][1]) + 
+				'\nOriginal Amount: $' + str(c.original_amount) + 
+				'\nCurrent Balance: $' + str(c.current_balance) + 
+				'\nCurrent Term: ' + str(c.current_term) + 
+				'\nCurrent Interest Rate: ' + str(c.current_intrate) + 
+				'%\nLate Payments: ' + str(c.LATE_CHOICES[c.late_payments][1]) + 
+				'\n\nDesired Mortgage\n\nAmount Desired: $' + str(d.amount_desired) + 
+				'\nCash Back Desired: $' + str(d.cash_back_desired) + 
+				'\nLoan Currency: ' + str(d.loan_currency) + 
+				'\nLoan Type Desired: ' + str(d.TYPE_CHOICES[d.loan_type_desired][1]) + 
+				'\nPayment Desired: $' + str(d.payment_desired) + 
+				'\nInterest Rate Desired: ' + str(d.intrate_desired) + 
+				'%\nTime Frame Desired: ' + str(d.TIMEFRAME_CHOICES[d.time_frame][1]) + 
+				'\nTerm Desired: ' + str(d.TERM_CHOICES[d.term_desired][1]) + 
+				'\n\nBorrower Information\n\nBorrower Type: ' + str(e.B_TYPE_CHOICES[e.type][1]) + 
+				'\nAnnual Income: $' + str(e.annual_income) + 
+				'\nNet Worth: $' + str(e.net_worth) + 
+				'\nFICO Score: ' + str(e.FICO_CHOICES[e.fico][1]) + 
+				'\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed by logging into The LendingCoin, Inc. Refinancing Dashboard and navigating to \'Loan Requests\'\n\nRegards,\n\nThe LendingCoin, Inc.',
 
 				# 'from' email address
 				'loan-app@thelendingcoin.com',
