@@ -15,6 +15,66 @@ terms of the loan that will determine interest rate, principal owed, and payment
 			<a href="/submit_loan/?finalized_vis=1">View Finalized Applications</a>
 		{% endif %}
 	{% endif %}
+
+	<br>
+	<h2>Standard Applications:</h2>
+	{% if standard %}
+		<table>
+			<tr>
+				<th>User</th>
+				<th>Property</th>
+				<th>Borrower</th>
+				<th>Status</th>
+				<th>Date Last Modified</th>
+				<th>Source</th>
+			</tr>
+			<tr>
+			{% for app in standard %}
+			<tr>
+				<td>{{ app.user.username }}</td>
+				<td>{{ app.property.address }}</td>
+				<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+				<td>{{ app.get_status_display }}</td>
+				<td>{{ app.submission_date }}</td>
+				<td>{{ app.source }}</td>
+				<td><a href="c2l{{ app.id }}"><button>Convert to Loan</button></a></td>			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<p>There are no Standard Applications</p>
+	{% endif %}
+	{% if convert_vis %}
+		<br>
+		<br>
+		{% if converted %}
+		<h2>Converted Applications:</h2>
+			<table>
+				<tr>
+					<th>User</th>
+					<th>Property</th>
+					<th>Borrower</th>
+					<th>Status</th>
+					<th>Date Last Modified</th>
+					<th>Source</th>
+				</tr>
+				<tr>
+				{% for app in converted %}
+				<tr>
+					<td>{{ app.user.username }}</td>
+					<td>{{ app.property.address }}</td>
+					<td>{{ app.borrower.name_last }}, {{ app.borrower.name_first }}</td>
+					<td>{{ app.get_status_display }}</td>
+					<td>{{ app.submission_date }}</td>
+					<td>{{ app.source }}</td>
+				{% endfor %}
+			</table>
+		{% endif %}
+	{% endif %}
+
+<!-- All code below is commented out due to being incomplete.
+	The code above is a hotfix solution for converting apps
+	into loans. It will be replaced eventually when that 
+	conversion process is figured out. -->
 	
 <!-- <h2>Basic Applications:</h2>
 	{% if basic %}
@@ -42,7 +102,7 @@ terms of the loan that will determine interest rate, principal owed, and payment
 		</table>
 	{% else %}
 		<p>There are no Basic Applications</p>
-	{% endif %} -->
+	{% endif %}
 	<br>
 	<br>
 	<h2>Standard Applications:</h2>
@@ -95,16 +155,17 @@ terms of the loan that will determine interest rate, principal owed, and payment
 				<td>{{ app.source }}</td>
 				<td><a href="elt{{ app.id }}">Edit Loan Terms</a></td>
 				<td><a href="edd{{ app.id }}">Edit Deed</a></td>
-				<!-- An if/else statement will wrap both of these <td> elements individually 
+				The line below had a comment
+				An if/else statement will wrap both of these <td> elements individually 
 					"if (BC.loan_balance):
 						display BC.loan_balance
 					else:
-						display button to write BC.loan_balance" -->
+						display button to write BC.loan_balance" That comment ended here
 				<td><a href="pbl{{ app.id }}"><button>Publish Loan</button></a></td>
 				<td><a href="pbd{{ app.id }}"><button>Publish Deed</button></a></td>
 			{% endfor %}
 		</table>
 	{% else %}
 		<p>There are no Converted Applications</p>
-	{% endif %}
+	{% endif %}-->
 {% endblock content %}
