@@ -51,7 +51,7 @@
 				document.getElementById("id_interest_pmt").setAttribute("value", interestPmt);
 				document.getElementById("principal").parentElement.innerHTML='<p><strong id="principal">Principal Payment:</strong> $' + principalPmt.toFixed(2) + '</p>';
 				
-				if (interestPmt > 0 && principalPmt >= 0 && pmtTotal > 0 && newPmtDate >= currDate) {
+				if (interestPmt > 0 && principalPmt >= 0 && pmtTotal > 0 && newPmtDate <= currDate) {
 					document.getElementById('submit_button').disabled = false;
 					document.getElementById('warning').innerHTML = ""
 				}
