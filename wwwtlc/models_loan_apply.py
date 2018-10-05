@@ -19,7 +19,7 @@ class Address(models.Model):
 	city = models.CharField(max_length=127)
 	state = models.CharField(max_length=25)
 	zipcode = models.CharField(max_length=10, blank=True, null=True)
-	country = models.CharField(max_length=3)
+	country = models.CharField(max_length=3, default = 'US')
 	
 	def __str__(self):
 		return self.street1 + ', ' + self.city + ', ' + self.state 
@@ -38,10 +38,11 @@ class PropertyInfoRequest(models.Model):
 		(1, 'Industrial'),
 		(2, 'Residential'),
 		(3, 'Mixed'),
+		(4, 'Select Property Type'),
 	)
 	property_type = models.IntegerField(
 		choices = TYPE_CHOICES,
-		default = 0,
+		default = 4,
 		verbose_name='Property Type'
 	)
 	source = models.ForeignKey(User)
@@ -59,6 +60,7 @@ class CurrentMortgage(models.Model):
 	LATE_CHOICES = (
 		(0, 'No'),
 		(1, 'Yes'),
+		(2, 'Select'),
 	)
 	source = models.ForeignKey(User)
 	date_loan_originated = models.CharField(max_length=30, verbose_name='Date Loan Originated')
@@ -72,7 +74,7 @@ class CurrentMortgage(models.Model):
 	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Current Interest Rate')
 	late_payments = models.IntegerField(
 		choices = LATE_CHOICES,
-		default = 0,
+		default = 2,
 		verbose_name = "Have you made any late payments?",
 	)
 	
@@ -91,7 +93,7 @@ class MortgageDesired(models.Model):
 		(1, '15 Year'),
 		(2, '10 Year'),
 		(3, 'Less than 10 Years'),
-		(4, 'Other'),
+		(4, 'Not Listed / Not Sure'),
 	)
 	source = models.ForeignKey(User)
 	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
@@ -114,7 +116,7 @@ class MortgageDesired(models.Model):
 		default = 0,
 		verbose_name='Desired Term'
 	)
-	if_not_listed = models.CharField(max_length=30, blank=True, null=True, verbose_name='Desired Term (if not listed)')
+	#~ if_not_listed = models.CharField(max_length=30, blank=True, null=True, verbose_name='Desired Term (if not listed)')
 	
 class BorrowerInfoRequest(models.Model):
 	B_TYPE_CHOICES = (
@@ -127,6 +129,7 @@ class BorrowerInfoRequest(models.Model):
 		(2, '660-679'),
 		(3, '630-659'),
 		(4, 'Unknown'),
+		(5, 'Select'),
 	)
 	source = models.ForeignKey(User)
 	language = models.CharField(default='en-us', max_length=8, null=True, blank=True)# hidden field, for now
@@ -139,9 +142,9 @@ class BorrowerInfoRequest(models.Model):
 	net_worth = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Net Worth')
 	fico = models.IntegerField(
 		choices = FICO_CHOICES,
-		default = 0,
+		default = 5,
 		verbose_name='FICO',
-		help_text='(approximate FICO)'
+		help_text='(approximate credit score)'
 	)
 	
 class NewRequestSummary(models.Model):
