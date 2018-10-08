@@ -89,4 +89,17 @@
 	</div> <!-- container -->
 </div> <!-- login-form -->
 
+<!-- Email Validation Script -->
+<script>
+	var user_email = document.getElementById('id_username').value;
+	var regex = RegExp('^(.+)@(.+){2,}\.(.+){2,}$')
+	
+	if(!regex.test(user_email)){
+		// invalid email
+		error = document.createElement('p');
+		error.innerHTML = '<p style="color:#ba2121;font-size:13px;">Please enter a valid email address.</p>';
+		div = document.getElementById('id_username').parentElement;
+		div.insertBefore(error, div.firstChild.nextElementSibling)
+	}
+</script>
 {% include "footer.html" %}
