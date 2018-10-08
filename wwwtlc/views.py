@@ -634,7 +634,7 @@ def new_field(request, field_name):
 	elif 'emp' in field_name:
 		return handle_pop_add(request, EmploymentIncomeForm, new_field)
 
-# Form for Loan Apply
+# Form for Loan Apply (Contact Form)
 class LoanApplyWizard(SessionWizardView):
 	# Function to send the form some initial values
 	def get_form_initial(self, step):
@@ -671,8 +671,17 @@ class LoanApplyWizard(SessionWizardView):
 			
 		if step == '1':
 			self.initial_dict = {'user': self.request.user}
-			
+
+		if step == '2':
+			print("I'm Here")
+	
 		return self.initial_dict
+
+	# Function to replace ',' with ''
+	def get_form_kwargs(self, step):
+		print(str(dir(self.post)))
+		print('\n'+str(self.post))
+		return {}
 	
 	def done(self, form_list, **kwargs):
 		summary = NewRequestSummary
