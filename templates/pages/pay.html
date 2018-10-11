@@ -97,26 +97,28 @@ function transfer() {
       return;
     }
     address=document.getElementById('currentAddress').innerHTML;
-    document.getElementById('currentStatus').innerHTML = "<a href='https://ropsten.etherscan.io/address/"+address+"/>'Payment Status</a>";
+    document.getElementById('currentStatus').innerHTML = "<a href='https://"+netdomain+" t.etherscan.io/address/"+address+"/>'Payment Status</a>";
   });
 }
-
+var amountstr;
+var netdomain;
 function loanPayTLC() {
   var recipient = document.getElementById("loanAddress").innerText;
-  var amount = document.getElementById("loanpayTLC").value +'000000000000000000';
+  amount = document.getElementById("loanpayTLC").value +'000000000000000000';
   amount=amount.substring(0,amount.indexOf('.')+19);
-  console.log( '"'+recipient +'","'+amount+'"');
-  if (!amount || !recipient) {
-    console.log( recipient + " error with "+ amount);
+  var amountstr = amount.replace(/./g, '');
+  console.log( '"'+recipient +'","'+amount+'","'+amountstr);
+  if (!amountstr || !recipient) {
+    console.log( recipient + " error with "+ amountstr);
   }
   document.getElementById('currentStatus').innerHTML = "Sending "+ recipient + " TLC "+ amount;
-  this.myContractInstance.loanPayTLC(recipient, amount, function(error, success) {
+  this.myContractInstance.loanPayTLC(recipient, amountstr, function(error, success) {
     if (error) {
-      document.getElementById('currentStatus').innerHTML = "Error";
+      document.getElementById('currentStatus').innerHTML = "Error"+error;
       return;
     }
     address=document.getElementById('currentAddress').innerHTML;
-    document.getElementById('currentStatus').innerHTML = "<a href='https://ropsten.etherscan.io/address/"+address+"/>'Payment Status</a>";
+    document.getElementById('currentStatus').innerHTML = "<a href='https://"+netdomain+".etherscan.io/address/"+address+"/>'Payment Status</a>";
   });
 }
 
@@ -161,18 +163,22 @@ function loadContract() {
       case "1":
         self.abi = mainnet.json;
         self.contractAddress = mainnet.address;
+	netdomain="www"
         break
       case "3":
         self.abi = ropsten.json;
         self.contractAddress = ropsten.address;
+	netdomain="ropsten"
         break
       case "4":
         self.abi = rinkeby.json;
         self.contractAddress = rinkeby.address;
+	netdomain="rinkeby"
         break
       case "42":
         self.abi = kovan.json;
         self.contractAddress = kovan.address;
+	netdomain="kovan"
         break
       default:
         console.log('This is an unknown network.');
