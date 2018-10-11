@@ -240,7 +240,7 @@
 	<p><strong>Date:</strong>{{ app.acknowledge.date }}</p>
 	<br />
 	{% if 'certify' in request.path %}
-		<a href="/pdf_done/{{ app.id }}" class="btn btn-default">Generate PDF</a>
+		<a href="/pdf_done/{{ app.id }}" class="btn btn-default" target="_blank">Generate PDF</a>
 		<br />
 	{% endif %}
 	

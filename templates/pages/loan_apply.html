@@ -37,13 +37,13 @@
 	try {
 		// Step 3, field=original_amount
 		x = document.getElementById('id_2-original_amount');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 
 		// Step 3, field=current_balance
 		x = document.getElementById('id_2-current_balance');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 
@@ -56,44 +56,47 @@
 	try {
 		// Step 4, field=amount_desired
 		x = document.getElementById('id_3-amount_desired');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 	
 		// Step 4, field=cash_back_desired
 		x = document.getElementById('id_3-cash_back_desired');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 
 		// Step 4, field=payment_desired
 		x = document.getElementById('id_3-payment_desired');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 
 		// Step 4, field=intrate_desired
 		x = document.getElementById('id_3-intrate_desired').parentElement;
-		x.innerHTML = x.innerHTML + "<span> %</span>"
+		x.innerHTML = x.innerHTML + "<span> %</span>";
 	}
 	catch (e) {}
 
 	try {
 		// Step 5, field=annual_income
 		x = document.getElementById('id_4-annual_income');
-		x.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
 		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 		
 
 		// Step 5, field=net_worth
 		x = document.getElementById('id_4-net_worth');
-		x.parentElement.setAttribute('class', 'commas')
+		x.setAttribute('class', 'commas');
 		x.setAttribute('type', 'text');
-		x.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
+		x.parentElement.innerHTML = "<span>$</span>" + x.parentElement.innerHTML;
 	}
 	catch (e) {}
-</script> <!-- selects input elements and adds either '$' or '%' to them -->
+</script> <!-- 
+selects input elements and adds either '$' or '%' to them,
+as well as adding 'commas' class to 'number' input fields
+-->
 
 <script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
 <script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
