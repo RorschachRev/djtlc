@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group row">
                     <label for="loanAddress" class="col-sm-2 col-form-label">Loan Address</label>
-                    <span class="col-sm-10" id="loanAddress">0x{{ loan.wallet_addr }}</span><br />
+                    <span class="col-sm-10" id="loanAddress">{{ loan.wallet_addr }}</span><br />
                 </div>
                 <div class="form-group row">
                     <label for="TLCtoUSDc" class="col-sm-2 col-form-label">USD per TLC</label>
@@ -51,7 +51,7 @@
               <form class="form-inline row">
                 <div class="form-group">
                    <label for="loanAddress" class="col-sm-2">Payment Address:</label>
-                  <div class="col-sm-10" id="loanAddress">0x{{ loan.wallet_addr }} </div>
+                  <div class="col-sm-10" id="loanAddress">{{ loan.wallet_addr }} </div>
                   <input type="number" class="form-control col-sm-8" size="10" id="loanpayTLC" value="{{ loan.payTLC }}">
                   <div class="col-sm-1">&nbsp;</div>
                   <button type="button" class="btn btn-primary col-sm-3" onclick="loanPayTLC()">Send TLC Loan Payment</button>
@@ -100,9 +100,11 @@ function transfer() {
     document.getElementById('currentStatus').innerHTML = "<a href='https://ropsten.etherscan.io/address/"+address+"/>'Payment Status</a>";
   });
 }
+
 function loanPayTLC() {
   var recipient = document.getElementById("loanAddress").innerText;
   var amount = document.getElementById("loanpayTLC").value +'000000000000000000';
+  amount=amount.substring(0,amount.indexOf('.')+19);
   console.log( '"'+recipient +'","'+amount+'"');
   if (!amount || !recipient) {
     console.log( recipient + " error with "+ amount);
@@ -127,6 +129,7 @@ function getWalletBalance(address) {
       if (error) {
         return;
       }
+//~       console.log(balance);
       document.getElementById('currentBalance').innerHTML = balance/(1e18) + ' TLC';
     });
 }
