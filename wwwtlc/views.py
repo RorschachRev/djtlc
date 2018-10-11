@@ -725,8 +725,6 @@ class LoanApplyWizard(SessionWizardView):
 				mut['4-net_worth'] = x
 				form.data = mut
 				self.request.POST = form.data
-				print('\n####\n' + str(self.storage.data))
-				print('\n' + str(dir(self.storage.data)) + '\n')
 			except:
 				pass	
 		return form
