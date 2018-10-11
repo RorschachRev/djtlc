@@ -672,17 +672,65 @@ class LoanApplyWizard(SessionWizardView):
 		if step == '1':
 			self.initial_dict = {'user': self.request.user}
 
-		if step == '2':
-			print("I'm Here")
-	
 		return self.initial_dict
 
-	# Function to replace ',' with ''
-	def get_form_kwargs(self, step):
-		print(str(dir(self.post)))
-		print('\n'+str(self.post))
-		return {}
-	
+	def get_form(self, step=None, data=None, files=None):
+		form = super(LoanApplyWizard, self).get_form(step, data, files)
+		
+		if step is None:
+			step = self.steps.current
+
+		if step == '1':
+			try:
+				mut = form.data.copy()
+				x = mut['1-rent'].replace(',','')
+				mut['1-rent'] = x
+				form.data = mut
+				self.request.POST = form.data
+			except: 
+				pass
+
+		if step == '2':
+			try:
+				mut = form.data.copy()
+				x = mut['2-original_amount'].replace(',','')
+				mut['2-original_amount'] = x
+				x = mut['2-current_balance'].replace(',','')
+				mut['2-current_balance'] = x
+				form.data = mut
+				self.request.POST = form.data
+			except:
+				pass
+
+		if step == '3':
+			try:
+				mut = form.data.copy()
+				x = mut['3-amount_desired'].replace(',','')
+				mut['3-amount_desired'] = x
+				x = mut['3-cash_back_desired'].replace(',','')
+				mut['3-cash_back_desired'] = x
+				x = mut['3-payment_desired'].replace(',','')
+				mut['3-payment_desired'] = x
+				form.data = mut
+				self.request.POST = form.data
+			except:
+				pass
+
+		if step == '4':
+			try:
+				mut = form.data.copy()
+				x = mut['4-annual_income'].replace(',','')
+				mut['4-annual_income'] = x
+				x = mut['4-net_worth'].replace(',','')
+				mut['4-net_worth'] = x
+				form.data = mut
+				self.request.POST = form.data
+				print('\n####\n' + str(self.storage.data))
+				print('\n' + str(dir(self.storage.data)) + '\n')
+			except:
+				pass	
+		return form
+
 	def done(self, form_list, **kwargs):
 		summary = NewRequestSummary
 		
