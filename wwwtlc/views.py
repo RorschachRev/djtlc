@@ -840,7 +840,7 @@ class LoanApplyWizard(SessionWizardView):
 				'loan-dept@thelendingcoin.com',
 
 				# 'to' email address(es)
-				['alexheistdev@gmail.com']
+				['loan-dept@thelendingcoin.com', 'rich@thelendingcoin.com', 'quoc@thelendingcoin.com', 'paul@thelendingcoin.com']
 			)	
 
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
