@@ -818,7 +818,7 @@ class LoanApplyWizard(SessionWizardView):
 				'Your The LendingCoin, Inc. Loan Refinancing Query',
 				
 				# message
-				('Greetings %s %s,\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBase on your requested loan, a loan of $%s for %s(s) at %s %% would make your payment approximately $%s.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer\n\nThe LendingCoin, Inc.\n1550 S. Cloverdale Rd.\nBoise, ID 83709\n(208) 401-9596\nthelendingcoin.com') % (a.name_first, a.name_last, str_amount, str_term, str_intrate, str(payment_calc(d.amount_desired, d.intrate_desired, int(split_term))) ), 
+				('Greetings %s %s,\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBased on your requested loan, a loan of $%s for %s(s) at %s %% would make your payment approximately $%s.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer\n\nThe LendingCoin, Inc.\n1550 S. Cloverdale Rd.\nBoise, ID 83709\n(208) 401-9596\nthelendingcoin.com') % (a.name_first, a.name_last, str_amount, str_term, str_intrate, str(payment_calc(d.amount_desired, d.intrate_desired, int(split_term))) ), 
 	
 				# 'from' email address
 				'loan-dept@thelendingcoin.com',
@@ -834,41 +834,13 @@ class LoanApplyWizard(SessionWizardView):
 				'New Refinancing Query',
 			
 				# message
-				'Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interest in obtaining more information about refinancing a commercial loan from ' + str(a.name_first) + ' ' + str(a.name_last) + '.\n\n' + 
-				'Contact Information\n\n' +
-				'Name: ' +  a.name_first + ' ' + a.name_last + 
-				'\nPhone: ' + a.phone + 
-				'\nEmail: ' + a.email_address + 
-				'\n\nProperty Information\n\nProperty Type: ' + str(b.TYPE_CHOICES[b.property_type][1]) +
-				'\nProperty Address: ' + str(b.property_address) + 
-				'\nRent: $' + str(b.rent) + 
-				'\nProperty Age: ' + str(b.property_age) + 
-				'\n\nCurrent Mortgage\n\nDate Loan Originated: ' + str(c.date_loan_originated) + 
-				'\nCurrent Loan Type: ' + str(c.TYPE_CHOICES[c.current_loan_type][1]) + 
-				'\nOriginal Amount: $' + str(c.original_amount) + 
-				'\nCurrent Balance: $' + str(c.current_balance) + 
-				'\nCurrent Term: ' + str(c.current_term) + 
-				'\nCurrent Interest Rate: ' + str(c.current_intrate) + 
-				'%\nLate Payments: ' + str(c.LATE_CHOICES[c.late_payments][1]) + 
-				'\n\nDesired Mortgage\n\nAmount Desired: $' + str(d.amount_desired) + 
-				'\nCash Back Desired: $' + str(d.cash_back_desired) + 
-				'\nLoan Currency: ' + str(d.loan_currency) + 
-				'\nLoan Type Desired: ' + str(d.TYPE_CHOICES[d.loan_type_desired][1]) + 
-				'\nPayment Desired: $' + str(d.payment_desired) + 
-				'\nInterest Rate Desired: ' + str(d.intrate_desired) + 
-				'%\nTime Frame Desired: ' + str(d.TIMEFRAME_CHOICES[d.time_frame][1]) + 
-				'\nTerm Desired: ' + str(d.TERM_CHOICES[d.term_desired][1]) + 
-				'\n\nBorrower Information\n\nBorrower Type: ' + str(e.B_TYPE_CHOICES[e.type][1]) + 
-				'\nAnnual Income: $' + str(e.annual_income) + 
-				'\nNet Worth: $' + str(e.net_worth) + 
-				'\nFICO Score: ' + str(e.FICO_CHOICES[e.fico][1]) + 
-				'\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed by logging into The LendingCoin, Inc. Refinancing Dashboard and navigating to \'Loan Requests\'\n\nRegards,\n\nThe LendingCoin, Inc.',
+				('Greetings staff,\n\nThe LendingCoin, Inc. has received an Expression of Interest in obtaining more information about refinancing a commercial loan from %s %s.\n\n Contact Information\n\nName: %s %s\nPhone: %s\nEmail: %s\n\nProperty Information\n\nProperty Type: %s\nProperty Address: %s\nRent: $%s\nProperty Age: %s\n\nCurrent Mortgage\n\nDate Loan Originated: %s\nCurrent Loan Type: %s\nOriginal Amount: $%s\nCurrent Balance: $%s\nCurrent Term: %s\nCurrent Interest Rate: %s %%\nLate Payments: %s\n\nDesired Mortgage\n\nAmount Desired: $%s\nCash Back Desired: $%s\nLoan Currency: %s\nLoan Type Desired: %s\nPayment Desired: $%s\nInterest Rate Desired: %s %%\nTime Frame Desired: %s\nTerm Desired: %s\n\nBorrower Information\n\nBorrower Type: %s\nAnnual Income: $%s\nNet Worth: $%s\nFICO Score: %s\n\nAt your earliest opportunity, please review their Expression of Interest and process their submission as appropriate. This Expression of Interest can be reviewed by logging into The LendingCoin, Inc. Refinancing Dashboard and navigating to \'Loan Requests\'\n\nRegards,\n\nThe LendingCoin, Inc.') % (a.name_first, a.name_last, a.name_first, a.name_last, a.phone, a.email_address, b.TYPE_CHOICES[b.property_type][1], b.property_address, b.rent, b.property_age, c.date_loan_originated, c.TYPE_CHOICES[c.current_loan_type][1], c.original_amount, c.current_balance, c.current_term, c.current_intrate, c.LATE_CHOICES[c.late_payments][1], d.amount_desired, d.cash_back_desired, d.loan_currency, d.TYPE_CHOICES[d.loan_type_desired][1], d.payment_desired, d.intrate_desired, d.TIMEFRAME_CHOICES[d.time_frame][1], d.TERM_CHOICES[d.term_desired][1], e.B_TYPE_CHOICES[e.type][1], e.annual_income, e.net_worth, e.FICO_CHOICES[e.fico][1]),
 
 				# 'from' email address
 				'loan-dept@thelendingcoin.com',
 
 				# 'to' email address(es)
-				['loan-dept@thelendingcoin.com', 'rich@thelendingcoin.com', 'quoc@thelendingcoin.com', 'paul@thelendingcoin.com']
+				['alexheistdev@gmail.com']
 			)	
 
 		return render(self.request, 'pages/loan_apply_done.html', {'name': a.name_first + ' ' + a.name_last} )
