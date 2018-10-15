@@ -331,11 +331,6 @@ urlpatterns = [
         standard_wizard,
         name='standard_app'
 ),
-    url(
-        r'^TESTING/$',
-	views.TESTING,
-        name='TESTING'
-),
 
 # urls for ExtendedWizard - Yet to be created
 #   url(

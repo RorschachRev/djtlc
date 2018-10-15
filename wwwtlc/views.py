@@ -35,10 +35,6 @@ from django.template.loader import get_template
 '''##################################################
 # Basic Functionality Views	
 ##################################################'''	
-def TESTING(request):
-	#Layout test
-	return render(request,'pages/testlayout.html',{})
-	
 def test(request):
 	#Wallet Test
 	return render(request, 'pages/testwallet.html')
