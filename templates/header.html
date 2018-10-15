@@ -49,6 +49,9 @@
                 {% endif %}
             </ul>
         </div>
+	{% if user.is_authenticated %}
+	<p style="color: #fff; opacity: 0.75; float: right; padding-top: 10px; font-size: 15px;">{{ request.user }}</p>
+	{% endif %}
         <div class="navbar-header col-md-2">&nbsp;</div>
         <!-- /.navbar-collapse -->
     </div>
