@@ -119,6 +119,9 @@ function test_username(){
 				} catch (e) {}
 				submit.disabled = true;
 			} else if(regex.test(user_email) === false){
+				try{
+					error.innerHTML = '';
+				} catch (e) {}
 				// invalid email
 				error = document.createElement('p');
 				error.innerHTML = '<p id="username_error" style="color:#ba2121;font-size:13px;">Please enter a valid email address.</p>';
@@ -136,3 +139,6 @@ function test_username(){
 };
 </script>
 {% include "footer.html" %}
+<script>
+document.getElementsByClassName('footer')[0].parentElement.setAttribute('class','')
+</script>
