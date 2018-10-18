@@ -116,7 +116,6 @@ class MortgageDesired(models.Model):
 		default = 0,
 		verbose_name='Desired Term'
 	)
-	#~ if_not_listed = models.CharField(max_length=30, blank=True, null=True, verbose_name='Desired Term (if not listed)')
 	
 class BorrowerInfoRequest(models.Model):
 	B_TYPE_CHOICES = (

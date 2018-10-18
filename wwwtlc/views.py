@@ -797,7 +797,7 @@ class LoanApplyWizard(SessionWizardView):
 			term = d.term_desired
 
 			if term == 4:
-				str_term = d.if_not_listed + ' Year'
+				str_term = '1 Year'
 			else:
 				str_term = d.TERM_CHOICES[term][1]
 
@@ -807,6 +807,9 @@ class LoanApplyWizard(SessionWizardView):
 				split_term = str_term[:2]
 				pass	
 
+			# retrieves estimated payment
+			est_payment = payment_calc(d.amount_desired, d.intrate_desired, int(split_term))
+			
 			# sends email (to USER) when data is submitted and validated
 			# WIP
 			send_mail(
@@ -814,8 +817,8 @@ class LoanApplyWizard(SessionWizardView):
 				'Your The LendingCoin, Inc. Loan Refinancing Query',
 				
 				# message
-				('Greetings %s %s,\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBased on your requested loan, a loan of $%s for %s(s) at %s %% would make your payment approximately $%s.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer\n\nThe LendingCoin, Inc.\n1550 S. Cloverdale Rd.\nBoise, ID 83709\n(208) 401-9596\nthelendingcoin.com') % (a.name_first, a.name_last, str_amount, str_term, str_intrate, str(payment_calc(d.amount_desired, d.intrate_desired, int(split_term))) ), 
-	
+				('Greetings %s %s,\n\nThe LendingCoin, Inc. received your Commercial Loan Refinancing Expression of Interest and is processing the information you submitted. It has been routed to the refinancing committee for review and you will be hearing from us soon.\n\nAt The LendingCoin, Inc., we are excited to be able to provide you and others with the opportunity to be considered for this alternative to traditional refinancing that allows you better terms, quicker and more responsive considerations, and the benefit of the transparency of the blockchain empowered processes employed at The LendingCoin, Inc.\n\nBased on your requested loan, a loan of $%s for %s(s) at %s %% would make your payment approximately $%s.\n\nWe look forward to disussing your refinancing needs in detail. If you have any need to talk to us before we are able to contact you, please don\'t hesitate.\n\nSincerely,\n\nDavid Slonaker\nChief Financial Officer\n\nThe LendingCoin, Inc.\n1550 S. Cloverdale Rd.\nBoise, ID 83709\n(208) 401-9596\nthelendingcoin.com') % (a.name_first, a.name_last, str_amount, str_term, str_intrate, str(est_payment)), 
+
 				# 'from' email address
 				'loan-dept@thelendingcoin.com',
 				

@@ -12,22 +12,14 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 <style>
-#background {
-	margin-top: 32px;
-}
-
-#background .left {
-	float: left;
-}
-
-#background .right {
-	float: right;
+.background {
+	margin-top: 58px;
 }
 
 #signup-form {
-	margin: 10% 0 0 5%;
+	margin-top: 10%;
+	padding: 0 25px;
 	text-align: center;
-	display: block;
 }
 
 #signup-form h1 {
@@ -62,35 +54,46 @@
 	margin: 2.5% 15% 0 15%;
 }
 
-</style>
-<div id="background">
-	<div class="left">
-		<img src="{% static 'img/landing-bg1.jpg' %}">
-	</div> <!-- left -->
-	<div class="right">
-		<img src="{% static 'img/landing-bg2.jpg' %}">
-	</div> <!-- right -->
-</div> <!-- background -->
+.nopadding {
+	padding: 0 !important;
+}
 
-<div id="signup-form">
-	<h1>The LendingCoin</h1>
-	<div class="container">
-		<form method="post">
+.row {
+	margin-bottom: 5px;
+}
+</style>
+<div class="row">
+	<div class="col-lg-3 background nopadding">
+		<img class="img-responsive" src="{% static 'img/landing-bg1.jpg' %}">
+	</div> <!-- col-lg-4 background -->
+		
+	<div id="signup-form" class="col-lg-6">
+		<h1>The LendingCoin</h1>
+		<form method="post" class="form-horizontal">
 			{% csrf_token %}
 			{% for field in form %}
-   			<div class="fieldWrapper">
-       			{{ field.errors }}
-       			{{ field.label_tag }} {{ field }}
+  			<div class="fieldWrapper form-group">
+       				{{ field.errors }}
+				<div class="control-label col-sm-3">
+       					{{ field.label_tag }}
+				</div>
+				<div class="col-sm-9">
+					{{ field }}
+				</div>
 				{% if field.help_text %}
 				<p class="help">{{ field.help_text|safe }}</p>
 				{% endif %}
-			    </div>
+			</div>
 			{% endfor %}
 			<!-- {{ form.as_p }} -->
 			<button id="signup_submit" type="submit">Sign Up</button>
 		</form>
-	</div> <!-- container -->
-</div> <!-- login-form -->
+	</div> <!-- signup-form col-lg-4 -->
+
+	<div class="col-lg-3 background nopadding">
+		<img class="img-responsive"src="{% static 'img/landing-bg2.jpg' %}">
+	</div> <!-- col-lg-4 background -->
+</div> <!-- row -->
 
 <!-- Email Validation Script -->
 <script>
