@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 from wwwtlc.models_loan_apply import Address
 
@@ -20,20 +21,20 @@ class BusinessInfo(models.Model):
 	source = models.ForeignKey(User)
 	bus_name = models.CharField(max_length=256, verbose_name='Business Name', help_text='(required)')
 	bus_description = models.TextField(verbose_name='Business Description', help_text='(required)')
-	income = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Income', help_text='(required)')
-	rent = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True)
-	first_mortgage = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='First Mortgage Amount')
-	other_mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Mortgage Amount')
+	income = models.DecimalField(max_digits=12, decimal_places=4, validators=[MinValueValidator(0)], verbose_name='Income', help_text='(required)')
+	rent = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)])
+	first_mortgage = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='First Mortgage Amount')
+	other_mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Other Mortgage Amount')
 	other_mortgage_description = models.TextField(null=True, blank=True, verbose_name='Other Mortgage Description')
-	hazard_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Hazard Insurance')
-	real_estate_taxes = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Real Estate Taxes')
-	net_rental = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Rental Income')
+	hazard_insur = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Hazard Insurance')
+	real_estate_taxes = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Real Estate Taxes')
+	net_rental = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Net Rental Income')
 	income_other_description = models.TextField(null=True, blank=True, verbose_name='Other Income')
-	income_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Income Total')
-	income_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Income Total', help_text='(required)')
+	income_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Other Income Total')
+	income_total = models.DecimalField(max_digits=12, decimal_places=4, validators=[MinValueValidator(0)], verbose_name='Income Total', help_text='(required)')
 	expense_other_description = models.TextField(null=True, blank=True, verbose_name='Other Expense(s)')
-	expense_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Other Expense Total')
-	expense_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Expense Total', help_text='(required)')
+	expense_other = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Other Expense Total')
+	expense_total = models.DecimalField(max_digits=12, decimal_places=4, validators=[MinValueValidator(0)], verbose_name='Expense Total', help_text='(required)')
 	
 	def __str__(self):
 		return self.bus_name
@@ -41,11 +42,11 @@ class BusinessInfo(models.Model):
 class ConstructionInfo(models.Model):
 	source = models.ForeignKey(User)
 	year_acquired = models.DateField(default=timezone.now, null=True, blank=True, verbose_name='Year Acquired')
-	original_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Original Cost')
-	amt_existing_liens = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Existing Liens Amount')
-	present_value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Present Value', help_text='a.') # a.
-	improve_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Cost of Improvements', help_text='b.') # b.
-	total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, help_text='a. + b.') # (a + b)
+	original_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Original Cost')
+	amt_existing_liens = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Existing Liens Amount')
+	present_value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Present Value', help_text='a.') # a.
+	improve_cost = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Cost of Improvements', help_text='b.') # b.
+	total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], help_text='a. + b.') # (a + b)
 	
 	def __str__(self):
 		return 'Construction Loan Information'
@@ -53,9 +54,9 @@ class ConstructionInfo(models.Model):
 class PropertyInfo (models.Model):
 	source = models.ForeignKey(User)
 	address = models.ForeignKey(Address, null=True, blank=True)
-	no_units = models.IntegerField(verbose_name='Number of Units', help_text='(required)') # number of units
+	no_units = models.IntegerField(validators=[MinValueValidator(0)], verbose_name='Number of Units', help_text='(required)') # number of units
 	legal_description = models.CharField(max_length=256, null=True, blank=True, verbose_name='Legal Description')
-	year_built = models.IntegerField(verbose_name='Year Built', help_text='(required)')
+	year_built = models.IntegerField(validators=[MinValueValidator(0)], verbose_name='Year Built', help_text='(required)')
 	construction_loan = models.ForeignKey(ConstructionInfo, null=True, blank=True, verbose_name='Construction Loan')
 	title_names = models.CharField(max_length=256, null=True, blank=True, verbose_name='Names on Title')
 	
@@ -270,7 +271,7 @@ class EmploymentIncome(models.Model): # for Tier 2, when personal income is need
 	title = models.CharField(max_length=256, help_text='(required)')
 	business_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Type of Business')
 	business_phone = models.CharField(max_length=256, null=True, blank=True, verbose_name='Phone Number')
-	income = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name='Yearly Income') # yearly amt
+	income = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Yearly Income') # yearly amt
 	
 	# if yrs_worked < 2 || if working in more than one position, 	\
 	# the following fields will need to be created / filled out:		\
@@ -284,7 +285,7 @@ class BankAccount(models.Model):
 	name = models.CharField(max_length=256, null=True, blank=True, verbose_name='Name of Bank, S&L, or Credit Union')
 	address = models.ForeignKey(Address, null=True, blank=True, verbose_name='Branch Address')
 	acct_no = models.IntegerField(null=True, blank=True, verbose_name='Account Number')
-	amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Cash or Market Value')
+	amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Cash or Market Value')
 		
 	def __str__(self):
 		return 'Applicant\'s Bank Information'
@@ -294,13 +295,13 @@ class ManagedProperty(models.Model):
 	real_estate_schedule = models.CharField(max_length=256, null=True, blank=True, verbose_name='Schedule of Real Estate') # may want to be a CHOICES field
 	property_address = models.ForeignKey(Address, null=True, blank=True, verbose_name='Address of Property')
 	property_type = models.CharField(max_length=256, null=True, blank=True, verbose_name='Type of Property') # will want to be CHOICES field
-	present_market_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Present Market Value')
-	mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Mortgage Amount')
-	liens_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Liens Amount')
-	gross_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Gross Rental Income') # might want to require this
-	mortgage_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Mortgage Payments')
-	misc_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Miscellaneous Payments', help_text='(Insurance, Maintenance, Taxes, etc.)') # might want to require this
-	net_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Rental Income') # might want to require this
+	present_market_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Present Market Value')
+	mortgage_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Mortgage Amount')
+	liens_amt = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Liens Amount')
+	gross_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Gross Rental Income') # might want to require this
+	mortgage_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Mortgage Payments')
+	misc_payments = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Miscellaneous Payments', help_text='(Insurance, Maintenance, Taxes, etc.)') # might want to require this
+	net_rental_income = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Net Rental Income') # might want to require this
 	
 	def __str__(self):
 		return 'Applicant\'s Managed Property'
@@ -318,22 +319,22 @@ class AssetSummary(models.Model):
 	acct1 = models.ForeignKey(BankAccount, related_name='acc_1', null=True, blank=True, verbose_name='Account 1')
 	acct2 = models.ForeignKey(BankAccount, related_name='acc_2', null=True, blank=True, verbose_name='Account 2')
 	acct3 = models.ForeignKey(BankAccount, related_name='acc_3', null=True, blank=True, verbose_name='Account 3')
-	stock_value = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Stock Value')
-	bond_value = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Bond Value')
+	stock_value = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Stock Value', help_text='(required)')
+	bond_value = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Bond Value', help_text='(required)')
 	
-	life_ins_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Life Insurance Value')
-	face_amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Face Amount')
-	subtotal_liquid = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Subtotal Liquid Assets', help_text='(required)')
-	vested_interest = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Vested Interest in Retirement Fund')
-	net_worth = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name='Net Worth of Business(es) Owned') # of business(es) owned
+	life_ins_value = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Life Insurance Value')
+	face_amount = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Face Amount')
+	subtotal_liquid = models.DecimalField(max_digits=12, decimal_places=4, validators=[MinValueValidator(0)], verbose_name='Subtotal Liquid Assets', help_text='(required)')
+	vested_interest = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Vested Interest in Retirement Fund')
+	net_worth = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, validators=[MinValueValidator(0)], verbose_name='Net Worth of Business(es) Owned') # of business(es) owned
 	
 	employment_income = models.ForeignKey(EmploymentIncome, null=True, blank=True, verbose_name='Employment Income Information')
 	managed_property = models.ForeignKey(ManagedProperty, null=True, blank=True, verbose_name='Managed Property Information')
 	
 	other_description = models.TextField(null=True, blank=True, verbose_name='Other Assets', help_text='(itemize)')
-	other_amt_total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Other Assets Total', help_text='(required)')
+	other_amt_total = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], verbose_name='Other Assets Total', help_text='(required)')
 	
-	assets_total = models.DecimalField(max_digits=12, decimal_places=4, verbose_name='Assets Total', help_text='(required)')
+	assets_total = models.DecimalField(max_digits=12, decimal_places=4, validators=[MinValueValidator(0)], verbose_name='Assets Total', help_text='(required)')
 		
 	def __str__(self):
 		return 'Applicant\'s Asset Summary'
@@ -397,7 +398,7 @@ class CreditRequest(models.Model):
 	)
 	source = models.ForeignKey(User)
 	borrower = models.ForeignKey(BorrowerInfo, null=True, blank=True)
-	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Amount Requested', help_text='(required)')
+	amt_requested = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(0)], verbose_name='Amount Requested', help_text='(required)')
 	term_requested = models.CharField(max_length=256, verbose_name='Term Requested', help_text='(required)') # unsure of what this is going to be
 	loan_type = models.IntegerField(
 		choices = LOAN_TYPE_CHOICES,
