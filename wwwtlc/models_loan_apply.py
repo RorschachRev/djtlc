@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 
 # For the most part, this models file is straightforward,
 # the only things that I would like to know about it would be
@@ -47,10 +48,10 @@ class PropertyInfoRequest(models.Model):
 	)
 	source = models.ForeignKey(User)
 	property_address = models.ForeignKey(Address, help_text="Select property from list, or click '+' to add new property.")
-	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, verbose_name='Occupancy Rate')
-	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, verbose_name='Lease Rate')
-	rent = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Loan Payment')
-	property_age = models.IntegerField(verbose_name='Property Age')
+	occupancy_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, validators=[MinValueValidator(0)], verbose_name='Occupancy Rate')
+	lease_rate = models.DecimalField(decimal_places=4, max_digits=12, blank=True, null=True, validators=[MinValueValidator(0)], verbose_name='Lease Rate')
+	rent = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Current Loan Payment')
+	property_age = models.IntegerField(validators=[MinValueValidator(0)], verbose_name='Property Age')
 	
 class CurrentMortgage(models.Model):
 	TYPE_CHOICES = (
@@ -68,10 +69,10 @@ class CurrentMortgage(models.Model):
 		choices = TYPE_CHOICES,
 		default = 0,
 	)
-	original_amount = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Original Amount')
-	current_balance = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Current Balance')
+	original_amount = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Original Amount')
+	current_balance = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Current Balance')
 	current_term = models.CharField(max_length=255, verbose_name='Current Term', help_text='Months remaining of total (e.g. 45 of 120)')
-	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Current Interest Rate')
+	current_intrate = models.DecimalField(decimal_places=2, max_digits=4, validators=[MinValueValidator(0)], verbose_name='Current Interest Rate')
 	late_payments = models.IntegerField(
 		choices = LATE_CHOICES,
 		default = 2,
@@ -96,16 +97,16 @@ class MortgageDesired(models.Model):
 		(4, 'Not Listed / Not Sure'),
 	)
 	source = models.ForeignKey(User)
-	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Amount Desired')
-	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Cash Back Desired')
+	amount_desired = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Amount Desired')
+	cash_back_desired = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Cash Back Desired')
 	loan_currency = models.CharField(max_length=3, default='USD', verbose_name='Loan Currency')
 	loan_type_desired = models.IntegerField(
 		choices = TYPE_CHOICES,
 		default = 0,
 		verbose_name='Desired Loan Type'
 	)
-	payment_desired = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Desired Payment of About')
-	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4, verbose_name='Desired Interest Rate')
+	payment_desired = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Desired Payment of About')
+	intrate_desired = models.DecimalField(decimal_places=2, max_digits=4, validators=[MinValueValidator(0)], verbose_name='Desired Interest Rate')
 	time_frame = models.IntegerField(
 		choices = TIMEFRAME_CHOICES,
 		default = 0,
@@ -137,8 +138,8 @@ class BorrowerInfoRequest(models.Model):
 		choices = B_TYPE_CHOICES,
 		verbose_name='Type'
 	)
-	annual_income = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Annual Income')
-	net_worth = models.DecimalField(decimal_places=4, max_digits=12, verbose_name='Net Worth')
+	annual_income = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Annual Income')
+	net_worth = models.DecimalField(decimal_places=4, max_digits=12, validators=[MinValueValidator(0)], verbose_name='Net Worth')
 	fico = models.IntegerField(
 		choices = FICO_CHOICES,
 		default = 5,
