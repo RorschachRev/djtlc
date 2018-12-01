@@ -102,6 +102,7 @@ def signup(request):
 # User Views
 ##################################################'''
 def loan(request):
+    #TODO details page shows get_loan_bal get_deed_loan
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
 	#basic = ApplicationSummary.objects.filter(user=request.user, status=0).order_by('-submission_date')
@@ -119,12 +120,14 @@ class loaninfo():
 		pass
 		
 def payhistory(request):
+	#TODO: change wallet_addr to user's loan
+	#TODO: if admin, display list of wallet loans, select wallet_addr by loan
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
 	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date')
+	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date') #TODO: query event history for the loan in question
 	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata, 'payments': payments })
-	
+		
 def wallet(request):
 	if request.method == 'POST':
 		form = WalletForm(request.POST)
@@ -135,7 +138,7 @@ def wallet(request):
 			obj.save()
 	w=Wallet.objects.all().filter(wallet=request.user)
 	form=WalletForm()
-	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
+	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form, 'objbc': obj })
 	
 def pay(request, loan_id, principal_paid=0):
 	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
