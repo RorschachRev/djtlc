@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <h1>Event Viewer</h1>
+    <h2><u>Approval Events</u></h2>
+    {% for event in approval_events %}
+      <div class="row">
+        <hr>
+	<p><strong>Block Number:</strong> {{ event.blockNumber }}</p>
+	<p><strong>Transaction Index:</strong> {{ event.transactionIndex }}</p>
+	<p><strong>Address:</strong> {{ event.address }}</p>
+	<p><strong>Event:</strong> {{ event.event }}</p>
+	<p><strong>Log Index:</strong> {{ event.logIndex }}</p>
+	<p><strong>Spender:</strong> {{ event.args.spender }}</p>
+	<p class="token"><strong>Tokens: </strong>{{ event.args.tokens }}</p>
+	<p><strong>Token Owner:</strong> {{ event.args.tokenOwner }}</p>
+      </div>
+    {% endfor %}
+    <br>
+    <h2><u>Buy Events</u></h2>
+    {% for event in buy_events %}
+      <div class="row">
+        <hr>
+	<p><strong>Block Number:</strong> {{ event.blockNumber }}</p>
+	<p><strong>Transaction Index:</strong> {{ event.transactionIndex }}</p>
+	<p><strong>Address:</strong> {{ event.address }}</p>
+	<p><strong>Event:</strong> {{ event.event }}</p>
+	<p><strong>Log Index:</strong> {{ event.logIndex }}</p>
+	<p class="token"><strong>Tokens: </strong>{{ event.args.tokens }}</p>
+	<p><strong>Buyer:</strong> {{ event.args.buyer }}</p>
+      </div>
+    {% endfor %}
+    <br>
+    <h2><u>Loan Payment Events</u></h2>
+    {% for event in loan_payment_events %}
+      <div class="row">
+        <hr>
+	<p><strong>Block Number:</strong> {{ event.blockNumber }}</p>
+	<p><strong>Transaction Index:</strong> {{ event.transactionIndex }}</p>
+	<p><strong>Address:</strong> {{ event.address }}</p>
+	<p><strong>Event:</strong> {{ event.event }}</p>
+	<p><strong>Log Index:</strong> {{ event.logIndex }}</p>
+	<p class="token"><strong>Tokens: </strong>{{ event.args.tokens }}</p>
+	<p><strong>From:</strong> {{ event.args.from }}</p>
+	<p><strong>Loan Wallet:</strong> {{ event.args.LoanWallet }}</p>
+      </div>
+    {% endfor %}
+    <br>
+    <h2><u>Ownership Events</u></h2>
+    {% for event in ownership_events %}
+      <div class="row">
+        <hr>
+	<p><strong>Block Number:</strong> {{ event.blockNumber }}</p>
+	<p><strong>Transaction Index:</strong> {{ event.transactionIndex }}</p>
+	<p><strong>Address:</strong> {{ event.address }}</p>
+	<p><strong>Event:</strong> {{ event.event }}</p>
+	<p><strong>Log Index:</strong> {{ event.logIndex }}</p>
+      </div>
+    {% endfor %}
+    <br>
+    <h2><u>Transfer Events</u></h2>
+    {% for event in transfer_events %}
+      <div class="row">
+        <hr>
+	<p><strong>Block Number:</strong> {{ event.blockNumber }}</p>
+	<p><strong>Transaction Index:</strong> {{ event.transactionIndex }}</p>
+	<p><strong>Address:</strong> {{ event.address }}</p>
+	<p><strong>Event:</strong> {{ event.event }}</p>
+	<p><strong>Log Index:</strong> {{ event.logIndex }}</p>
+	<p><strong>To:</strong> {{ event.args.to }}</p>
+	<p><strong>From:</strong> {{ event.args.from }}</p>
+	<p class="token"><strong>Tokens: </strong>{{ event.args.tokens }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<script>
+y = document.getElementsByClassName('token');
+
+for(x=0; x<y.length; x++){
+  y[x].lastChild.nodeValue = parseFloat(y[x].lastChild.nodeValue) / 1e18;
+}
+</script>
+{% endblock content %}

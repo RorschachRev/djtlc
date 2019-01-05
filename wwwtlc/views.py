@@ -11,12 +11,17 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect, HttpResponse, render_to_response, reverse
 
 import os
+import web3
 import pytz
+import json
 import datetime
 import decimal as D
 
+from wwwtlc import events
+from wwwtlc.eth import BC
 from wwwtlc.forms import *
-from wwwtlc.ethereum import BC
+from wwwtlc import explorer
+from wwwtlc.tx_hashes import rop_tx
 from wwwtlc.models_officer import NewLoan
 from wwwtlc.models_bse import ApplicationSummary
 from wwwtlc.models_meta import Person, Wallet, Contract
@@ -29,6 +34,7 @@ from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
 from xhtml2pdf import pisa
 from pymongo import MongoClient
+from web3 import Web3
 from django.template import Context
 from django.template.loader import get_template
 
@@ -102,7 +108,6 @@ def signup(request):
 # User Views
 ##################################################'''
 def loan(request):
-    #TODO details page shows get_loan_bal get_deed_loan
 	loan_iterable = NewLoan.objects.filter(user=request.user)
 	blockdata=BC()
 	#basic = ApplicationSummary.objects.filter(user=request.user, status=0).order_by('-submission_date')
@@ -120,14 +125,12 @@ class loaninfo():
 		pass
 		
 def payhistory(request):
-	#TODO: change wallet_addr to user's loan
-	#TODO: if admin, display list of wallet loans, select wallet_addr by loan
 	loaninfo.wallet_addr='303f9e7D8588EC4B1464252902d9e2a96575168A'
 	blockdata=BC()
 	blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date') #TODO: query event history for the loan in question
+	payments = LoanPaymentHistory.objects.filter(loan__user=request.user).order_by('-pmt_date')
 	return render(request, 'pages/payhistory.html', {'loan': loaninfo, 'blockdata':blockdata, 'payments': payments })
-		
+	
 def wallet(request):
 	if request.method == 'POST':
 		form = WalletForm(request.POST)
@@ -138,7 +141,7 @@ def wallet(request):
 			obj.save()
 	w=Wallet.objects.all().filter(wallet=request.user)
 	form=WalletForm()
-	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form, 'objbc': obj })
+	return render(request, 'pages/wallet.html', {'wallet': w, 'form':form })
 	
 def pay(request, loan_id, principal_paid=0):
 	loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
@@ -398,13 +401,27 @@ def payment_history(request, loan_id=0):
 		loans = NewLoan.objects.all().order_by('id')
 		return render(request, 'dashboard/payment_history.html', {'loans': loans})
 	else:
-		loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)
+		loaninfo.wallet_addr= str(NewLoan.objects.get(pk=loan_id).loan_wallet.address)[2:]
 		blockdata=BC()
-		blockdata.loanbal=blockdata.get_loan_bal(loaninfo.wallet_addr) / 100
-		loaninfo.payment=0 #supposed to be principal_paid, hardcoded for testing
-		blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
-		loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
+		#Begin Gio's Code
+		if loaninfo.wallet_addr[:2] == "0x":
+			loaninfo.wallet_addr[2:]
+		else:
+			loaninfo.wallet_addr="d520f58d25f7259c9a03e4d861a593d7cdfe92df" #hax by ian
+		blockdata.loanbal=    blockdata.get_loan_bal(loaninfo.wallet_addr) /100
+		blockdata.tlctousdc=  blockdata.get_TLC_USDc()  /100000000
+		blockdata.deedloan=  ('https://cloudflare-ipfs.com/ipfs/%s')%(bytearray.fromhex(blockdata.get_deed_loan(loaninfo.wallet_addr)).decode() )
+		blockdata.paidfee=    blockdata.get_paid_fee(loaninfo.wallet_addr)
+		blockdata.paidinterest=  blockdata.get_paid_interest(loaninfo.wallet_addr) 
+		blockdata.paidprincipal= blockdata.get_paid_principal(loaninfo.wallet_addr)
+		#blockdata.allowloan=  blockdata.get_allow_loan(loaninfo.wallet_addr)
+		blockdata.currentbal= blockdata.get_bal_of(loaninfo.wallet_addr) 
+		#End Gio's Code
+		#loaninfo.payment=0   #supposed to be principal_paid, hardcoded for testing
+		#blockdata.tlctousdc=D.Decimal(blockdata.get_TLC_USDc() ) / 100000000 
+		#loaninfo.payTLC= loaninfo.payment / blockdata.tlctousdc
 		return render(request, 'dashboard/bc_payment_details.html', {'loan': loaninfo, 'blockdata':blockdata} )
+
 	
 def loan_accounting(request):
 	if request.method == 'GET':
@@ -549,6 +566,80 @@ def add_vendor(request):
 	# TODO:
 	# Add logic to create form for adding vendors	
 	return render(request, 'admin/add_vendor.html', {})
+
+'''
+n():
+        resp= BC()
+        w3 = resp.w3
+        contract_address=Web3.toChecksumAddress(resp.contract_address)
+        with open('abi.json', 'r', encoding='utf-8') as abi_file:
+                contract_abi = json.loads(abi_file.read())
+        my_contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+        approval_filter = my_contract.events.Approval.createFilter(fromBlock=0)
+        print(approval_filter.get_all_entries())
+        buy_filter = my_contract.events.Buy.createFilter(fromBlock=0)
+        print(buy_filter.get_all_entries())
+        loan_payment_filter = my_contract.events.LoanPayment.createFilter(fromBlock=0)
+        print(loan_payment_filter.get_all_entries())
+        ownership_filter = my_contract.events.OwnershipTransferred.createFilter(fromBlock=0)
+        print(ownership_filter.get_all_entries())
+        transfer_filter = my_contract.events.Transfer.createFilter(fromBlock=0)
+'''
+
+def event_viewer(request):
+	bc = events.BC()
+	w3 = bc.w3
+	contract_address = Web3.toChecksumAddress(bc.contract_address)
+	with open('abi.json', 'r', encoding='utf-8') as abi_file:
+		contract_abi = json.loads(abi_file.read())
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+	approval_filter = contract.events.Approval.createFilter(fromBlock=0)
+	buy_filter = contract.events.Buy.createFilter(fromBlock=0)
+	loan_payment_filter = contract.events.LoanPayment.createFilter(fromBlock=0)
+	ownership_filter = contract.events.OwnershipTransferred.createFilter(fromBlock=0)
+	transfer_filter = contract.events.Transfer.createFilter(fromBlock=0)
+	approval_events = approval_filter.get_all_entries()
+	buy_events = buy_filter.get_all_entries()
+	loan_payment_events = loan_payment_filter.get_all_entries()
+	ownership_events = ownership_filter.get_all_entries()
+	transfer_events = transfer_filter.get_all_entries()
+	context = {
+		'approval_events': approval_events,
+		'buy_events': buy_events,
+		'loan_payment_events': loan_payment_events,
+		'ownership_events': ownership_events,
+		'transfer_events': transfer_events,
+	}
+	return render(request, 'admin/event_viewer.html', context)
+
+def bc_explorer(request):
+	bc = explorer.BC()
+	w3 = bc.w3
+	tx = web3.eth.Eth(w3) 
+	contract_address = Web3.toChecksumAddress(bc.contract_address)
+	transaction = {}
+	net = 'ropsten.' # Set to '' to target mainnet
+	for hash in reversed(rop_tx):
+		receipt = tx.getTransactionReceipt(hash)
+		tx_data = tx.getTransaction(hash)
+		try:
+			data = receipt.logs[0]['data']
+			hint = int(data[2:], 16)
+		except:
+			data = receipt.logs
+			hint = None
+		transaction[hash] = {
+			'from': receipt['from'],
+			'to': receipt['to'],
+			'data': data,
+			'hint': hint,
+			'input': tx_data.input
+		}
+	context = {
+		'net': net,
+		'transaction': transaction,
+	}
+	return render(request, 'admin/bc_explorer.html', context)
 	
 '''##################################################
 PDF Generation Views

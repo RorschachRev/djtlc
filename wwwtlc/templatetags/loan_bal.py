@@ -1,5 +1,5 @@
 from django import template
-from wwwtlc.ethereum import BC
+from wwwtlc.eth import BC
 from loan.models import Loan
 
 register = template.Library()

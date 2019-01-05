@@ -21,6 +21,54 @@
 <table>
 	<tr>
 		<th>Date</th>
+		<th>Loan Address</th>
+		<th>Loan Balance</th>
+		<th>TLC to USD Currency</th>
+		<th>Deed For Loan</th>
+		<th>Loan Paid Fees</th>
+		<th>Loan Paid Interest</th>
+		<th>Loan Paid Principal</th>
+		<th>Allow Loan</th>
+		<th>Current Balance</th>
+		
+	</tr>
+	<!-- <tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0x8c4681725167ea7c1d95ce3afdc5b5459d499ec255b46fc5b349d4e820353434">Tx 0x8c4681...</a></td>
+	</tr>
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>TLCPAID</td>
+		<td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a></td>
+	</tr> -->
+	<!--Begin Gio's Code -->
+	<tr>
+		<td>DATE</td>
+		<td>{{ loan.wallet_addr }} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
+		<td>{% money_localize blockdata.tlctousdc  'USD' %} USD </td>
+		<td><a href="{{ blockdata.deedloan }}">IPFS Deed</a></td>
+		<td>{% money_localize blockdata.paidfee 'USD' %} USD </td>
+		<td>{% money_localize blockdata.paidinterest 'USD' %} USD </td>
+		<td>{% money_localize blockdata.paidprincipal 'USD' %} USD </td>
+<!--		<td>{{ blockdata.allowloan }} </td> -->
+		<td>Not Good </td> 
+		<td>{% money_localize blockdata.currentbal 'USD' %} TLC</td>
+	</tr>
+	<!--End Gio's Code -->
+
+</table>
+
+
+<!--
+<table>
+	<tr>
+		<th>Date</th>
 		<th>Loan</th>
 		<th>Balance</th>
 		<th>Amount</th>
@@ -40,5 +88,5 @@
 		<td>TLCPAID</td>
 		<td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a></td>
 	</tr>
-</table>
+</table>-->
 {% endblock content %}

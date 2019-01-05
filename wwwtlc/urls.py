@@ -256,6 +256,16 @@ urlpatterns = [
         views.add_vendor,
         name='add_vendor'
 ),
+    url(
+	r'^event_viewer/$',
+	views.event_viewer,
+	name='event_viewer'
+),
+    url(
+        r'^bc_explorer/$',
+        views.bc_explorer,
+        name='bc_explorer'
+),
 
 # Form URLs
 
