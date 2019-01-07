@@ -17,7 +17,7 @@
 			{% endif %}
 			<button type='button' class='btn-sm btn-default' data-toggle='modal' data-target='#{{ tx }}'>View Raw</button></p>
 			<div class='modal fade' id='{{ tx }}' tabindex='-1' role='dialog' aria-labelledby='rawDataLabel' aria-hidden='true'>
-				<div class='modal-dialog' style='background-color:white;' role='document'>
+				<div class='modal-dialog modal-lg' style='background-color:white;' role='document'>
 					<div class='modal-header'>
 						<h2 class='modal-title' id='rawDataLabel'>Raw Data</h5>
 						<button type='button' class='close' data-dismiss='modal' aria-label='Close'>
@@ -26,6 +26,7 @@
 					</div>
 					<div class='modal-body'>
 						<p><strong>Transaction:</strong> {{ tx }}</p>
+						<p><strong>Function:</strong> {{ info.f_raw }}</p>
 						<p><strong>From:</strong> {{ info.from }}</p>
 						<p><strong>To:</strong> {{ info.to }}</p>
 						<p><strong>Data:</strong> {{ info.data }}</p>

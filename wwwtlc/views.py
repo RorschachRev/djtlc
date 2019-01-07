@@ -22,9 +22,9 @@ from wwwtlc.eth import BC
 from wwwtlc.forms import *
 from wwwtlc import explorer
 from wwwtlc.tx_hashes import rop_tx
-from wwwtlc.tlc_functions import functions
 from wwwtlc.models_officer import NewLoan
 from wwwtlc.models_bse import ApplicationSummary
+from wwwtlc.named_tlc_functions import functions
 from wwwtlc.models_meta import Person, Wallet, Contract
 from wwwtlc.models_loan_apply import NewRequestSummary
 
@@ -624,8 +624,8 @@ def bc_explorer(request):
 		receipt = tx.getTransactionReceipt(hash)
 		tx_data = tx.getTransaction(hash)
 		try:
-			f = tx_data.input[2:10]
-			function = functions[f]
+			f_raw = tx_data.input[2:10]
+			function = functions[f_raw]
 		except:
 			function = 'N/a'
 		try:
@@ -641,6 +641,7 @@ def bc_explorer(request):
 			'hint': hint,
 			'input': tx_data.input,
 			'function': function,
+			'f_raw': f_raw,
 		}
 	context = {
 		'net': net,
