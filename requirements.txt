@@ -1,5 +1,6 @@
 asn1crypto==0.24.0
 attrdict==2.0.0
+bitcoin==1.1.42
 certifi==2018.4.16
 cffi==1.11.4
 chardet==3.0.4

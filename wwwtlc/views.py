@@ -22,6 +22,7 @@ from wwwtlc.eth import BC
 from wwwtlc.forms import *
 from wwwtlc import explorer
 from wwwtlc.tx_hashes import rop_tx
+from wwwtlc.tlc_functions import functions
 from wwwtlc.models_officer import NewLoan
 from wwwtlc.models_bse import ApplicationSummary
 from wwwtlc.models_meta import Person, Wallet, Contract
@@ -623,6 +624,11 @@ def bc_explorer(request):
 		receipt = tx.getTransactionReceipt(hash)
 		tx_data = tx.getTransaction(hash)
 		try:
+			f = tx_data.input[2:10]
+			function = functions[f]
+		except:
+			function = 'N/a'
+		try:
 			data = receipt.logs[0]['data']
 			hint = int(data[2:], 16)
 		except:
@@ -633,7 +639,8 @@ def bc_explorer(request):
 			'to': receipt['to'],
 			'data': data,
 			'hint': hint,
-			'input': tx_data.input
+			'input': tx_data.input,
+			'function': function,
 		}
 	context = {
 		'net': net,

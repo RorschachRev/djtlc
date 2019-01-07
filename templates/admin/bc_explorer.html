@@ -6,6 +6,7 @@
 		{{ debug }}
 		{% for tx, info in transaction.items %}
 			<p><strong>Transaction:</strong> <a href='https://{{ net }}etherscan.io/tx/{{ tx }}' target='_blank'>{{ tx }}</a></p>
+			<p><strong>Function:</strong> {{ info.function }}</p>
 			<p><strong>From:</strong> <a href='https://{{ net }}etherscan.io/address/{{ info.from }}' target='_blank'>{{ info.from|truncatechars:20 }}</a></p>
 			<p><strong>To:</strong> <a href='https://{{ net }}etherscan.io/address/{{ info.to }}' target='_blank'>{{ info.to|truncatechars:20 }}</a></p>
 			{% if info.hint %}
