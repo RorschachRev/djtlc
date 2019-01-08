@@ -5,16 +5,27 @@
 	<div class="col-lg-12">
 		{{ debug }}
 		{% for tx, info in transaction.items %}
-			<p><strong>Transaction:</strong> <a href='https://{{ net }}etherscan.io/tx/{{ tx }}' target='_blank'>{{ tx }}</a></p>
-			<p><strong>Function:</strong> {{ info.function }}</p>
-			<p><strong>From:</strong> <a href='https://{{ net }}etherscan.io/address/{{ info.from }}' target='_blank'>{{ info.from|truncatechars:20 }}</a></p>
-			<p><strong>To:</strong> <a href='https://{{ net }}etherscan.io/address/{{ info.to }}' target='_blank'>{{ info.to|truncatechars:20 }}</a></p>
-			{% if info.hint %}
-				<p><strong>Data:</strong> {{ info.hint }}</p>
-				<p>{{ info.data }}</p>
-			{% else %}
-				<p><strong>Data:</strong> {{ info.data }}</p>
-			{% endif %}
+			<div class="row">
+				<div class="col-md-2">
+					<p><strong>Transaction:</strong></p>
+					<p><strong>Function:</strong></p>
+					<p><strong>From:</strong></p>
+					<p><strong>To:</strong></p>
+					<p><strong>Data:</strong></p>
+				</div>
+				<div class="col-md-10">
+					<p><a href='https://{{ net }}etherscan.io/tx/{{ tx }}' target='_blank'>{{ tx }}</a></p>
+					<p>{{ info.function }}</p>
+					<p><a href='https://{{ net }}etherscan.io/address/{{ info.from }}' target='_blank'>{{ info.from|truncatechars:20 }}</a></p>
+					<p><a href='https://{{ net }}etherscan.io/address/{{ info.to }}' target='_blank'>{{ info.to|truncatechars:20 }}</a></p>
+					{% if info.hint %}
+						<p>{{ info.hint }}</p>
+						<p>{{ info.data }}</p>
+					{% else %}
+						<p>{{ info.data }}</p>
+					{% endif %}
+				</div>
+			</div>
 			<button type='button' class='btn-sm btn-default' data-toggle='modal' data-target='#{{ tx }}'>View Raw</button></p>
 			<div class='modal fade' id='{{ tx }}' tabindex='-1' role='dialog' aria-labelledby='rawDataLabel' aria-hidden='true'>
 				<div class='modal-dialog modal-lg' style='background-color:white;' role='document'>
