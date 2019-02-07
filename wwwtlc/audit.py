@@ -5,7 +5,10 @@ import time
 import web3
 # from web3 import Web3, HTTPProvider
 from ethjsonrpc import EthJsonRpc
-from tx_hashes import rop_tx, main_tx
+try:
+	from tx_hashes import rop_tx, main_tx
+except:
+	pass
 
 ETH_MAIN=True
 ROPSTEN_TEST=False
