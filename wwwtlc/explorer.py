@@ -23,13 +23,13 @@ class BC():
             #~ self.contract_address="0x8BC87Ae6F6b7946B5ab84e0AC47cb2F76EC4193F"	#ETH Main	
             #~ self.blockchainURL="http://66.232.80.162:48545"      #ETH
             self.blockchainURL="https://mainnet.infura.io/metamask"      #ETH
-            self.w3 = web3.Web3(web3.Web3.WebsocketProvider("wss://mainnet.infura.io/_ws")) # Websocket connection (?)
+            self.w3 = web3.Web3(web3.Web3.WebsocketProvider("wss://mainnet.infura.io/ws")) # Websocket connection (?)
             self.network_id=1
         if ROPSTEN_TEST:
             #self.contract_address="0x89699241f04e489e5583f57f71cf2e48e9c526ca"	#Ropsten
             self.contract_address="0xFF1cef38Ce6a7DE2f8df6dfE5Ad922B81A952822"
             self.blockchainURL="https://ropsten.infura.io/metamask"      #ETH
-            self.w3 = web3.Web3(web3.Web3.WebsocketProvider("wss://ropsten.infura.io/_ws")) # Websocket connection (?)
+            self.w3 = web3.Web3(web3.Web3.WebsocketProvider("wss://ropsten.infura.io/ws")) # Websocket connection (?)
             self.network_id=3
 
 def main():

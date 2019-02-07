@@ -568,25 +568,6 @@ def add_vendor(request):
 	# Add logic to create form for adding vendors	
 	return render(request, 'admin/add_vendor.html', {})
 
-'''
-n():
-        resp= BC()
-        w3 = resp.w3
-        contract_address=Web3.toChecksumAddress(resp.contract_address)
-        with open('abi.json', 'r', encoding='utf-8') as abi_file:
-                contract_abi = json.loads(abi_file.read())
-        my_contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-        approval_filter = my_contract.events.Approval.createFilter(fromBlock=0)
-        print(approval_filter.get_all_entries())
-        buy_filter = my_contract.events.Buy.createFilter(fromBlock=0)
-        print(buy_filter.get_all_entries())
-        loan_payment_filter = my_contract.events.LoanPayment.createFilter(fromBlock=0)
-        print(loan_payment_filter.get_all_entries())
-        ownership_filter = my_contract.events.OwnershipTransferred.createFilter(fromBlock=0)
-        print(ownership_filter.get_all_entries())
-        transfer_filter = my_contract.events.Transfer.createFilter(fromBlock=0)
-'''
-
 def event_viewer(request):
 	bc = events.BC()
 	w3 = bc.w3
@@ -594,11 +575,11 @@ def event_viewer(request):
 	with open('abi.json', 'r', encoding='utf-8') as abi_file:
 		contract_abi = json.loads(abi_file.read())
 	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-	approval_filter = contract.events.Approval.createFilter(fromBlock=0)
-	buy_filter = contract.events.Buy.createFilter(fromBlock=0)
-	loan_payment_filter = contract.events.LoanPayment.createFilter(fromBlock=0)
-	ownership_filter = contract.events.OwnershipTransferred.createFilter(fromBlock=0)
-	transfer_filter = contract.events.Transfer.createFilter(fromBlock=0)
+	approval_filter = contract.events.Approval.createFilter(fromBlock=3255394, toBlock=4216364)
+	buy_filter = contract.events.Buy.createFilter(fromBlock=3255394, toBlock=4216364)
+	loan_payment_filter = contract.events.LoanPayment.createFilter(fromBlock=3255394, toBlock=4216364)
+	ownership_filter = contract.events.OwnershipTransferred.createFilter(fromBlock=3255394, toBlock=4216364)
+	transfer_filter = contract.events.Transfer.createFilter(fromBlock=3255394, toBlock=4216364)
 	approval_events = approval_filter.get_all_entries()
 	buy_events = buy_filter.get_all_entries()
 	loan_payment_events = loan_payment_filter.get_all_entries()

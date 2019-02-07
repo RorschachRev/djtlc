@@ -5,8 +5,8 @@ import time
 from web3 import Web3, HTTPProvider
 from ethjsonrpc import EthJsonRpc
 
-ETH_MAIN=True
-ROPSTEN_TEST=False
+ETH_MAIN=False
+ROPSTEN_TEST=True
 
 #c = EthJsonRpc('127.0.0.1', 8545)
 c = EthJsonRpc('66.232.80.162', 48545)
@@ -22,13 +22,13 @@ class BC():
 			self.contract_address="0x97fa8C5349c5Edf44FfE861297c602D13c662C00"
 			#~ self.blockchainURL="http://66.232.80.162:48545"      #ETH
 			self.blockchainURL="https://mainnet.infura.io/metamask"      #ETH
-			self.w3 = Web3(Web3.WebsocketProvider("wss://mainnet.infura.io/_ws")) # Websocket connection (?)
+			self.w3 = Web3(Web3.WebsocketProvider("wss://mainnet.infura.io/ws")) # Websocket connection (?)
 			self.network_id=1
 		if ROPSTEN_TEST:
 #			self.contract_address="0x89699241f04e489e5583f57f71cf2e48e9c526ca"	#Ropsten
 			self.contract_address="0xFF1cef38Ce6a7DE2f8df6dfE5Ad922B81A952822"
 			self.blockchainURL="https://ropsten.infura.io/metamask"      #ETH
-			self.w3 = Web3(Web3.WebsocketProvider("wss://ropsten.infura.io/_ws")) # Websocket connection (?)
+			self.w3 = Web3(Web3.WebsocketProvider("wss://ropsten.infura.io/ws")) # Websocket connection (?)
 			self.network_id=3
 
 def main():
