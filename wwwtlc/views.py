@@ -20,8 +20,8 @@ import decimal as D
 from wwwtlc import events
 from wwwtlc.eth import BC
 from wwwtlc.forms import *
-from wwwtlc import explorer
-from wwwtlc.tx_hashes import rop_tx
+from wwwtlc import explorer, audit
+from wwwtlc.tx_hashes import rop_tx, main_tx
 from wwwtlc.models_officer import NewLoan
 from wwwtlc.models_bse import ApplicationSummary
 from wwwtlc.named_tlc_functions import functions
@@ -648,6 +648,54 @@ def bc_explorer(request):
 		'transaction': transaction,
 	}
 	return render(request, 'admin/bc_explorer.html', context)
+
+def token_audit(request):
+	bc = audit.BC()
+	w3 = bc.w3
+	contract_address = Web3.toChecksumAddress(bc.contract_address)
+	with open('abi.json', 'r', encoding='utf-8') as abi_file:
+		contract_abi = json.loads(abi_file.read())
+	contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+	try:
+	#	transfer_filter = contract.events.Transfer.createFilter(fromBlock=0)
+		transfer_filter = my_contract.events.Transfer.createFilter(fromBlock=4340299, toBlock=4615429)
+	except:
+		context = {'message': 'Oops! Something went wrong'}
+		return render(request, 'admin/audit.html', context)
+	tx = web3.eth.Eth(w3)
+	context = {}
+	addresses = ['0x0000000000000000000000000000000000000000']
+	zero_addresses = []
+	zero_sum = 0
+	tracked_balance = 0
+	for transfer in transfer_filter.get_all_entries():
+		if transfer['args']['from'].lower() not in addresses:
+			addresses.append(transfer['args']['from'].lower())
+		if transfer['args']['to'].lower() not in addresses:
+			addresses.append(transfer['args']['to'].lower())
+	for x in main_tx:
+		receipt = tx.getTransactionReceipt(x)
+		try:
+			if receipt['from'].lower() not in addresses:
+				addresses.append(receipt['from'].lower())
+			if receipt['to'].lower() not in addresses:
+				addresses.append(receipt['to'].lower())
+		except:
+			pass
+	for addr in addresses:
+		try:
+			addr = web3.Web3.toChecksumAddress(addr)
+			token_balance = my_contract.call().balanceOf(addr)
+			if not token_balance == 0:
+				tracked_balance += token_balance
+				context[addr] = [token_balance]
+			else:
+				zero_bal += 1
+				zero_addresses.append(addr)
+		except:
+			pass
+
+	return render(request, 'admin/audit.html', context)
 	
 '''##################################################
 PDF Generation Views

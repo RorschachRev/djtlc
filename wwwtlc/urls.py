@@ -266,6 +266,11 @@ urlpatterns = [
         views.bc_explorer,
         name='bc_explorer'
 ),
+    url(
+        r'^token_audit/$',
+        views.token_audit,
+        name='token_audit'
+),
 
 # Form URLs
 
