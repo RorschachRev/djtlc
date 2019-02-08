@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load djmoney %}
-{% money_localize money %}
 
 {% block title %}Login{% endblock %}
 
@@ -65,29 +64,30 @@ by the server).</caption></pre>
 	<!-- <tr>
 		<td>DATE</td>
 		<td>{{ loan.wallet_addr }} </td>
-		<td>{% blockdata.loanbal 'USD' %} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
 		<td>TLCPAID</td>
 		<td><a href="https://ropsten.etherscan.io/tx/0x8c4681725167ea7c1d95ce3afdc5b5459d499ec255b46fc5b349d4e820353434">Tx 0x8c4681...</a></td>
 	</tr>
 	<tr>
 		<td>DATE</td>
 		<td>{{ loan.wallet_addr }} </td>
-		<td>{% blockdata.loanbal 'USD' %} </td>
+		<td>{% money_localize blockdata.loanbal 'USD' %} </td>
 		<td>TLCPAID</td>
 		<td><a href="https://ropsten.etherscan.io/tx/0xf20277472ea94dc1e5ec86f04e666be34bdbddcf3a7617906f937c69a6181732">Tx 0xf20277...</a></td>
 	</tr> -->
 	<!--Begin Gio's Code -->
 	<tr>
 		<td>DATE</td>
+		<!-- moneyed_localize was failing on NoneType -->
 		<td>{{ loan.wallet_addr }} </td>
-		<td>{% blockdata.loanbal 'USD' %} </td>
-		<td>{% blockdata.tlctousdc 'USD' %} </td>
+		<td>{{ blockdata.loanbal }} </td>
+		<td>{{ blockdata.tlctousdc }} </td>
 		<td>{{ blockdata.deedloan }} </td>
-		<td>{% blockdata.paidfee 'USD' %} </td>
-		<td>{% blockdata.paidinterest 'USD' %} </td>
-		<td>{% blockdata.paidprincipal 'USD' %} </td>
+		<td>{{ blockdata.paidfee }} </td>
+		<td>{{ blockdata.paidinterest }} </td>
+		<td>{{ blockdata.paidprincipal }} </td>
 		<td>{{ blockdata.allowloan }} </td>
-		<td>{% blockdata.currentbal 'USD' %} </td>
+		<td>{{ blockdata.currentbal }} </td>
 	</tr>
 	<!--End Gio's Code -->
 
