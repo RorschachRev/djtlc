@@ -41,7 +41,7 @@ pyOpenSSL==17.5.0
 PyPDF2==1.26.0
 pysha3==1.0.2
 pytz==2018.7
-PyYAML==3.12
+PyYAML==5.4
 reportlab==3.5.12
 repoze.lru==0.7
 requests==2.18.4
